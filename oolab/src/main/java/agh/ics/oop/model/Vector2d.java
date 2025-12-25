@@ -1,4 +1,4 @@
-package agh.ics.oop.model.moving;
+package agh.ics.oop.model;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -7,7 +7,6 @@ public record Vector2d(int x, int y) {
 
     public String toString() {
         return String.format("(%d,%d)", x, y);
-
     }
 
     public boolean precedes(Vector2d other) {
