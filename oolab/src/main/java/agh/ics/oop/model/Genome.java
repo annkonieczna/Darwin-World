@@ -38,8 +38,9 @@ public final class Genome {
             System.arraycopy(weaker,strongerGeneCount, child,strongerGeneCount,length-strongerGeneCount);
 
         } else {
-            System.arraycopy(weaker,0, child,0,length-strongerGeneCount);
-            System.arraycopy(stronger,length-strongerGeneCount,child,length-strongerGeneCount,strongerGeneCount);
+            int weakerGeneCount = length-strongerGeneCount;
+            System.arraycopy(weaker,0, child,0,weakerGeneCount);
+            System.arraycopy(stronger,weakerGeneCount,child,weakerGeneCount,strongerGeneCount);
         }
         mutate(child,minMutations,maxMutations);
         return child;
