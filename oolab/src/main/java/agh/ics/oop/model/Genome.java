@@ -1,12 +1,14 @@
 package agh.ics.oop.model;
 
+import java.util.Random;
+
 public final class Genome {
 
     private Genome() {
 
     }
 
-    private static int[] combine(int[] genomeA, int[] genomeB, int energyA, int energyB, int minMutations, int MaxMutations) {
+    private static int[] combine(int[] genomeA, int[] genomeB, int energyA, int energyB, int minMutations, int maxMutations) {
 
         int length = genomeA.length;
 
@@ -29,11 +31,24 @@ public final class Genome {
 
         double ratio = (double) moreEnergy /(moreEnergy + lessEnergy);
         int strongerGeneCount = (int) Math.round(ratio*length);
+        boolean isLeft = new Random().nextBoolean();
+        int[] child = new int[length];
+        if(isLeft) {
+            System.arraycopy(stronger,0, child,0,strongerGeneCount);
+            System.arraycopy(weaker,strongerGeneCount, child,strongerGeneCount,length-strongerGeneCount);
+
+        } else {
+            System.arraycopy(weaker,0, child,0,length-strongerGeneCount);
+            System.arraycopy(stronger,length-strongerGeneCount,child,length-strongerGeneCount,strongerGeneCount);
+        }
+        mutate(child,minMutations,maxMutations);
+        return child;
 
 
+    }
 
-
-
+    public static void mutate(int[] child,int min,int max) {
+        if (max == 0) return;
     }
 
 
