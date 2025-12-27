@@ -80,16 +80,36 @@ public class Animal implements WorldElement {
 
 
     }
+
     //getters
     @Override
-    public Vector2d getPosition() { return position; }
+    public Vector2d position() {
+        return position;
+    }
 
-    public int getEnergy() { return energy; }
-    public int getAge() { return age; }
-    public int getChildrenCount() { return childrenCount; }
-    public int[] getGenome() { return genome; }
-    public int getActiveGeneIndex() { return activeGeneIndex; }
-    public MapDirection getDirection() { return direction; }
+    public int getEnergy() {
+        return energy;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getChildrenCount() {
+        return childrenCount;
+    }
+
+    public int[] getGenome() {
+        return genome;
+    }
+
+    public int getActiveGeneIndex() {
+        return activeGeneIndex;
+    }
+
+    public MapDirection getDirection() {
+        return direction;
+    }
 
     public Integer getDeathDay() {
         return deathDay;
