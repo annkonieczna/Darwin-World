@@ -11,6 +11,7 @@ public class Animal implements WorldElement {
 
     private int plantsEaten = 0;
     private int age = 0;
+    private int childrenCount = 0;
 
     public Animal(Vector2d position, int startEnergy, int[] genome) {
         this.position = position;
@@ -57,7 +58,7 @@ public class Animal implements WorldElement {
         direction = direction.rotate(activeGene);
 
         Vector2d moveVector = direction.toUnitVector();
-//      position =
+        position = map.correctPosition(position,moveVector);
 
         activeGeneIndex = (activeGeneIndex + 1) % genome.length;
         age++;
