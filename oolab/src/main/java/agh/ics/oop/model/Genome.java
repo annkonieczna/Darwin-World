@@ -50,6 +50,20 @@ public final class Genome {
 
     public static void mutate(int[] child, int min, int max) {
         if (max == 0) return;
+
+        Random random = new Random();
+        int mutations = random.nextInt((max - min + 1)) + min;
+        for (int i = 0; i < mutations; i++) {
+            int index = random.nextInt(child.length);
+            int newGene;
+            do {
+                newGene = random.nextInt(8);
+            } while (newGene == child[index]);
+
+            child[index] = newGene;
+
+
+        }
     }
 
 
