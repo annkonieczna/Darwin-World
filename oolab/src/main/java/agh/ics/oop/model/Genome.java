@@ -8,7 +8,7 @@ public final class Genome {
 
     }
 
-    private static int[] combine(int[] genomeA, int[] genomeB, int energyA, int energyB, int minMutations, int maxMutations) {
+    public static int[] combine(int[] genomeA, int[] genomeB, int energyA, int energyB, int minMutations, int maxMutations) {
 
         int length = genomeA.length;
 
@@ -64,6 +64,7 @@ public final class Genome {
 
 
         }
+
     }
 
 
