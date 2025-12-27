@@ -12,13 +12,16 @@ public class Animal implements WorldElement {
     private int plantsEaten = 0;
     private int age = 0;
     private int childrenCount = 0;
+    private Integer deathDay = null;
+
+    private static final Random random = new Random();
 
     public Animal(Vector2d position, int startEnergy, int[] genome) {
         this.position = position;
         this.energy = startEnergy;
         this.genome = genome;
-        this.direction = MapDirection.values()[new Random().nextInt(8)];
-        this.activeGeneIndex = new Random().nextInt(genome.length);
+        this.direction = MapDirection.values()[random.nextInt(8)];
+        this.activeGeneIndex = random.nextInt(genome.length);
     }
 
 
@@ -32,14 +35,6 @@ public class Animal implements WorldElement {
     }
 
 
-    public MapDirection getDirection() {
-        return direction;
-    }
-
-    public Vector2d getPosition() {
-        return position;
-    }
-
     public void loseEnergy(int amount) {
         energy -= amount;
     }
@@ -49,8 +44,14 @@ public class Animal implements WorldElement {
         plantsEaten += 1;
     }
 
-    public int getEnergy() {
-        return energy;
+    public boolean isDead() {
+        return energy <= 0;
+    }
+
+    public void setDeathDay(int day) {
+        if (deathDay == null) {
+            deathDay = day;
+        }
     }
 
     public void move(WorldMap map) {
@@ -58,11 +59,41 @@ public class Animal implements WorldElement {
         direction = direction.rotate(activeGene);
 
         Vector2d moveVector = direction.toUnitVector();
-        position = map.correctPosition(position,moveVector);
+        position = map.correctPosition(position, moveVector);
 
         activeGeneIndex = (activeGeneIndex + 1) % genome.length;
         age++;
 
     }
 
+    public Animal reproduceWith(Animal partner, int min, int max, int energyCost) {
+
+        int[] childGenome = Genome.combine(this.genome, partner.genome, this.energy, partner.energy, min, max);
+
+
+        this.energy -= energyCost;
+        partner.energy -= energyCost;
+
+        this.childrenCount++;
+        partner.childrenCount++;
+        return new Animal(this.position, energyCost * 2, childGenome);
+
+
+    }
+    //getters
+    @Override
+    public Vector2d getPosition() { return position; }
+
+    public int getEnergy() { return energy; }
+    public int getAge() { return age; }
+    public int getChildrenCount() { return childrenCount; }
+    public int[] getGenome() { return genome; }
+    public int getActiveGeneIndex() { return activeGeneIndex; }
+    public MapDirection getDirection() { return direction; }
+
+    public Integer getDeathDay() {
+        return deathDay;
+    }
 }
+
+

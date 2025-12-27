@@ -4,6 +4,8 @@ import java.util.Random;
 
 public final class Genome {
 
+    private static final Random random = new Random();
+
     private Genome() {
 
     }
@@ -31,7 +33,7 @@ public final class Genome {
 
         double ratio = (double) moreEnergy / (moreEnergy + lessEnergy);
         int strongerGeneCount = (int) Math.round(ratio * length);
-        boolean isLeft = new Random().nextBoolean();
+        boolean isLeft = random.nextBoolean();
         int[] child = new int[length];
         if (isLeft) {
             System.arraycopy(stronger, 0, child, 0, strongerGeneCount);
@@ -51,7 +53,6 @@ public final class Genome {
     public static void mutate(int[] child, int min, int max) {
         if (max == 0) return;
 
-        Random random = new Random();
         int mutations = random.nextInt((max - min + 1)) + min;
         for (int i = 0; i < mutations; i++) {
             int index = random.nextInt(child.length);
