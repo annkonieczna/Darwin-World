@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractWorldMap implements WorldMap {
-    protected List<Vector2d> freeJunglePositions;
-    protected List<Vector2d> freeSteppePositions;
-    protected RandomPositionGenerator randomPG;
-
     protected Map<Vector2d, List<Animal>> animals;
     protected Map<Vector2d, Grass> grasses;
 
@@ -19,7 +15,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         if (animals.containsKey(animal.getPosition())) {
             animals.get(animal.getPosition()).add(animal);
         } else {
-            List<Animal> list = new ArrayList<Animal>();
+            List<Animal> list = new ArrayList<>();
             list.add(animal);
             animals.put(animal.getPosition(), list);
         }
@@ -32,11 +28,13 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void move(Animal animal) {
-        animals.get(animal.getPosition()).remove(animal);
-        if (animals.get(animal.getPosition()).isEmpty()) {
-            animals.remove(animal.getPosition());
+        if (animals.get(animal.getPosition()) != null) {
+            animals.get(animal.getPosition()).remove(animal);
+            if (animals.get(animal.getPosition()).isEmpty()) {
+                animals.remove(animal.getPosition());
+            }
+            animal.move(this);
+            placeAnimal(animal);
         }
-        animal.move(this);
-        placeAnimal(animal);
     }
 }
