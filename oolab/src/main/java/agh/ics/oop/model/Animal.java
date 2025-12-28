@@ -1,5 +1,7 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.util.Movement;
+
 import java.util.Random;
 
 public class Animal implements WorldElement {
@@ -54,12 +56,13 @@ public class Animal implements WorldElement {
         }
     }
 
-    public void move(WorldMap map) {
+    public void move(MoveValidator validator) {
         int activeGene = genome[activeGeneIndex];
         direction = direction.rotate(activeGene);
 
-        Vector2d moveVector = direction.toUnitVector();
-        position = map.correctPosition(position, moveVector);
+        Movement movement = validator.correctPosition(position, direction);
+        position = movement.position();
+        direction = movement.direction();
 
         activeGeneIndex = (activeGeneIndex + 1) % genome.length;
         age++;

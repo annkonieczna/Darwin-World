@@ -12,11 +12,13 @@ import agh.ics.oop.model.util.IncorrectPositionException;
  */
 public interface WorldMap extends MoveValidator {
 
+    void move(Animal animal);
+
     void placeAnimal(Animal animal);
 
     void placeGrass(Grass grass);
 
-    List<WorldElement> getElementsAt(Vector2d position);
+    boolean inBounds(Vector2d position);
 
     Boundary getBounds();
 

@@ -1,5 +1,7 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.util.Movement;
+
 public interface MoveValidator {
-    Vector2d correctPosition(Vector2d current,Vector2d moveVector);
+    Movement correctPosition(Vector2d current, MapDirection direction);
 }

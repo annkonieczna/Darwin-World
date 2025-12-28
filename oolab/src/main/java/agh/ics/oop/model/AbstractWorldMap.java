@@ -30,5 +30,13 @@ public abstract class AbstractWorldMap implements WorldMap {
         grasses.put(grass.getPosition(), grass);
     }
 
-
+    @Override
+    public void move(Animal animal) {
+        animals.get(animal.getPosition()).remove(animal);
+        if (animals.get(animal.getPosition()).isEmpty()) {
+            animals.remove(animal.getPosition());
+        }
+        animal.move(this);
+        placeAnimal(animal);
+    }
 }
