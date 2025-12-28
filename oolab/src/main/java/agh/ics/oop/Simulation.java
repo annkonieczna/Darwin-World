@@ -40,6 +40,14 @@ public class Simulation implements Runnable {
 
     @Override
     public void run() {
-        //Tutaj po kolei to co tam ma się dziać
+        //1.usuwanie martwych zwierzątek
+        //2.skręt,ruch
+        //3.obiad
+        //4.sex
+        //5.spawn roślinek
+    }
+
+    public void removeDeadAnimals() {
+        animals.removeIf(animal -> animal.isDead());
     }
 }

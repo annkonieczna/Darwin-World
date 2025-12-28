@@ -18,7 +18,7 @@ public class Animal implements WorldElement {
 
     private static final Random random = new Random();
 
-    public Animal(Vector2d position, int startEnergy, int genomeLength) {
+    public Animal(Vector2d position, int startEnergy, int[] genome) {
         this.position = position;
         this.energy = startEnergy;
         this.genome = genome;
