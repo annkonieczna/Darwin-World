@@ -26,6 +26,13 @@ public class Animal implements WorldElement {
         this.activeGeneIndex = random.nextInt(genome.length);
     }
 
+    public Animal(Vector2d position, int startEnergy, int genomeLength) {
+        this.position = position;
+        this.energy = startEnergy;
+        this.genome = Genome.generate(genomeLength);
+        this.direction = MapDirection.values()[random.nextInt(8)];
+        this.activeGeneIndex = random.nextInt(genome.length);
+    }
 
     @Override
     public String toString() {
