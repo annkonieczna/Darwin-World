@@ -12,19 +12,11 @@ import agh.ics.oop.model.util.IncorrectPositionException;
  */
 public interface WorldMap extends MoveValidator {
 
-    void place(WorldElement element);
+    void placeAnimal(Animal animal);
 
-    /**
-     * Return true if given position on the map is occupied. Should not be
-     * confused with canMoveTo since there might be empty positions where the animal
-     * cannot move.
-     *
-     * @param position Position to check.
-     * @return True if the position is occupied.
-     */
-    boolean isOccupied(Vector2d position);
+    void placeGrass(Grass grass);
 
-    Vector2d correctPosition(Vector2d current,Vector2d moveVector);
+    List<WorldElement> getElementsAt(Vector2d position);
 
     Boundary getBounds();
 

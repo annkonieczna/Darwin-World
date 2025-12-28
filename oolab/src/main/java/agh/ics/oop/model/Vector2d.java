@@ -37,5 +37,12 @@ public record Vector2d(int x, int y) {
         return new Vector2d(-this.x, -this.y);
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 
 }
