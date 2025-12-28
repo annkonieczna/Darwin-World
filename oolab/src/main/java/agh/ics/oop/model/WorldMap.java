@@ -12,13 +12,7 @@ import agh.ics.oop.model.util.IncorrectPositionException;
  */
 public interface WorldMap extends MoveValidator {
 
-    /**
-     * Place a new animal on the map.
-     *
-     * @param animal The animal to be placed on the map.
-     */
-    void place(Animal animal) throws IncorrectPositionException;
-
+    void place(WorldElement element);
 
     /**
      * Return true if given position on the map is occupied. Should not be
