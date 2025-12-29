@@ -21,13 +21,17 @@ public class RandomPositionGenerator {
         for(int x = 0; x < width; x++){
             for(int y = 0; y < height; y++){
                 Vector2d position = new Vector2d(x, y);
-                if(y >= this.jungleStart && y < this.jungleEnd){
+                if(isInJungle(position)){
                     freeJunglePositions.add(position);
                 } else {
                     freeSteppePositions.add(position);
                 }
             }
         }
+    }
+
+    public boolean isInJungle(Vector2d position){
+        return position.getY() >= this.jungleStart && position.getY() < this.jungleEnd;
     }
 
     public Vector2d randomPositionGrass() {
@@ -51,6 +55,15 @@ public class RandomPositionGenerator {
         }
 
         return position;
+    }
+
+    public void grassPositionFree(Grass grass) {
+        Vector2d position = grass.getPosition();
+        if (isInJungle(position)) {
+            freeJunglePositions.add(position);
+        } else {
+            freeSteppePositions.add(position);
+        }
     }
 
     public Vector2d randomPositionFromList(List<Vector2d> list) {

@@ -14,6 +14,10 @@ public class Simulation implements Runnable {
     private final Random random = new Random();
 
     private final SimulationConfig config;
+    private int avgChildAmount;
+    private int avgEnergy;
+    private int avgLifeTime;
+    private int avgLifeTimeCount;
     private int day = 0;
 
     public Simulation(SimulationConfig config) {
@@ -42,15 +46,22 @@ public class Simulation implements Runnable {
     public void run() {
         //1.usuwanie martwych zwierzątek
         removeDeadAnimals();
+
         //2.skręt,ruch
         moveAnimals();
+
         //3.obiad
         dinnerAnimals();
+
         //4.sex
         reproduceAnimals();
+
         //5.spawn roślinek
         spawnGrasses();
-        day++;
+
+        //6.update średnich
+        updateStats();
+
     }
 
     public void removeDeadAnimals() {
@@ -59,6 +70,7 @@ public class Simulation implements Runnable {
             Animal animal = iter.next();
             if(animal.isDead()){
                 animal.setDeathDay(day);
+                avgLifeTimeCount += animal.getAge();
                 deadAnimals.add(animal);
                 map.removeAnimal(animal);
                 iter.remove();
@@ -84,6 +96,7 @@ public class Simulation implements Runnable {
                         grass.isToxic()
                 );
                 map.removeGrass(grass);
+                randomPG.grassPositionFree(grass);
             }
         }
     }
@@ -137,5 +150,25 @@ public class Simulation implements Runnable {
             );
             map.placeGrass(grass);
         }
+    }
+
+    private void updateStats() {
+        avgEnergy = 0;
+        avgChildAmount = 0;
+        if (!animals.isEmpty()) {
+            for (Animal animal : animals) {
+                avgChildAmount += animal.getChildrenCount();
+                avgEnergy += animal.getEnergy();
+            }
+            avgChildAmount = avgChildAmount / animals.size();
+            avgEnergy = avgEnergy / animals.size();
+        }
+
+        avgLifeTime = 0;
+        if (!deadAnimals.isEmpty()) {
+            avgLifeTime = avgLifeTimeCount / deadAnimals.size();
+        }
+
+        day++;
     }
 }
