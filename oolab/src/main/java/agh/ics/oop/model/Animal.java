@@ -48,8 +48,12 @@ public class Animal implements WorldElement {
         energy -= amount;
     }
 
-    public void eatGrass(int amount) {
-        energy += amount;
+    public void eatGrass(int amount, boolean isToxic) {
+        if (isToxic) {
+            energy -= amount;
+        } else {
+            energy += amount;
+        }
         plantsEaten += 1;
     }
 

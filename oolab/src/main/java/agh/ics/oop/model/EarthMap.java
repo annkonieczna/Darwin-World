@@ -7,7 +7,6 @@ import java.util.UUID;
 
 public class EarthMap extends AbstractWorldMap{
     private final Boundary bounds;
-    private final String mapID = UUID.randomUUID().toString();
 
     public EarthMap(int width, int height) {
         this.bounds = new Boundary(new Vector2d(0,0), new Vector2d(width-1,height-1));
@@ -45,10 +44,5 @@ public class EarthMap extends AbstractWorldMap{
     @Override
     public Boundary getBounds() {
         return bounds;
-    }
-
-    @Override
-    public UUID getId() {
-        return null;
     }
 }
