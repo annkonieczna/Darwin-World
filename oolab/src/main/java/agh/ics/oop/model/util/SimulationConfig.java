@@ -12,6 +12,7 @@ public record SimulationConfig(
         int startEnergy,
         int loosingEnergy,
         int reproductionEnergyCost,
+        int minimumEnergyForReproduction,
         int minMutation,    //<=maxMutation
         int maxMutation,    //<=genomeLength
         int genomeLength

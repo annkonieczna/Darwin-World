@@ -47,7 +47,9 @@ public class Simulation implements Runnable {
         //3.obiad
         dinnerAnimals();
         //4.sex
+        reproduceAnimals();
         //5.spawn roślinek
+        spawnGrasses();
         day++;
     }
 
@@ -86,6 +88,27 @@ public class Simulation implements Runnable {
         }
     }
 
+    public void reproduceAnimals() {
+        Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
+        List<Animal> newAnimals = new ArrayList<>();
+        for (Map.Entry<Vector2d, List<Animal>> field : placedAnimals.entrySet()) {
+            if (field.getValue().size() > 1) {
+                List<Animal> toReproduce = chooseBestAnimals(field.getValue(), 2);
+                if (toReproduce.get(1).getEnergy() >= config.minimumEnergyForReproduction()) {
+                    Animal child = toReproduce.get(0).reproduceWith(
+                            toReproduce.get(1),
+                            config.minMutation(),
+                            config.minMutation(),
+                            config.reproductionEnergyCost()
+                    );
+                    newAnimals.add(child);
+                    map.placeAnimal(child);
+                }
+            }
+        }
+        animals.addAll(newAnimals);
+    }
+
     public List<Animal> chooseBestAnimals(List<Animal> allAnimals, int count) {
         if (allAnimals.isEmpty()) {
             return Collections.emptyList();
@@ -104,5 +127,15 @@ public class Simulation implements Runnable {
         });
 
         return result.subList(0, Math.min(count, result.size()));
+    }
+
+    public void spawnGrasses() {
+        for (int i = 0; i < config.growingGrassAmount(); i++) {
+            Grass grass = new Grass(
+                    randomPG.randomPositionGrass(),
+                    random.nextInt(100) < config.toxicGrassChance()
+            );
+            map.placeGrass(grass);
+        }
     }
 }

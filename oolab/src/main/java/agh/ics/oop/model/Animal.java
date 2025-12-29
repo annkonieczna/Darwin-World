@@ -84,16 +84,14 @@ public class Animal implements WorldElement {
 
         int[] childGenome = Genome.combine(this.genome, partner.genome, this.energy, partner.energy, min, max);
 
-
         this.energy -= energyCost;
         partner.energy -= energyCost;
 
         this.childrenCount++;
         partner.childrenCount++;
         return new Animal(this.position, energyCost * 2, childGenome);
-
-
     }
+
     //getters
     @Override
     public Vector2d getPosition() { return position; }
