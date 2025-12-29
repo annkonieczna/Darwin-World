@@ -5,6 +5,7 @@ import agh.ics.oop.model.Grass;
 import agh.ics.oop.model.Vector2d;
 import agh.ics.oop.model.WorldMap;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -77,6 +78,12 @@ public class RandomPositionGenerator {
         Vector2d position = new Vector2d(random.nextInt(boundary.lowerLeft().getX(),boundary.upperRight().getX()+1),
                 random.nextInt(boundary.lowerLeft().getY(),boundary.upperRight().getY())+1);
         return position;
+    }
+
+    public List<Vector2d> getFreePositions() {
+        List<Vector2d> freePositions = new ArrayList<>(freeSteppePositions);
+        freePositions.addAll(freeJunglePositions);
+        return freePositions;
     }
 
 }

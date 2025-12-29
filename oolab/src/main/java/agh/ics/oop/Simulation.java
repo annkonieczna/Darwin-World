@@ -18,6 +18,7 @@ public class Simulation implements Runnable {
     private int avgEnergy;
     private int avgLifeTime;
     private int avgLifeTimeCount;
+    private int freeFields;
     private int day = 0;
 
     public Simulation(SimulationConfig config) {
@@ -169,6 +170,19 @@ public class Simulation implements Runnable {
             avgLifeTime = avgLifeTimeCount / deadAnimals.size();
         }
 
+        freeFields = countFreeFields();
+
         day++;
+    }
+
+    private int countFreeFields() {
+        int result = 0;
+        Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
+        for(Vector2d position : randomPG.getFreePositions()){
+            if(!placedAnimals.containsKey(position)){
+                result++;
+            }
+        }
+        return result;
     }
 }
