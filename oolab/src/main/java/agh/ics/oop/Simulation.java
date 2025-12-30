@@ -55,9 +55,9 @@ public class Simulation implements Runnable {
 
     public void removeDeadAnimals() {
         Iterator<Animal> iter = animals.iterator();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             Animal animal = iter.next();
-            if(animal.isDead()){
+            if (animal.isDead()) {
                 animal.setDeathDay(day);
                 avgLifeTimeCount += animal.getAge();
                 deadAnimals.add(animal);
@@ -118,7 +118,7 @@ public class Simulation implements Runnable {
 
         List<Animal> result = new ArrayList<>(allAnimals);
         Collections.shuffle(result);
-        Collections.sort(result, (a,b) ->{
+        Collections.sort(result, (a, b) -> {
             if (a.getEnergy() > b.getEnergy()) return -1;
             if (a.getEnergy() < b.getEnergy()) return 1;
             if (a.getAge() > b.getAge()) return -1;
@@ -169,11 +169,32 @@ public class Simulation implements Runnable {
     private int countFreeFields() {
         int result = 0;
         Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
-        for(Vector2d position : randomPG.getAllFreePositions()){
-            if(!placedAnimals.containsKey(position)){
+        for (Vector2d position : randomPG.getAllFreePositions()) {
+            if (!placedAnimals.containsKey(position)) {
                 result++;
             }
         }
         return result;
+    }
+
+    //gettery
+    public WorldMap getMap() {
+        return map;
+    }
+
+    public int getAvgEnergy() {
+        return avgEnergy;
+    }
+
+    public int getAvgLifeTime() {
+        return avgLifeTime;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public int getFreeFields() {
+        return freeFields;
     }
 }
