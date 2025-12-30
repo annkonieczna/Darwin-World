@@ -3,10 +3,12 @@ package agh.ics.oop.model;
 import agh.ics.oop.model.util.Boundary;
 import agh.ics.oop.model.util.Movement;
 
+import java.util.Random;
 import java.util.UUID;
 
 public class EarthMap extends AbstractWorldMap{
     private final Boundary bounds;
+    private final Random random = new Random();
 
     public EarthMap(int width, int height) {
         this.bounds = new Boundary(new Vector2d(0,0), new Vector2d(width-1,height-1));
@@ -34,6 +36,13 @@ public class EarthMap extends AbstractWorldMap{
         }
 
         return new Movement(new Vector2d(x,y), direction);
+    }
+
+    @Override
+    public Vector2d randomPositionFromMap() {
+        Vector2d position = new Vector2d(random.nextInt(bounds.lowerLeft().getX(),bounds.upperRight().getX()+1),
+                random.nextInt(bounds.lowerLeft().getY(),bounds.upperRight().getY())+1);
+        return position;
     }
 
     @Override

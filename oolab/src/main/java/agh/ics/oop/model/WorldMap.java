@@ -29,6 +29,8 @@ public interface WorldMap extends MoveValidator {
 
     Map<Vector2d, Grass> getGrasses();
 
+    Vector2d randomPositionFromMap();
+
     Boundary getBounds();
 
     UUID getId();

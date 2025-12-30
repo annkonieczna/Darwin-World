@@ -1,7 +1,7 @@
 package agh.ics.oop;
 
 import agh.ics.oop.model.*;
-import agh.ics.oop.model.util.RandomPositionGenerator;
+import agh.ics.oop.model.util.GrassPositionGenerator;
 import agh.ics.oop.model.util.SimulationConfig;
 
 import java.util.*;
@@ -10,7 +10,7 @@ public class Simulation implements Runnable {
     private final List<Animal> animals = new ArrayList<>();
     private final List<Animal> deadAnimals = new ArrayList<>();
     private final WorldMap map;
-    private final RandomPositionGenerator randomPG;
+    private final GrassPositionGenerator randomPG;
     private final Random random = new Random();
 
     private final SimulationConfig config;
@@ -24,10 +24,10 @@ public class Simulation implements Runnable {
     public Simulation(SimulationConfig config) {
         this.config = config;
         this.map = new EarthMap(config.width(), config.height());
-        this.randomPG = new RandomPositionGenerator(config.width(), config.height());
+        this.randomPG = new GrassPositionGenerator(config.width(), config.height());
         for (int i = 0; i < config.startAnimalAmount(); i++) {
             Animal animal = new Animal(
-                    randomPG.randomPositionFromBounds(map.getBounds()),
+                    map.randomPositionFromMap(),
                     config.startEnergy(),
                     config.genomeLength()
             );
@@ -85,7 +85,7 @@ public class Simulation implements Runnable {
                         grass.isToxic()
                 );
                 map.removeGrass(grass);
-                randomPG.removeGrassPosition(grass);
+                randomPG.makePositionFree(grass);
             }
         }
     }
@@ -133,7 +133,7 @@ public class Simulation implements Runnable {
 
     public void spawnGrasses(int amount) {
         for (int i = 0; i < amount; i++) {
-            Vector2d position = randomPG.randomPositionGrass();
+            Vector2d position = randomPG.generateRandomPosition();
             if (position != null) {
                 Grass grass = new Grass(
                         position,
@@ -169,7 +169,7 @@ public class Simulation implements Runnable {
     private int countFreeFields() {
         int result = 0;
         Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
-        for(Vector2d position : randomPG.getAllFreeFromGrassPositions()){
+        for(Vector2d position : randomPG.getAllFreePositions()){
             if(!placedAnimals.containsKey(position)){
                 result++;
             }
