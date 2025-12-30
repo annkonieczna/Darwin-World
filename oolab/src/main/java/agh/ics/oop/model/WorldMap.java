@@ -1,6 +1,7 @@
 package agh.ics.oop.model;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import agh.ics.oop.model.util.Boundary;
@@ -12,25 +13,23 @@ import agh.ics.oop.model.util.IncorrectPositionException;
  */
 public interface WorldMap extends MoveValidator {
 
-    /**
-     * Place a new animal on the map.
-     *
-     * @param animal The animal to be placed on the map.
-     */
-    void place(Animal animal) throws IncorrectPositionException;
+    void move(Animal animal);
 
+    void placeAnimal(Animal animal);
 
-    /**
-     * Return true if given position on the map is occupied. Should not be
-     * confused with canMoveTo since there might be empty positions where the animal
-     * cannot move.
-     *
-     * @param position Position to check.
-     * @return True if the position is occupied.
-     */
-    boolean isOccupied(Vector2d position);
+    void placeGrass(Grass grass);
 
-    Vector2d correctPosition(Vector2d current,Vector2d moveVector);
+    void removeAnimal(Animal animal);
+
+    void removeGrass(Grass grass);
+
+    boolean inBounds(Vector2d position);
+
+    Map<Vector2d, List<Animal>> getAnimals();
+
+    Map<Vector2d, Grass> getGrasses();
+
+    Vector2d randomPositionFromMap();
 
     Boundary getBounds();
 

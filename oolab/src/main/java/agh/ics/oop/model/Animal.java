@@ -1,5 +1,7 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.util.Movement;
+
 import java.util.Random;
 
 public class Animal implements WorldElement {
@@ -24,6 +26,13 @@ public class Animal implements WorldElement {
         this.activeGeneIndex = random.nextInt(genome.length);
     }
 
+    public Animal(Vector2d position, int startEnergy, int genomeLength) {
+        this.position = position;
+        this.energy = startEnergy;
+        this.genome = Genome.generate(genomeLength);
+        this.direction = MapDirection.values()[random.nextInt(8)];
+        this.activeGeneIndex = random.nextInt(genome.length);
+    }
 
     @Override
     public String toString() {
@@ -39,8 +48,12 @@ public class Animal implements WorldElement {
         energy -= amount;
     }
 
-    public void eatGrass(int amount) {
-        energy += amount;
+    public void eatGrass(int amount, boolean isToxic) {
+        if (isToxic) {
+            energy -= amount;
+        } else {
+            energy += amount;
+        }
         plantsEaten += 1;
     }
 
@@ -54,12 +67,13 @@ public class Animal implements WorldElement {
         }
     }
 
-    public void move(WorldMap map) {
+    public void move(MoveValidator validator) {
         int activeGene = genome[activeGeneIndex];
         direction = direction.rotate(activeGene);
 
-        Vector2d moveVector = direction.toUnitVector();
-        position = map.correctPosition(position, moveVector);
+        Movement movement = validator.correctPosition(position, direction);
+        position = movement.position();
+        direction = movement.direction();
 
         activeGeneIndex = (activeGeneIndex + 1) % genome.length;
         age++;
@@ -70,16 +84,14 @@ public class Animal implements WorldElement {
 
         int[] childGenome = Genome.combine(this.genome, partner.genome, this.energy, partner.energy, min, max);
 
-
         this.energy -= energyCost;
         partner.energy -= energyCost;
 
         this.childrenCount++;
         partner.childrenCount++;
         return new Animal(this.position, energyCost * 2, childGenome);
-
-
     }
+
     //getters
     @Override
     public Vector2d getPosition() { return position; }

@@ -10,6 +10,14 @@ public final class Genome {
 
     }
 
+    public static int[] generate(int length) {
+        int[] result = new int[length];
+        for (int i = 0; i < length; i++) {
+            result[i] = random.nextInt(8);
+        }
+        return result;
+    }
+
     public static int[] combine(int[] genomeA, int[] genomeB, int energyA, int energyB, int minMutations, int maxMutations) {
 
         int length = genomeA.length;
@@ -67,6 +75,4 @@ public final class Genome {
         }
 
     }
-
-
 }
