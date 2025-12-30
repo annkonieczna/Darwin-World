@@ -4,6 +4,7 @@ import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.util.Boundary;
 
+import  javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -33,7 +34,7 @@ public class SimulationPresenter {
     private Timeline timeline;
 
     private static final int CELL_SIZE = 40;
-    private static final int FRAME_TIME_MS = 200;
+    private static final int FRAME_TIME_IN_MS = 200;
 
     //Drawing
 
@@ -126,6 +127,19 @@ public class SimulationPresenter {
     //Starting/Pausing/Resuming a simulation
 
     public void startSimulation() {
+        this.simulation = simulation;
+        this.map = simulation.getMap();
+        //initial render before first simulation step
+        drawMap();
+        updateStats();
+        timeline = new Timeline(new KeyFrame(Duration.millis(FRAME_TIME_IN_MS),e -> {
+            simulation.run();
+            drawMap();
+            updateStats();
+        })
+        );
+        timeline.setCycleCount((Animation.INDEFINITE));
+        timeline.play();
 
     }
 
