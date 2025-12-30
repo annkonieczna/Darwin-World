@@ -11,8 +11,8 @@ import java.util.Random;
 
 public class RandomPositionGenerator {
     private Random random = new Random();
-    private List<Vector2d> freeSteppePositions;
-    private List<Vector2d> freeJunglePositions;
+    private List<Vector2d> freeSteppePositions = new ArrayList<>();
+    private List<Vector2d> freeJunglePositions = new ArrayList<>();
     private int jungleStart;
     private int jungleEnd;
 
@@ -35,6 +35,7 @@ public class RandomPositionGenerator {
         return position.getY() >= this.jungleStart && position.getY() < this.jungleEnd;
     }
 
+    //Returns random free from grass position with rule 80 - 20
     public Vector2d randomPositionGrass() {
         Vector2d position = null;
         if (random.nextInt(100) < 20) {
@@ -58,7 +59,8 @@ public class RandomPositionGenerator {
         return position;
     }
 
-    public void grassPositionFree(Grass grass) {
+    //Adds position back to free positions
+    public void removeGrassPosition(Grass grass) {
         Vector2d position = grass.getPosition();
         if (isInJungle(position)) {
             freeJunglePositions.add(position);
@@ -67,6 +69,7 @@ public class RandomPositionGenerator {
         }
     }
 
+    //Returns random position from list of Vector2d-s
     public Vector2d randomPositionFromList(List<Vector2d> list) {
         Vector2d position = list.get(random.nextInt(list.size()));
         list.remove(position);
@@ -74,13 +77,15 @@ public class RandomPositionGenerator {
         return position;
     }
 
+    //Returns random position from space in boundary
     public Vector2d randomPositionFromBounds(Boundary boundary) {
         Vector2d position = new Vector2d(random.nextInt(boundary.lowerLeft().getX(),boundary.upperRight().getX()+1),
                 random.nextInt(boundary.lowerLeft().getY(),boundary.upperRight().getY())+1);
         return position;
     }
 
-    public List<Vector2d> getFreePositions() {
+    //Getter from both lists
+    public List<Vector2d> getAllFreeFromGrassPositions() {
         List<Vector2d> freePositions = new ArrayList<>(freeSteppePositions);
         freePositions.addAll(freeJunglePositions);
         return freePositions;

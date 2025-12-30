@@ -34,33 +34,21 @@ public class Simulation implements Runnable {
             animals.add(animal);
             map.placeAnimal(animal);
         }
-        for (int i = 0; i < config.startGrassAmount(); i++) {
-            Grass grass = new Grass(
-                    randomPG.randomPositionGrass(),
-                    random.nextInt(100) < config.toxicGrassChance()
-            );
-            map.placeGrass(grass);
-        }
+        spawnGrasses(config.startGrassAmount());
     }
 
     @Override
     public void run() {
-        //1.usuwanie martwych zwierzątek
         removeDeadAnimals();
 
-        //2.skręt,ruch
         moveAnimals();
 
-        //3.obiad
         dinnerAnimals();
 
-        //4.sex
         reproduceAnimals();
 
-        //5.spawn roślinek
-        spawnGrasses();
+        spawnGrasses(config.growingGrassAmount());
 
-        //6.update średnich
         updateStats();
 
     }
@@ -97,7 +85,7 @@ public class Simulation implements Runnable {
                         grass.isToxic()
                 );
                 map.removeGrass(grass);
-                randomPG.grassPositionFree(grass);
+                randomPG.removeGrassPosition(grass);
             }
         }
     }
@@ -112,7 +100,7 @@ public class Simulation implements Runnable {
                     Animal child = toReproduce.get(0).reproduceWith(
                             toReproduce.get(1),
                             config.minMutation(),
-                            config.minMutation(),
+                            config.maxMutation(),
                             config.reproductionEnergyCost()
                     );
                     newAnimals.add(child);
@@ -143,13 +131,16 @@ public class Simulation implements Runnable {
         return result.subList(0, Math.min(count, result.size()));
     }
 
-    public void spawnGrasses() {
-        for (int i = 0; i < config.growingGrassAmount(); i++) {
-            Grass grass = new Grass(
-                    randomPG.randomPositionGrass(),
-                    random.nextInt(100) < config.toxicGrassChance()
-            );
-            map.placeGrass(grass);
+    public void spawnGrasses(int amount) {
+        for (int i = 0; i < amount; i++) {
+            Vector2d position = randomPG.randomPositionGrass();
+            if (position != null) {
+                Grass grass = new Grass(
+                        position,
+                        random.nextInt(100) < config.toxicGrassChance()
+                );
+                map.placeGrass(grass);
+            }
         }
     }
 
@@ -178,7 +169,7 @@ public class Simulation implements Runnable {
     private int countFreeFields() {
         int result = 0;
         Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
-        for(Vector2d position : randomPG.getFreePositions()){
+        for(Vector2d position : randomPG.getAllFreeFromGrassPositions()){
             if(!placedAnimals.containsKey(position)){
                 result++;
             }
