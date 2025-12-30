@@ -3,7 +3,9 @@ package agh.ics.oop.presenter;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.util.Boundary;
-import javafx.application.Platform;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.geometry.VPos;
+import javafx.util.Duration;
 
 
 
@@ -25,9 +28,12 @@ public class SimulationPresenter {
     @FXML
     private Canvas mapCanvas;
 
+    private Simulation simulation;
     private WorldMap map;
+    private Timeline timeline;
 
     private static final int CELL_SIZE = 40;
+    private static final int FRAME_TIME_MS = 200;
 
     //Drawing
 
