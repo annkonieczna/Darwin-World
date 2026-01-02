@@ -23,7 +23,7 @@
         <HBox>
             <Button fx:id="playButton" text="Pause" onAction="#onPlayClicked"/>
             <Label fx:id="simSpeedLabel" text="Speed: 500"/>
-<!--            tutaj 40 bo z jakiegoś powodu blokuje to przesuwanie suwaka co 10-->
+<!--            tutaj 40 bo to blokuje przesuwanie suwaka co 10-->
             <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="40" max="990" value="500"/>
         </HBox>
     </bottom>

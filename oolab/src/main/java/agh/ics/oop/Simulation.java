@@ -45,6 +45,7 @@ public class Simulation implements Runnable {
         spawnGrasses(config.startGrassAmount());
     }
 
+    //for tests
     public Simulation() {
         this(new SimulationConfig(
                 10,
@@ -86,6 +87,8 @@ public class Simulation implements Runnable {
         }
     }
 
+    //tutaj dodałem synchronized żeby nie wywalało błędu przy zapisie i odczycie mapy (problem z wątkami)
+    //całość działa w pętli którą ciągle sobie leci a my przyciskiem zmieniamy tylko running
     @Override
     public void run() {
         notifyListeners();
@@ -129,7 +132,7 @@ public class Simulation implements Runnable {
     private void moveAnimals() {
         for (Animal animal : animals) {
             map.move(animal);
-            animal.loseEnergy(config.moveEnergy());
+            animal.loseEnergy(config.moveEnergyCost());
         }
     }
 

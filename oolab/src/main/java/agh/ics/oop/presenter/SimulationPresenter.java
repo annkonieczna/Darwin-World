@@ -12,6 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -29,9 +30,7 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private Button playButton;
     @FXML
-    private Label simStatsLabel;
-    @FXML
-    private Label simSpeedLabel;
+    private Label simStatsLabel, simSpeedLabel;
     @FXML
     private Slider simSpeedScroll;
 
@@ -45,6 +44,7 @@ public class SimulationPresenter implements MapChangeListener {
         this.sim = sim;
         this.map = sim.getWorldMap();
 
+        //Bierze wartość z slidera i ją odejmuje od 1000 (żeby jak jest na maksa w prawo to się jak najszybciej wykonywał ruch)
         simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
             int speed = ((int) (1000 - newValue.intValue())/10) * 10;
             simSpeedLabel.setText("Speed: " + String.valueOf(speed));
@@ -160,6 +160,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void  drawElements() {
+        //!!! to do zmiany, wrzuciłem na szybko żebym mógł testować
         Boundary boundary = map.getBounds();
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
         for (Map.Entry<Vector2d, Grass> entity : map.getGrasses().entrySet()) {
@@ -193,7 +194,6 @@ public class SimulationPresenter implements MapChangeListener {
         simulationThread.start();
     }
 
-
     @FXML
     public void onPlayClicked(){
         if (playButton.getText().equals("Play")) {
@@ -201,11 +201,6 @@ public class SimulationPresenter implements MapChangeListener {
         } else {
             pauseSimulation();
         }
-    }
-
-    @FXML
-    public void onSpeedScroll(){
-        simSpeedLabel.setText(String.valueOf(simSpeedScroll.getValue()));
     }
 
     public void pauseSimulation() {

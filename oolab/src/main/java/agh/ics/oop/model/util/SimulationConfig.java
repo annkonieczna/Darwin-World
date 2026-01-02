@@ -10,7 +10,7 @@ public record SimulationConfig(
         int energyFromGrass,
         int energyFromToxicGrass,
         int startEnergy,
-        int moveEnergy,
+        int moveEnergyCost,
         int reproductionEnergyCost,
         int minimumEnergyForReproduction,
         int minMutation,    //<=maxMutation
