@@ -17,10 +17,7 @@ import javafx.geometry.VPos;
 
 import java.util.List;
 
-public class SimulationPresenter {
-
-    @FXML
-    private Label descriptionLabel;
+public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     private Canvas mapCanvas;
@@ -28,6 +25,13 @@ public class SimulationPresenter {
     private WorldMap map;
 
     private static final int CELL_SIZE = 40;
+
+    @Override
+    public void mapChanged(WorldMap worldMap) {
+        Platform.runLater(() -> {
+            drawMap();
+        });
+    }
 
     //Drawing
 
@@ -137,8 +141,6 @@ public class SimulationPresenter {
     private void updateStats() {
 
     }
-
-
 
 
 }

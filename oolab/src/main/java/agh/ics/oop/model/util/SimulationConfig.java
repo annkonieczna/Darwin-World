@@ -6,7 +6,7 @@ public record SimulationConfig(
         int startGrassAmount,   //<=width*height
         int startAnimalAmount,
         int growingGrassAmount,
-        int toxicGrassChance,
+        int toxicGrassChance,   //between 0 and 100
         int energyFromGrass,
         int energyFromToxicGrass,
         int startEnergy,

@@ -10,8 +10,13 @@ import javafx.stage.Stage;
 
 public class MainPresenter {
 
-    @FXML
-    private TextField movesTextField;
+    private void configureStage(Stage primaryStage, BorderPane viewRoot) {
+        var scene = new Scene(viewRoot);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Simulation");
+        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
+        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+    }
 
     public void onStartClicked(ActionEvent event) {
         try {
@@ -23,12 +28,12 @@ public class MainPresenter {
             BorderPane viewRoot = loader.load();
             SimulationPresenter presenter = loader.getController();
 
-            presenter.startSimulation();
 
             Stage stage = new Stage();
-            stage.setTitle("Simulation");
-            stage.setScene(new Scene(viewRoot));
+            configureStage(stage, viewRoot);
             stage.show();
+
+            presenter.startSimulation();
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,6 +12,7 @@ public class Simulation implements Runnable {
     private final WorldMap map;
     private final GrassPositionGenerator randomPG;
     private final Random random = new Random();
+    private final List<MapChangeListener> listeners = new ArrayList<>();
 
     private final SimulationConfig config;
     private int avgChildAmount;
@@ -35,6 +36,39 @@ public class Simulation implements Runnable {
             map.placeAnimal(animal);
         }
         spawnGrasses(config.startGrassAmount());
+    }
+
+    public Simulation() {
+        this(new SimulationConfig(
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                10,
+                1,
+                3,
+                10
+        ));
+    }
+
+    public void registerListener(MapChangeListener listener){
+        listeners.add(listener);
+    }
+    public void removeListener(MapChangeListener listener){
+        listeners.remove(listener);
+    }
+    public void mapChanged(){
+        for(MapChangeListener listener : listeners){
+            //!!! do dodanie jeszcze przesył statystyk
+            listener.mapChanged(map);
+        }
     }
 
     @Override

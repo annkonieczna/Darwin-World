@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import agh.ics.oop.model.util.Boundary;
-import agh.ics.oop.model.util.IncorrectPositionException;
 
 /**
  * The interface responsible for interacting with the map of the world.

@@ -4,15 +4,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="agh.ics.oop.presenter.MainPresenter"
-      spacing="10"
-      alignment="CENTER">
-    <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
-    </padding>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="agh.ics.oop.presenter.MainPresenter"
+            minWidth="600" minHeight="600">
+    <center>
+        <VBox spacing="10" alignment="CENTER">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
 
-    <Button text="Start" onAction="#onStartClicked"/>
+            <Button text="Start" onAction="#onStartClicked"/>
+        </VBox>
+    </center>
 
-</VBox>
+</BorderPane>

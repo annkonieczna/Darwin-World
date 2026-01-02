@@ -15,8 +15,4 @@
     <center>
         <Canvas fx:id="mapCanvas"/>
     </center>
-
-    <bottom>
-        <Label fx:id="descriptionLabel"/>
-    </bottom>
 </BorderPane>
