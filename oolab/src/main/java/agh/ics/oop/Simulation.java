@@ -9,10 +9,10 @@ import java.util.*;
 public class Simulation implements Runnable {
     private final List<Animal> animals = new ArrayList<>();
     private final List<Animal> deadAnimals = new ArrayList<>();
+    private final List<MapChangeListener> listeners = new ArrayList<>();
     private final WorldMap map;
     private final GrassPositionGenerator randomPG;
     private final Random random = new Random();
-    private final List<MapChangeListener> listeners = new ArrayList<>();
 
     private final SimulationConfig config;
     private int avgChildAmount;
@@ -42,16 +42,16 @@ public class Simulation implements Runnable {
         this(new SimulationConfig(
                 10,
                 10,
+                0,
+                5,
+                555,
                 10,
+                3,
+                100,
                 10,
-                10,
-                10,
-                10,
-                10,
-                10,
-                10,
-                10,
-                10,
+                1,
+                2,
+                2,
                 1,
                 3,
                 10
@@ -64,30 +64,40 @@ public class Simulation implements Runnable {
     public void removeListener(MapChangeListener listener){
         listeners.remove(listener);
     }
-    public void mapChanged(){
+    public void notifyListeners(){
         for(MapChangeListener listener : listeners){
-            //!!! do dodanie jeszcze przesył statystyk
+            //!!! do dodania jeszcze przesył statystyk
             listener.mapChanged(map);
         }
     }
 
     @Override
     public void run() {
-        removeDeadAnimals();
+        notifyListeners();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        while (!Thread.currentThread().isInterrupted()) {
+            removeDeadAnimals();
+            moveAnimals();
+            dinnerAnimals();
+            reproduceAnimals();
+            spawnGrasses(config.growingGrassAmount());
+            updateStats();
+            notifyListeners();
 
-        moveAnimals();
-
-        dinnerAnimals();
-
-        reproduceAnimals();
-
-        spawnGrasses(config.growingGrassAmount());
-
-        updateStats();
-
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
     }
 
-    public void removeDeadAnimals() {
+    private void removeDeadAnimals() {
         Iterator<Animal> iter = animals.iterator();
         while(iter.hasNext()){
             Animal animal = iter.next();
@@ -102,29 +112,27 @@ public class Simulation implements Runnable {
 
     }
 
-    public void moveAnimals() {
+    private void moveAnimals() {
         for (Animal animal : animals) {
             map.move(animal);
+            animal.loseEnergy(config.moveEnergy());
         }
     }
 
-    public void dinnerAnimals() {
+    private void dinnerAnimals() {
         Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
         Map<Vector2d, Grass> placedGrasses = map.getGrasses();
         for (Map.Entry<Vector2d, List<Animal>> field : placedAnimals.entrySet()) {
             Grass grass = placedGrasses.get(field.getKey());
             if (grass != null) {
-                chooseBestAnimals(
-                        field.getValue(), 1).get(0).eatGrass(config.energyFromGrass(),
-                        grass.isToxic()
-                );
+                chooseBestAnimals(field.getValue(), 1).get(0).eatGrass(config.energyFromGrass(), grass.isToxic());
                 map.removeGrass(grass);
                 randomPG.makePositionFree(grass);
             }
         }
     }
 
-    public void reproduceAnimals() {
+    private void reproduceAnimals() {
         Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
         List<Animal> newAnimals = new ArrayList<>();
         for (Map.Entry<Vector2d, List<Animal>> field : placedAnimals.entrySet()) {
@@ -145,7 +153,7 @@ public class Simulation implements Runnable {
         animals.addAll(newAnimals);
     }
 
-    public List<Animal> chooseBestAnimals(List<Animal> allAnimals, int count) {
+    private List<Animal> chooseBestAnimals(List<Animal> allAnimals, int count) {
         if (allAnimals.isEmpty()) {
             return Collections.emptyList();
         }
@@ -165,7 +173,7 @@ public class Simulation implements Runnable {
         return result.subList(0, Math.min(count, result.size()));
     }
 
-    public void spawnGrasses(int amount) {
+    private void spawnGrasses(int amount) {
         for (int i = 0; i < amount; i++) {
             Vector2d position = randomPG.generateRandomPosition();
             if (position != null) {
@@ -209,5 +217,9 @@ public class Simulation implements Runnable {
             }
         }
         return result;
+    }
+
+    public WorldMap getWorldMap() {
+        return map;
     }
 }

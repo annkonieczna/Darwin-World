@@ -16,15 +16,22 @@ import javafx.geometry.VPos;
 
 
 import java.util.List;
+import java.util.Map;
 
 public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     private Canvas mapCanvas;
 
+    private Simulation sim;
     private WorldMap map;
 
-    private static final int CELL_SIZE = 40;
+    private static final int CELL_SIZE = 20;
+
+    public void setPresenter(Simulation sim) {
+        this.sim = sim;
+        this.map = sim.getWorldMap();
+    }
 
     @Override
     public void mapChanged(WorldMap worldMap) {
@@ -32,6 +39,7 @@ public class SimulationPresenter implements MapChangeListener {
             drawMap();
         });
     }
+
 
     //Drawing
 
@@ -113,18 +121,44 @@ public class SimulationPresenter implements MapChangeListener {
         configureFont(graphics, 16);
 
         //drawElements
-
+        drawElements();
     }
     // to add
     private void  drawElements() {
+        Boundary boundary = map.getBounds();
+        GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
+        for (Map.Entry<Vector2d, Grass> entity : map.getGrasses().entrySet()) {
+            Vector2d position = entity.getKey();
+            WorldElement element = entity.getValue();
 
+            int x = (position.getX() - boundary.lowerLeft().getX() +1) * CELL_SIZE + 1;
+            int y = (boundary.upperRight().getY() - position.getY() +1) * CELL_SIZE + 1;
+
+            graphics.fillText(element.toString(), x + CELL_SIZE / 2, y + CELL_SIZE / 2);
+        }
+
+        for (Map.Entry<Vector2d, List<Animal>> entity : map.getAnimals().entrySet()) {
+            Vector2d position = entity.getKey();
+            for (Animal element: entity.getValue()) {
+                int x = (position.getX() - boundary.lowerLeft().getX() +1) * CELL_SIZE + 1;
+                int y = (boundary.upperRight().getY() - position.getY() +1) * CELL_SIZE + 1;
+
+                graphics.fillText(element.toString(), x + CELL_SIZE / 2, y + CELL_SIZE / 2);
+            }
+
+
+        }
     }
 
 
     //Starting/Pausing/Resuming a simulation
 
     public void startSimulation() {
+        Thread simulationThread = new Thread(this.sim);
 
+        simulationThread.setDaemon(true);
+
+        simulationThread.start();
     }
 
 

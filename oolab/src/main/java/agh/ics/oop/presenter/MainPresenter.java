@@ -1,5 +1,6 @@
 package agh.ics.oop.presenter;
 
+import agh.ics.oop.Simulation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,6 +33,10 @@ public class MainPresenter {
             Stage stage = new Stage();
             configureStage(stage, viewRoot);
             stage.show();
+
+            Simulation sim = new Simulation();
+            sim.registerListener(presenter);
+            presenter.setPresenter(sim);
 
             presenter.startSimulation();
 

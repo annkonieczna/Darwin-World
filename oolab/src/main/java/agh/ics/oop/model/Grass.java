@@ -10,6 +10,11 @@ public class Grass implements WorldElement {
     }
 
     @Override
+    public String toString() {
+        return "*";
+    }
+
+    @Override
     public Vector2d getPosition() {
         return position;
     }
