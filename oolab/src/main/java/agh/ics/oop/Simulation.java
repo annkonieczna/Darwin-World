@@ -3,6 +3,7 @@ package agh.ics.oop;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.util.GrassPositionGenerator;
 import agh.ics.oop.model.util.SimulationConfig;
+import agh.ics.oop.model.util.SimulationStats;
 
 import java.util.*;
 
@@ -16,6 +17,7 @@ public class Simulation implements Runnable {
 
     private final SimulationConfig config;
     private boolean running = true;
+    private int runningSpeed = 500;
 
     private int avgChildAmount;
     private int avgEnergy;
@@ -23,6 +25,8 @@ public class Simulation implements Runnable {
     private int avgLifeTimeCount;
     private int freeFields;
     private int day = 0;
+    private int animalCount;
+    private int grassCount;
 
     public Simulation(SimulationConfig config) {
         this.config = config;
@@ -36,6 +40,7 @@ public class Simulation implements Runnable {
             );
             animals.add(animal);
             map.placeAnimal(animal);
+            animalCount++;
         }
         spawnGrasses(config.startGrassAmount());
     }
@@ -45,7 +50,7 @@ public class Simulation implements Runnable {
                 10,
                 10,
                 0,
-                5,
+                4,
                 5,
                 10,
                 3,
@@ -68,8 +73,16 @@ public class Simulation implements Runnable {
     }
     public void notifyListeners(){
         for(MapChangeListener listener : listeners){
-            //!!! do dodania jeszcze przesył statystyk
             listener.mapChanged(map);
+            listener.updateStats(new SimulationStats(
+                    avgChildAmount,
+                    avgEnergy,
+                    avgLifeTime,
+                    freeFields,
+                    day,
+                    animalCount,
+                    grassCount
+            ));
         }
     }
 
@@ -78,18 +91,20 @@ public class Simulation implements Runnable {
         notifyListeners();
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(runningSpeed);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
             if (running) {
-                removeDeadAnimals();
-                moveAnimals();
-                dinnerAnimals();
-                reproduceAnimals();
-                spawnGrasses(config.growingGrassAmount());
-                updateStats();
+                synchronized (map) {
+                    removeDeadAnimals();
+                    moveAnimals();
+                    dinnerAnimals();
+                    reproduceAnimals();
+                    spawnGrasses(config.growingGrassAmount());
+                    updateStats();
+                }
                 notifyListeners();
             }
         }
@@ -104,6 +119,7 @@ public class Simulation implements Runnable {
                 avgLifeTimeCount += animal.getAge();
                 deadAnimals.add(animal);
                 map.removeAnimal(animal);
+                animalCount--;
                 iter.remove();
             }
         }
@@ -126,6 +142,7 @@ public class Simulation implements Runnable {
                 chooseBestAnimals(field.getValue(), 1).get(0).eatGrass(config.energyFromGrass(), grass.isToxic());
                 map.removeGrass(grass);
                 randomPG.makePositionFree(grass);
+                grassCount--;
             }
         }
     }
@@ -145,6 +162,7 @@ public class Simulation implements Runnable {
                     );
                     newAnimals.add(child);
                     map.placeAnimal(child);
+                    animalCount++;
                 }
             }
         }
@@ -180,6 +198,7 @@ public class Simulation implements Runnable {
                         random.nextInt(100) < config.toxicGrassChance()
                 );
                 map.placeGrass(grass);
+                grassCount++;
             }
         }
     }
@@ -225,7 +244,7 @@ public class Simulation implements Runnable {
         this.running = running;
     }
 
-    public boolean isRunning() {
-        return running;
+    public void setRunningSpeed(int speed) {
+        runningSpeed = speed;
     }
 }

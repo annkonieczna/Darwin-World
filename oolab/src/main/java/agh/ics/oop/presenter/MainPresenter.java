@@ -37,7 +37,7 @@ public class MainPresenter {
 
             Simulation sim = new Simulation();
             sim.registerListener(presenter);
-            presenter.setPresenter(sim);
+            presenter.setupPresenter(sim);
 
             presenter.startSimulation();
 

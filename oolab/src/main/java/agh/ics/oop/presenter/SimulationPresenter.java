@@ -3,12 +3,15 @@ package agh.ics.oop.presenter;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.util.Boundary;
+import agh.ics.oop.model.util.SimulationStats;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -25,6 +28,12 @@ public class SimulationPresenter implements MapChangeListener {
     private Canvas mapCanvas;
     @FXML
     private Button playButton;
+    @FXML
+    private Label simStatsLabel;
+    @FXML
+    private Label simSpeedLabel;
+    @FXML
+    private Slider simSpeedScroll;
 
     private Simulation sim;
     private WorldMap map;
@@ -32,15 +41,39 @@ public class SimulationPresenter implements MapChangeListener {
 
     private static final int CELL_SIZE = 30;
 
-    public void setPresenter(Simulation sim) {
+    public void setupPresenter(Simulation sim) {
         this.sim = sim;
         this.map = sim.getWorldMap();
+
+        simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
+            int speed = ((int) (1000 - newValue.intValue())/10) * 10;
+            simSpeedLabel.setText("Speed: " + String.valueOf(speed));
+            this.sim.setRunningSpeed(speed);
+        });
     }
 
     @Override
-    public void mapChanged(WorldMap worldMap) {
+    public  void mapChanged(WorldMap worldMap) {
         Platform.runLater(() -> {
-            drawMap();
+            synchronized (worldMap) {
+                drawMap();
+            }
+        });
+    }
+
+    //stats
+
+    @Override
+    public void updateStats(SimulationStats stats) {
+        Platform.runLater(() -> {
+            String text = "Day: " + stats.day() + "\n" +
+                    "Animals: " + stats.animalCount() + "\n" +
+                    "Grasses: " + stats.grassCount() + "\n" +
+                    "Free Fields: " + stats.freeFields() + "\n" +
+                    "Avg Energy: " + stats.avgEnergy() + "\n" +
+                    "Avg Life Time: " + stats.avgLifeTime() + "\n" +
+                    "Avg Child Count: " + stats.avgChildAmount();
+            simStatsLabel.setText(text);
         });
     }
 
@@ -123,10 +156,9 @@ public class SimulationPresenter implements MapChangeListener {
         drawAxes(graphics, boundary, mapCols, mapRows);
         configureFont(graphics, 16);
 
-        //drawElements
         drawElements();
     }
-    // to add
+
     private void  drawElements() {
         Boundary boundary = map.getBounds();
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
@@ -151,7 +183,6 @@ public class SimulationPresenter implements MapChangeListener {
         }
     }
 
-
     //Starting/Pausing/Resuming a simulation
 
     public void startSimulation() {
@@ -172,6 +203,11 @@ public class SimulationPresenter implements MapChangeListener {
         }
     }
 
+    @FXML
+    public void onSpeedScroll(){
+        simSpeedLabel.setText(String.valueOf(simSpeedScroll.getValue()));
+    }
+
     public void pauseSimulation() {
         playButton.setText("Play");
         sim.setRunning(false);
@@ -181,12 +217,5 @@ public class SimulationPresenter implements MapChangeListener {
         playButton.setText("Pause");
         sim.setRunning(true);
     }
-
-    //stats
-
-    private void updateStats() {
-
-    }
-
 
 }
