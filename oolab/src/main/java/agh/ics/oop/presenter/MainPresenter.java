@@ -19,6 +19,7 @@ public class MainPresenter {
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
     }
 
+    @FXML
     public void onStartClicked(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();

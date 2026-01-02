@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -22,11 +23,14 @@ public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     private Canvas mapCanvas;
+    @FXML
+    private Button playButton;
 
     private Simulation sim;
     private WorldMap map;
+    private Thread simulationThread;
 
-    private static final int CELL_SIZE = 20;
+    private static final int CELL_SIZE = 30;
 
     public void setPresenter(Simulation sim) {
         this.sim = sim;
@@ -39,7 +43,6 @@ public class SimulationPresenter implements MapChangeListener {
             drawMap();
         });
     }
-
 
     //Drawing
 
@@ -145,8 +148,6 @@ public class SimulationPresenter implements MapChangeListener {
 
                 graphics.fillText(element.toString(), x + CELL_SIZE / 2, y + CELL_SIZE / 2);
             }
-
-
         }
     }
 
@@ -154,7 +155,7 @@ public class SimulationPresenter implements MapChangeListener {
     //Starting/Pausing/Resuming a simulation
 
     public void startSimulation() {
-        Thread simulationThread = new Thread(this.sim);
+        simulationThread = new Thread(this.sim);
 
         simulationThread.setDaemon(true);
 
@@ -162,12 +163,23 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
 
-    public void pauseSimulation() {
+    @FXML
+    public void onPlayClicked(){
+        if (playButton.getText().equals("Play")) {
+            resumeSimulation();
+        } else {
+            pauseSimulation();
+        }
+    }
 
+    public void pauseSimulation() {
+        playButton.setText("Play");
+        sim.setRunning(false);
     }
 
     public void resumeSimulation() {
-
+        playButton.setText("Pause");
+        sim.setRunning(true);
     }
 
     //stats

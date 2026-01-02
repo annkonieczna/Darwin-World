@@ -15,4 +15,7 @@
     <center>
         <Canvas fx:id="mapCanvas"/>
     </center>
+    <bottom>
+        <Button fx:id="playButton" text="Pause" onAction="#onPlayClicked"/>
+    </bottom>
 </BorderPane>

@@ -15,6 +15,8 @@ public class Simulation implements Runnable {
     private final Random random = new Random();
 
     private final SimulationConfig config;
+    private boolean running = true;
+
     private int avgChildAmount;
     private int avgEnergy;
     private int avgLifeTime;
@@ -44,7 +46,7 @@ public class Simulation implements Runnable {
                 10,
                 0,
                 5,
-                555,
+                5,
                 10,
                 3,
                 100,
@@ -74,25 +76,21 @@ public class Simulation implements Runnable {
     @Override
     public void run() {
         notifyListeners();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         while (!Thread.currentThread().isInterrupted()) {
-            removeDeadAnimals();
-            moveAnimals();
-            dinnerAnimals();
-            reproduceAnimals();
-            spawnGrasses(config.growingGrassAmount());
-            updateStats();
-            notifyListeners();
-
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
+            }
+            if (running) {
+                removeDeadAnimals();
+                moveAnimals();
+                dinnerAnimals();
+                reproduceAnimals();
+                spawnGrasses(config.growingGrassAmount());
+                updateStats();
+                notifyListeners();
             }
         }
     }
@@ -221,5 +219,13 @@ public class Simulation implements Runnable {
 
     public WorldMap getWorldMap() {
         return map;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    public boolean isRunning() {
+        return running;
     }
 }
