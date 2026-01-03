@@ -60,9 +60,7 @@ public final class Genome {
 
     public static void mutate(int[] child, int min, int max) {
         if (max == 0) return;
-        if (min > max) {
-            min = max;
-        };
+        if (min > max) return;
 
         int mutations = random.nextInt((max - min + 1)) + min;
         for (int i = 0; i < mutations; i++) {

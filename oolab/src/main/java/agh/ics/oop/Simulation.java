@@ -243,6 +243,10 @@ public class Simulation implements Runnable {
         return map;
     }
 
+    public boolean getRunning() {
+        return running;
+    }
+
     public void setRunning(boolean running) {
         this.running = running;
     }

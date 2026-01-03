@@ -196,10 +196,10 @@ public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     public void onPlayClicked(){
-        if (playButton.getText().equals("Play")) {
-            resumeSimulation();
-        } else {
+        if (sim.getRunning()) {
             pauseSimulation();
+        } else {
+            resumeSimulation();
         }
     }
 

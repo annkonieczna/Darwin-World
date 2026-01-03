@@ -58,10 +58,8 @@ public class MainPresenter {
                 return change;
             }
 
-            if (newText.matches("\\d*")) {
-                if (newText.length() < 10) {
-                    return change;
-                }
+            if (newText.matches("\\d*") && newText.length() < 10) {
+                return change;
             }
             return null;
         }));
@@ -123,7 +121,7 @@ public class MainPresenter {
             presenter.startSimulation();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(),e);
         }
     }
 
