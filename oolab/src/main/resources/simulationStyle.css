@@ -65,15 +65,24 @@
     -fx-effect:
             dropshadow(
                     three-pass-box,
-                    #123524,
-                    0, 2, 0, 5);
+                    #123524cc,
+                    0, 2, 0, 4);
+}
+
+#playButton:hover {
+    -fx-translate-y: -3px;
+    -fx-effect:
+            dropshadow(
+                    three-pass-box,
+                    #123524cc,
+                    0, 2, 0, 7);
 }
 
 #playButton:pressed {
-    -fx-translate-y: 5px;
+    -fx-translate-y: 4px;
     -fx-effect:
             innershadow(
                     three-pass-box,
-                    #123524,
-                    0, 3, 0, 5);
+                    #123524cc,
+                    0, 3, 0, 4);
 }
