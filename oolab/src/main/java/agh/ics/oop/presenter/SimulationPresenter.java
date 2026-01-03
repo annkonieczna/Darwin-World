@@ -3,11 +3,16 @@ package agh.ics.oop.presenter;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.util.Boundary;
+import agh.ics.oop.model.util.SimulationStats;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -16,18 +21,61 @@ import javafx.geometry.VPos;
 
 
 import java.util.List;
+import java.util.Map;
 
-public class SimulationPresenter {
-
-    @FXML
-    private Label descriptionLabel;
+public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     private Canvas mapCanvas;
+    @FXML
+    private Button playButton;
+    @FXML
+    private Label simStatsLabel, simSpeedLabel;
+    @FXML
+    private Slider simSpeedScroll;
 
+    private Simulation sim;
     private WorldMap map;
+    private Thread simulationThread;
 
-    private static final int CELL_SIZE = 40;
+    private static final int CELL_SIZE = 30;
+
+    public void setupPresenter(Simulation sim) {
+        this.sim = sim;
+        this.map = sim.getWorldMap();
+
+        //Bierze wartość z slidera i ją odejmuje od 1000 (żeby jak jest na maksa w prawo to się jak najszybciej wykonywał ruch)
+        simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
+            int speed = ((int) (1000 - newValue.intValue())/10) * 10;
+            simSpeedLabel.setText("Speed: " + String.valueOf(speed));
+            this.sim.setRunningSpeed(speed);
+        });
+    }
+
+    @Override
+    public  void mapChanged(WorldMap worldMap) {
+        Platform.runLater(() -> {
+            synchronized (worldMap) {
+                drawMap();
+            }
+        });
+    }
+
+    //stats
+
+    @Override
+    public void updateStats(SimulationStats stats) {
+        Platform.runLater(() -> {
+            String text = "Day: " + stats.day() + "\n" +
+                    "Animals: " + stats.animalCount() + "\n" +
+                    "Grasses: " + stats.grassCount() + "\n" +
+                    "Free Fields: " + stats.freeFields() + "\n" +
+                    "Avg Energy: " + stats.avgEnergy() + "\n" +
+                    "Avg Life Time: " + stats.avgLifeTime() + "\n" +
+                    "Avg Child Count: " + stats.avgChildAmount();
+            simStatsLabel.setText(text);
+        });
+    }
 
     //Drawing
 
@@ -108,37 +156,61 @@ public class SimulationPresenter {
         drawAxes(graphics, boundary, mapCols, mapRows);
         configureFont(graphics, 16);
 
-        //drawElements
-
+        drawElements();
     }
-    // to add
+
     private void  drawElements() {
+        //!!! to do zmiany, wrzuciłem na szybko żebym mógł testować
+        Boundary boundary = map.getBounds();
+        GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
+        for (Map.Entry<Vector2d, Grass> entity : map.getGrasses().entrySet()) {
+            Vector2d position = entity.getKey();
+            WorldElement element = entity.getValue();
 
+            int x = (position.getX() - boundary.lowerLeft().getX() +1) * CELL_SIZE + 1;
+            int y = (boundary.upperRight().getY() - position.getY() +1) * CELL_SIZE + 1;
+
+            graphics.fillText(element.toString(), x + CELL_SIZE / 2, y + CELL_SIZE / 2);
+        }
+
+        for (Map.Entry<Vector2d, List<Animal>> entity : map.getAnimals().entrySet()) {
+            Vector2d position = entity.getKey();
+            for (Animal element: entity.getValue()) {
+                int x = (position.getX() - boundary.lowerLeft().getX() +1) * CELL_SIZE + 1;
+                int y = (boundary.upperRight().getY() - position.getY() +1) * CELL_SIZE + 1;
+
+                graphics.fillText(element.toString(), x + CELL_SIZE / 2, y + CELL_SIZE / 2);
+            }
+        }
     }
-
 
     //Starting/Pausing/Resuming a simulation
 
     public void startSimulation() {
+        simulationThread = new Thread(this.sim);
 
+        simulationThread.setDaemon(true);
+
+        simulationThread.start();
     }
 
+    @FXML
+    public void onPlayClicked(){
+        if (sim.getRunning()) {
+            pauseSimulation();
+        } else {
+            resumeSimulation();
+        }
+    }
 
     public void pauseSimulation() {
-
+        playButton.setText("Play");
+        sim.setRunning(false);
     }
 
     public void resumeSimulation() {
-
+        playButton.setText("Pause");
+        sim.setRunning(true);
     }
-
-    //stats
-
-    private void updateStats() {
-
-    }
-
-
-
 
 }

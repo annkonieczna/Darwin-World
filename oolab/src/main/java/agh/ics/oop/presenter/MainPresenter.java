@@ -1,18 +1,104 @@
 package agh.ics.oop.presenter;
 
+import agh.ics.oop.Simulation;
+import agh.ics.oop.model.util.SimulationConfig;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MainPresenter {
+    @FXML
+    private TextField
+            widthInput,
+            heightInput,
+            startGrassInput,
+            startAnimalInput,
+            growingGrassInput,
+            toxicChanceInput,
+            energyFromGrassInput,
+            energyFromToxicInput,
+            startEnergyInput,
+            moveEnergyCostInput,
+            reproductionEnergyCostInput,
+            minimumEnergyForReproductionInput,
+            minMutationInput,
+            maxMutationInput,
+            genomeLengthInput;
 
     @FXML
-    private TextField movesTextField;
+    public void initialize() {
+        setupIntegerValidation(widthInput, 5, 200);
+        setupIntegerValidation(heightInput, 5, 200);
+        setupIntegerValidation(startGrassInput, 0, 40000);
+        setupIntegerValidation(startAnimalInput, 0, 40000);
+        setupIntegerValidation(growingGrassInput, 0, 40000);
+        setupIntegerValidation(toxicChanceInput, 0, 100);
+        setupIntegerValidation(energyFromGrassInput, 0, 1000);
+        setupIntegerValidation(energyFromToxicInput, 0, 1000);
+        setupIntegerValidation(startEnergyInput, 1, 1000);
+        setupIntegerValidation(moveEnergyCostInput, 0, 1000);
+        setupIntegerValidation(reproductionEnergyCostInput, 1, 1000);
+        setupIntegerValidation(minimumEnergyForReproductionInput, 1, 1000);
+        setupIntegerValidation(genomeLengthInput, 1, 100);
+        setupIntegerValidation(minMutationInput, 0, 100);
+        setupIntegerValidation(maxMutationInput, 0, 100);
+    }
 
+    //tutaj muszę przyznać że cały ten Validator to prawie nie mój ale nie chciało mi się bawić w validację
+    private void setupIntegerValidation(TextField textField, int min, int max) {
+        textField.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+
+            if (newText.isEmpty()) {
+                return change;
+            }
+
+            if (newText.matches("\\d*") && newText.length() < 10) {
+                return change;
+            }
+            return null;
+        }));
+
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                String text = textField.getText();
+                if (text.isEmpty()) {
+                    textField.setText(String.valueOf(min));
+                }
+                if (Integer.parseInt(text) < min) {
+                    textField.setText(String.valueOf(min));
+                }
+                if (Integer.parseInt(text) > max) {
+                    textField.setText(String.valueOf(max));
+                }
+                if (textField.getId().equals("minMutationInput")) {
+                    if(Integer.parseInt(text) > Integer.parseInt(maxMutationInput.getText())) {
+                        maxMutationInput.setText(text);
+                    }
+                }
+                if (textField.getId().equals("maxMutationInput")) {
+                    if(Integer.parseInt(text) < Integer.parseInt(minMutationInput.getText())) {
+                        minMutationInput.setText(text);
+                    }
+                }
+            }
+        });
+    }
+
+    private void configureStage(Stage primaryStage, BorderPane viewRoot) {
+        var scene = new Scene(viewRoot);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Simulation");
+        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
+        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+    }
+
+    @FXML
     public void onStartClicked(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -23,15 +109,39 @@ public class MainPresenter {
             BorderPane viewRoot = loader.load();
             SimulationPresenter presenter = loader.getController();
 
-            presenter.startSimulation();
-
             Stage stage = new Stage();
-            stage.setTitle("Simulation");
-            stage.setScene(new Scene(viewRoot));
+            configureStage(stage, viewRoot);
             stage.show();
 
+            Simulation sim = new Simulation(makeConfig());
+//            Simulation sim = new Simulation();
+            sim.registerListener(presenter);
+            presenter.setupPresenter(sim);
+
+            presenter.startSimulation();
+
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(),e);
         }
+    }
+
+    public SimulationConfig makeConfig() {
+        return new SimulationConfig(
+                Integer.parseInt(widthInput.getText()),
+                Integer.parseInt(heightInput.getText()),
+                Integer.parseInt(startGrassInput.getText()),
+                Integer.parseInt(startAnimalInput.getText()),
+                Integer.parseInt(growingGrassInput.getText()),
+                Integer.parseInt(toxicChanceInput.getText()),
+                Integer.parseInt(energyFromGrassInput.getText()),
+                Integer.parseInt(energyFromToxicInput.getText()),
+                Integer.parseInt(startEnergyInput.getText()),
+                Integer.parseInt(moveEnergyCostInput.getText()),
+                Integer.parseInt(reproductionEnergyCostInput.getText()),
+                Integer.parseInt(minimumEnergyForReproductionInput.getText()),
+                Integer.parseInt(minMutationInput.getText()),
+                Integer.parseInt(maxMutationInput.getText()),
+                Integer.parseInt(genomeLengthInput.getText())
+        );
     }
 }

@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Slider?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
@@ -15,8 +16,15 @@
     <center>
         <Canvas fx:id="mapCanvas"/>
     </center>
-
+    <left>
+        <Label fx:id="simStatsLabel" textAlignment="CENTER"/>
+    </left>
     <bottom>
-        <Label fx:id="descriptionLabel"/>
+        <HBox>
+            <Button fx:id="playButton" text="Pause" onAction="#onPlayClicked"/>
+            <Label fx:id="simSpeedLabel" text="Speed: 500"/>
+<!--            tutaj 40 bo to blokuje przesuwanie suwaka co 10-->
+            <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="40" max="990" value="500"/>
+        </HBox>
     </bottom>
 </BorderPane>

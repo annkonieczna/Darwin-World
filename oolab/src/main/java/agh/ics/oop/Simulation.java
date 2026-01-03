@@ -3,23 +3,30 @@ package agh.ics.oop;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.util.GrassPositionGenerator;
 import agh.ics.oop.model.util.SimulationConfig;
+import agh.ics.oop.model.util.SimulationStats;
 
 import java.util.*;
 
 public class Simulation implements Runnable {
     private final List<Animal> animals = new ArrayList<>();
     private final List<Animal> deadAnimals = new ArrayList<>();
+    private final List<MapChangeListener> listeners = new ArrayList<>();
     private final WorldMap map;
     private final GrassPositionGenerator randomPG;
     private final Random random = new Random();
 
     private final SimulationConfig config;
+    private boolean running = true;
+    private int runningSpeed = 500;
+
     private int avgChildAmount;
     private int avgEnergy;
     private int avgLifeTime;
     private int avgLifeTimeCount;
     private int freeFields;
     private int day = 0;
+    private int animalCount;
+    private int grassCount;
 
     public Simulation(SimulationConfig config) {
         this.config = config;
@@ -33,27 +40,80 @@ public class Simulation implements Runnable {
             );
             animals.add(animal);
             map.placeAnimal(animal);
+            animalCount++;
         }
         spawnGrasses(config.startGrassAmount());
     }
 
-    @Override
-    public void run() {
-        removeDeadAnimals();
-
-        moveAnimals();
-
-        dinnerAnimals();
-
-        reproduceAnimals();
-
-        spawnGrasses(config.growingGrassAmount());
-
-        updateStats();
-
+    //for tests
+    public Simulation() {
+        this(new SimulationConfig(
+                10,
+                10,
+                0,
+                4,
+                5,
+                10,
+                3,
+                100,
+                10,
+                1,
+                2,
+                2,
+                1,
+                3,
+                10
+        ));
     }
 
-    public void removeDeadAnimals() {
+    public void registerListener(MapChangeListener listener){
+        listeners.add(listener);
+    }
+    public void removeListener(MapChangeListener listener){
+        listeners.remove(listener);
+    }
+    public void notifyListeners(){
+        for(MapChangeListener listener : listeners){
+            listener.mapChanged(map);
+            listener.updateStats(new SimulationStats(
+                    avgChildAmount,
+                    avgEnergy,
+                    avgLifeTime,
+                    freeFields,
+                    day,
+                    animalCount,
+                    grassCount
+            ));
+        }
+    }
+
+    //tutaj dodałem synchronized żeby nie wywalało błędu przy zapisie i odczycie mapy (problem z wątkami)
+    //całość działa w pętli którą ciągle sobie leci a my przyciskiem zmieniamy tylko running
+    @Override
+    public void run() {
+        notifyListeners();
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                Thread.sleep(runningSpeed);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            if (running) {
+                synchronized (map) {
+                    removeDeadAnimals();
+                    moveAnimals();
+                    dinnerAnimals();
+                    reproduceAnimals();
+                    spawnGrasses(config.growingGrassAmount());
+                    updateStats();
+                }
+                notifyListeners();
+            }
+        }
+    }
+
+    private void removeDeadAnimals() {
         Iterator<Animal> iter = animals.iterator();
         while(iter.hasNext()){
             Animal animal = iter.next();
@@ -62,35 +122,35 @@ public class Simulation implements Runnable {
                 avgLifeTimeCount += animal.getAge();
                 deadAnimals.add(animal);
                 map.removeAnimal(animal);
+                animalCount--;
                 iter.remove();
             }
         }
 
     }
 
-    public void moveAnimals() {
+    private void moveAnimals() {
         for (Animal animal : animals) {
             map.move(animal);
+            animal.loseEnergy(config.moveEnergyCost());
         }
     }
 
-    public void dinnerAnimals() {
+    private void dinnerAnimals() {
         Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
         Map<Vector2d, Grass> placedGrasses = map.getGrasses();
         for (Map.Entry<Vector2d, List<Animal>> field : placedAnimals.entrySet()) {
             Grass grass = placedGrasses.get(field.getKey());
             if (grass != null) {
-                chooseBestAnimals(
-                        field.getValue(), 1).get(0).eatGrass(config.energyFromGrass(),
-                        grass.isToxic()
-                );
+                chooseBestAnimals(field.getValue(), 1).get(0).eatGrass(config.energyFromGrass(), grass.isToxic());
                 map.removeGrass(grass);
                 randomPG.makePositionFree(grass);
+                grassCount--;
             }
         }
     }
 
-    public void reproduceAnimals() {
+    private void reproduceAnimals() {
         Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
         List<Animal> newAnimals = new ArrayList<>();
         for (Map.Entry<Vector2d, List<Animal>> field : placedAnimals.entrySet()) {
@@ -105,13 +165,14 @@ public class Simulation implements Runnable {
                     );
                     newAnimals.add(child);
                     map.placeAnimal(child);
+                    animalCount++;
                 }
             }
         }
         animals.addAll(newAnimals);
     }
 
-    public List<Animal> chooseBestAnimals(List<Animal> allAnimals, int count) {
+    private List<Animal> chooseBestAnimals(List<Animal> allAnimals, int count) {
         if (allAnimals.isEmpty()) {
             return Collections.emptyList();
         }
@@ -131,7 +192,7 @@ public class Simulation implements Runnable {
         return result.subList(0, Math.min(count, result.size()));
     }
 
-    public void spawnGrasses(int amount) {
+    private void spawnGrasses(int amount) {
         for (int i = 0; i < amount; i++) {
             Vector2d position = randomPG.generateRandomPosition();
             if (position != null) {
@@ -140,6 +201,7 @@ public class Simulation implements Runnable {
                         random.nextInt(100) < config.toxicGrassChance()
                 );
                 map.placeGrass(grass);
+                grassCount++;
             }
         }
     }
@@ -175,5 +237,21 @@ public class Simulation implements Runnable {
             }
         }
         return result;
+    }
+
+    public WorldMap getWorldMap() {
+        return map;
+    }
+
+    public boolean getRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    public void setRunningSpeed(int speed) {
+        runningSpeed = speed;
     }
 }

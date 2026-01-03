@@ -36,13 +36,12 @@ public class Animal implements WorldElement {
 
     @Override
     public String toString() {
-        return direction.toString();
+        return String.valueOf(energy);
     }
 
     public boolean isAt(Vector2d position) {
         return this.position.equals(position);
     }
-
 
     public void loseEnergy(int amount) {
         energy -= amount;
