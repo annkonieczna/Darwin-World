@@ -75,7 +75,7 @@ public class Simulation implements Runnable {
     public void notifyListeners(){
         for(MapChangeListener listener : listeners){
             listener.mapChanged(map);
-            listener.updateStats(new SimulationStats(
+            listener.statsChanged(new SimulationStats(
                     avgChildAmount,
                     avgEnergy,
                     avgLifeTime,

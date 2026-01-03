@@ -20,6 +20,30 @@ public class MapRenderer {
         mapCanvas = canvas;
     }
 
+    public void drawMap(WorldMap map) {
+        if (map == null) return;
+
+        Boundary boundary = map.getBounds();
+
+        int mapCols = boundary.upperRight().x() - boundary.lowerLeft().x() + 1;
+        int mapRows = boundary.upperRight().y() - boundary.lowerLeft().y() + 1;
+
+        int cols = mapCols + 1;
+        int rows = mapRows + 1;
+
+        mapCanvas.setWidth(cols * CELL_SIZE);
+        mapCanvas.setHeight(rows * CELL_SIZE);
+
+        GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
+
+        clearCanvas(graphics);
+        drawGrid(graphics, cols, rows);
+        drawAxes(graphics, boundary, mapCols, mapRows);
+        configureFont(graphics, 16);
+
+        drawElements(map);
+    }
+
     private void clearCanvas(GraphicsContext graphics) {
         graphics.setFill(Color.WHITE);
         graphics.fillRect(0, 0, mapCanvas.getWidth(), mapCanvas.getHeight());
@@ -76,32 +100,9 @@ public class MapRenderer {
         }
     }
 
-    public void drawMap(WorldMap map) {
-        if (map == null) return;
 
-        Boundary boundary = map.getBounds();
-
-        int mapCols = boundary.upperRight().x() - boundary.lowerLeft().x() + 1;
-        int mapRows = boundary.upperRight().y() - boundary.lowerLeft().y() + 1;
-
-        int cols = mapCols + 1;
-        int rows = mapRows + 1;
-
-        mapCanvas.setWidth(cols * CELL_SIZE);
-        mapCanvas.setHeight(rows * CELL_SIZE);
-
-        GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
-
-        clearCanvas(graphics);
-        drawGrid(graphics, cols, rows);
-        drawAxes(graphics, boundary, mapCols, mapRows);
-        configureFont(graphics, 16);
-
-        drawElements(map);
-    }
 
     private void  drawElements(WorldMap map) {
-        //!!! to do zmiany, wrzuciłem na szybko żebym mógł testować
         Boundary boundary = map.getBounds();
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
         for (Map.Entry<Vector2d, Grass> entity : map.getGrasses().entrySet()) {

@@ -11,20 +11,33 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
-            minWidth="600" minHeight="600">
+            minWidth="640" minHeight="640"
+            stylesheets="@simulationStyle.css">
 
     <center>
         <Canvas fx:id="mapCanvas"/>
     </center>
     <left>
-        <Label fx:id="simStatsLabel" textAlignment="CENTER"/>
+        <VBox alignment="CENTER" minWidth="240" >
+            <VBox alignment="CENTER" spacing="20" styleClass="statsPanel">
+                <VBox alignment="CENTER" spacing="10">
+                    <Label fx:id="dayLabel" text="Day: 0"/>
+                    <Label fx:id="animalCountLabel" text="Animals: 0"/>
+
+                    <Label fx:id="grassCountLabel" text="Grasses: 0"/>
+                    <Label fx:id="freeFieldsLabel" text="Free Fields: 0"/>
+                </VBox>
+                <VBox alignment="CENTER" spacing="10">
+                    <Label fx:id="avgEnergyLabel" text="Avg. Energy: 0"/>
+                    <Label fx:id="avgLifeTimeLabel" text="Avg. Life Time: 0"/>
+                    <Label fx:id="avgChildAmountLabel" text="Avg. Child Count: 0"/>
+                </VBox>
+                <VBox alignment="CENTER" styleClass="sliderBox">
+                    <Label fx:id="simSpeedLabel" text="Speed: 500"/>
+                    <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="40" max="990" value="500"/>
+                </VBox>
+                <Button fx:id="playButton" text="Pause" onAction="#onPlayClicked"/>
+            </VBox>
+        </VBox>
     </left>
-    <bottom>
-        <HBox>
-            <Button fx:id="playButton" text="Pause" onAction="#onPlayClicked"/>
-            <Label fx:id="simSpeedLabel" text="Speed: 500"/>
-<!--            tutaj 40 bo to blokuje przesuwanie suwaka co 10-->
-            <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="40" max="990" value="500"/>
-        </HBox>
-    </bottom>
 </BorderPane>

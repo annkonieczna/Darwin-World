@@ -47,6 +47,8 @@ public class MainPresenter {
         setupIntegerValidation(genomeLengthInput, 1, 100);
         setupIntegerValidation(minMutationInput, 0, 100);
         setupIntegerValidation(maxMutationInput, 0, 100);
+        //!!!for tests
+        onStartClicked();
     }
 
     private void setupIntegerValidation(TextField textField, int min, int max) {
@@ -89,16 +91,19 @@ public class MainPresenter {
         });
     }
 
-    private void configureStage(Stage primaryStage, BorderPane viewRoot) {
+    private void configureAndShowStage(Stage primaryStage, BorderPane viewRoot) {
         var scene = new Scene(viewRoot);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Simulation");
-        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
-        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+
+        primaryStage.show();
+
+        primaryStage.setMinWidth(primaryStage.getWidth());
+        primaryStage.setMinHeight(primaryStage.getHeight());
     }
 
     @FXML
-    public void onStartClicked(ActionEvent event) {
+    public void onStartClicked() {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(
@@ -109,8 +114,7 @@ public class MainPresenter {
             SimulationPresenter presenter = loader.getController();
 
             Stage stage = new Stage();
-            configureStage(stage, viewRoot);
-            stage.show();
+            configureAndShowStage(stage, viewRoot);
 
             Simulation sim = new Simulation(makeConfig());
             sim.registerListener(presenter);

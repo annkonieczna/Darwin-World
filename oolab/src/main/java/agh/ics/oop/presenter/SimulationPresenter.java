@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -30,7 +31,15 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private Button playButton;
     @FXML
-    private Label simStatsLabel, simSpeedLabel;
+    private Label
+            simSpeedLabel,
+            dayLabel,
+            animalCountLabel,
+            grassCountLabel,
+            freeFieldsLabel,
+            avgEnergyLabel,
+            avgLifeTimeLabel,
+            avgChildAmountLabel;
     @FXML
     private Slider simSpeedScroll;
 
@@ -43,7 +52,10 @@ public class SimulationPresenter implements MapChangeListener {
         this.sim = sim;
         this.renderer = new MapRenderer(mapCanvas);
 
-        //Bierze wartość z slidera i ją odejmuje od 1000 (żeby jak jest na maksa w prawo to się jak najszybciej wykonywał ruch)
+        setListeners();
+    }
+
+    private void setListeners(){
         simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
             int speed = ((int) (1000 - newValue.intValue())/10) * 10;
             simSpeedLabel.setText("Speed: " + String.valueOf(speed));
@@ -52,7 +64,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     @Override
-    public  void mapChanged(WorldMap worldMap) {
+    public void mapChanged(WorldMap worldMap) {
         Platform.runLater(() -> {
             synchronized (worldMap) {
                 renderer.drawMap(worldMap);
@@ -63,16 +75,15 @@ public class SimulationPresenter implements MapChangeListener {
     //stats
 
     @Override
-    public void updateStats(SimulationStats stats) {
+    public void statsChanged(SimulationStats stats) {
         Platform.runLater(() -> {
-            String text = "Day: " + stats.day() + "\n" +
-                    "Animals: " + stats.animalCount() + "\n" +
-                    "Grasses: " + stats.grassCount() + "\n" +
-                    "Free Fields: " + stats.freeFields() + "\n" +
-                    "Avg Energy: " + stats.avgEnergy() + "\n" +
-                    "Avg Life Time: " + stats.avgLifeTime() + "\n" +
-                    "Avg Child Count: " + stats.avgChildAmount();
-            simStatsLabel.setText(text);
+            dayLabel.setText("Day: " + String.valueOf(stats.day()));
+            animalCountLabel.setText("Animals: " + String.valueOf(stats.animalCount()));
+            grassCountLabel.setText("Grasses: " + String.valueOf(stats.grassCount()));
+            freeFieldsLabel.setText("Free Fields: " + String.valueOf(stats.freeFields()));
+            avgEnergyLabel.setText("Avg. Energy: " + String.valueOf(stats.avgEnergy()));
+            avgLifeTimeLabel.setText("Avg. Life Time: " + String.valueOf(stats.avgLifeTime()));
+            avgChildAmountLabel.setText("Avg. Child Count: " + String.valueOf(stats.avgChildAmount()));
         });
     }
 
