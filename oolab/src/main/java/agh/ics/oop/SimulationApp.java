@@ -13,7 +13,7 @@ import javafx.scene.Parent;
 public class SimulationApp extends Application {
 
     private void configureAndShowStage(Stage primaryStage, BorderPane viewRoot) {
-        var scene = new Scene(viewRoot);
+        var scene = new Scene(viewRoot, 600,640);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Simulation launcher");
         //zmieniłem to żeby okienko faktycznie miało takie minimalne rozmiary

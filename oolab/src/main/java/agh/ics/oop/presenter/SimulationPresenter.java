@@ -58,7 +58,7 @@ public class SimulationPresenter implements MapChangeListener {
     private void setListeners(){
         simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
             int speed = ((int) (1000 - newValue.intValue())/10) * 10;
-            simSpeedLabel.setText("Speed: " + String.valueOf(speed));
+            simSpeedLabel.setText(String.valueOf(speed));
             this.sim.setRunningSpeed(speed);
         });
     }
@@ -77,13 +77,13 @@ public class SimulationPresenter implements MapChangeListener {
     @Override
     public void statsChanged(SimulationStats stats) {
         Platform.runLater(() -> {
-            dayLabel.setText("Day: " + String.valueOf(stats.day()));
-            animalCountLabel.setText("Animals: " + String.valueOf(stats.animalCount()));
-            grassCountLabel.setText("Grasses: " + String.valueOf(stats.grassCount()));
-            freeFieldsLabel.setText("Free Fields: " + String.valueOf(stats.freeFields()));
-            avgEnergyLabel.setText("Avg. Energy: " + String.valueOf(stats.avgEnergy()));
-            avgLifeTimeLabel.setText("Avg. Life Time: " + String.valueOf(stats.avgLifeTime()));
-            avgChildAmountLabel.setText("Avg. Child Count: " + String.valueOf(stats.avgChildAmount()));
+            dayLabel.setText( String.valueOf(stats.day()));
+            animalCountLabel.setText(String.valueOf(stats.animalCount()));
+            grassCountLabel.setText(String.valueOf(stats.grassCount()));
+            freeFieldsLabel.setText(String.valueOf(stats.freeFields()));
+            avgEnergyLabel.setText(String.valueOf(stats.avgEnergy()));
+            avgLifeTimeLabel.setText(String.valueOf(stats.avgLifeTime()));
+            avgChildAmountLabel.setText(String.valueOf(stats.avgChildAmount()));
         });
     }
 

@@ -6,8 +6,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="agh.ics.oop.presenter.MainPresenter"
-            minWidth="600" minHeight="640">
+            fx:controller="agh.ics.oop.presenter.MainPresenter">
     <center>
         <VBox spacing="10" alignment="CENTER">
             <padding>

@@ -8,27 +8,8 @@
                     #3E7B27,
                     2, 0, 0, 2)
 }
-@font-face {
-    font-family: 'Poppins';
-    src: url('fonts/Poppins-Regular.ttf');
-}
 
-@font-face {
-    font-family: 'Poppins';
-    src: url('fonts/Poppins-Medium.ttf');
-    -fx-font-smoothing-type: lcd;
-}
-
-@font-face {
-    font-family: 'Poppins';
-    src: url('fonts/Poppins-Bold.ttf');
-    -fx-font-smoothing-type: lcd;
-}
-
-.label, .sliderBox {
-    -fx-font-family: "Poppins Medium";
-    -fx-font-size: 12px;
-    -fx-text-fill: white;
+.defaultBox {
 
     -fx-background-color: #3E7B27;
     -fx-background-radius: 10;
@@ -44,15 +25,19 @@
                     2, 0, 0, 2);
 }
 
-.sliderBox .label {
-    -fx-background-color: none;
-    -fx-effect: none;
-    -fx-padding: 5;
+.label {
+    -fx-font-family: "Poppins Regular";
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+.fontMedium {
+    -fx-font-family: "Poppins Medium";
 }
 
 #playButton {
     -fx-font-family: "Poppins Medium";
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
     -fx-text-fill: white;
 
     -fx-background-color: #3E7B27;

@@ -92,7 +92,7 @@ public class MainPresenter {
     }
 
     private void configureAndShowStage(Stage primaryStage, BorderPane viewRoot) {
-        var scene = new Scene(viewRoot);
+        var scene = new Scene(viewRoot, 1280,720);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Simulation");
 
