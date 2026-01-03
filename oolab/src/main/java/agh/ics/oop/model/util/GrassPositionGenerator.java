@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GrassPositionGenerator {
-    private Random random = new Random();
-    private List<Vector2d> freeSteppePositions = new ArrayList<>();
-    private List<Vector2d> freeJunglePositions = new ArrayList<>();
-    private int jungleStart;
-    private int jungleEnd;
+public class GrassPositionGenerator implements ElementPositionGenerator {
+    private final Random random = new Random();
+    private final List<Vector2d> freeSteppePositions = new ArrayList<>();
+    private final List<Vector2d> freeJunglePositions = new ArrayList<>();
+    private final int jungleStart;
+    private final int jungleEnd;
 
     public GrassPositionGenerator(int width, int height) {
         this.jungleStart = (int) (height * 0.4);
@@ -75,11 +75,18 @@ public class GrassPositionGenerator {
         return position.getY() >= this.jungleStart && position.getY() < this.jungleEnd;
     }
 
-    //Getter from both lists
+    //Getters
     public List<Vector2d> getAllFreePositions() {
         List<Vector2d> freePositions = new ArrayList<>(freeSteppePositions);
         freePositions.addAll(freeJunglePositions);
         return freePositions;
     }
 
+    public int getJungleStart() {
+        return jungleStart;
+    }
+
+    public int getJungleEnd() {
+        return jungleEnd;
+    }
 }

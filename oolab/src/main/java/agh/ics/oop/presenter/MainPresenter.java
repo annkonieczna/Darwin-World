@@ -49,7 +49,6 @@ public class MainPresenter {
         setupIntegerValidation(maxMutationInput, 0, 100);
     }
 
-    //tutaj muszę przyznać że cały ten Validator to prawie nie mój ale nie chciało mi się bawić w validację
     private void setupIntegerValidation(TextField textField, int min, int max) {
         textField.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
@@ -114,7 +113,6 @@ public class MainPresenter {
             stage.show();
 
             Simulation sim = new Simulation(makeConfig());
-//            Simulation sim = new Simulation();
             sim.registerListener(presenter);
             presenter.setupPresenter(sim);
 
