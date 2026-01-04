@@ -49,7 +49,7 @@ public class MainPresenter {
         setupIntegerValidation(maxMutationInput, 0, 100);
 
         //!!!for tests
-        onStartClicked();
+//        onStartClicked();
     }
 
     private void setupIntegerValidation(TextField textField, int min, int max) {
@@ -68,24 +68,31 @@ public class MainPresenter {
 
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                String text = textField.getText();
-                if (text.isEmpty()) {
+                if (textField.getText().isEmpty()) {
                     textField.setText(String.valueOf(min));
                 }
-                if (Integer.parseInt(text) < min) {
+                int value = Integer.parseInt(textField.getText());
+                if (value < min) {
                     textField.setText(String.valueOf(min));
                 }
-                if (Integer.parseInt(text) > max) {
+                if (value > max) {
                     textField.setText(String.valueOf(max));
                 }
                 if (textField.getId().equals("minMutationInput")) {
-                    if(Integer.parseInt(text) > Integer.parseInt(maxMutationInput.getText())) {
-                        maxMutationInput.setText(text);
+                    if (value > Integer.parseInt(genomeLengthInput.getText())) {
+                        minMutationInput.setText(genomeLengthInput.getText());
+                        value = Integer.parseInt(genomeLengthInput.getText());
+                    }
+                    if(value > Integer.parseInt(maxMutationInput.getText())) {
+                        maxMutationInput.setText(String.valueOf(value));
                     }
                 }
                 if (textField.getId().equals("maxMutationInput")) {
-                    if(Integer.parseInt(text) < Integer.parseInt(minMutationInput.getText())) {
-                        minMutationInput.setText(text);
+                    if (value > Integer.parseInt(genomeLengthInput.getText())) {
+                        maxMutationInput.setText(genomeLengthInput.getText());
+                    }
+                    if(value < Integer.parseInt(minMutationInput.getText())) {
+                        minMutationInput.setText(String.valueOf(value));
                     }
                 }
             }
@@ -131,9 +138,11 @@ public class MainPresenter {
         scene.widthProperty().addListener((obs, oldW, newW) -> {
             presenter.setWindowSize(scene.getWidth(), scene.getHeight());
         });
-
         scene.heightProperty().addListener((obs, oldH, newH) -> {
             presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+        });
+        primaryStage.setOnCloseRequest(event -> {
+            presenter.terminateSimulation();
         });
     }
 

@@ -66,6 +66,18 @@ public class SimulationPresenter implements MapChangeListener {
         });
     }
 
+    public void setWindowSize(double width, double height){
+        windowWidth = width;
+        windowHeight = height;
+
+        if (sim != null) {
+            WorldMap map = sim.getWorldMap();
+            synchronized (map) {
+                renderer.drawMap(map, windowWidth, windowHeight);
+            }
+        }
+    }
+
     @Override
     public void mapChanged(WorldMap worldMap) {
         Platform.runLater(() -> {
@@ -119,9 +131,10 @@ public class SimulationPresenter implements MapChangeListener {
         sim.setRunning(true);
     }
 
-    public void setWindowSize(double width, double height){
-        windowWidth = width;
-        windowHeight = height;
+    public void terminateSimulation() {
+        if (simulationThread != null) {
+            simulationThread.interrupt();
+        }
     }
 
 }

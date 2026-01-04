@@ -15,10 +15,10 @@
             </padding>
             <GridPane hgap="10" vgap="10" alignment="CENTER">
                 <Label text="Map Width:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <TextField fx:id="widthInput" text="52" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <TextField fx:id="widthInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                 <Label text="Map Height:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <TextField fx:id="heightInput" text="52" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <TextField fx:id="heightInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
                 <Label text="Start Grass Amount:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                 <TextField fx:id="startGrassInput" text="30" GridPane.columnIndex="1" GridPane.rowIndex="2"/>

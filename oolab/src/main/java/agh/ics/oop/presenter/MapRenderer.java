@@ -34,65 +34,46 @@ public class MapRenderer {
 
         cellSize = Math.min(
                 (windowWidth - 300) / cols,
-                windowHeight / rows
+                (windowHeight - 100) / rows
         );
-
-        mapCanvas.setWidth(cols * cellSize + cellMargin);
-        mapCanvas.setHeight(rows * cellSize + cellMargin);
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
 
-        clearCanvas(graphics);
-
-        if (cellSize > 15) {
-            drawGrid(graphics, cols, rows, false);
+        if (cellSize > 18) {
+            mapCanvas.setWidth(cols * cellSize + cellMargin);
+            mapCanvas.setHeight(rows * cellSize + cellMargin);
+            clearCanvas(graphics);
+            drawGrid(graphics, cols, rows);
             drawAxes(graphics, boundary, mapCols, mapRows);
-            drawElements(graphics, map, boundary);
+            drawElements(graphics, map, boundary, false);
         } else {
-            drawGrid(graphics, cols, rows, true);
-            drawAxes(graphics, boundary, mapCols, mapRows);
-            drawElements(graphics, map, boundary);
+            mapCanvas.setWidth(mapCols * cellSize);
+            mapCanvas.setHeight(mapRows * cellSize);
+            clearCanvas(graphics);
+            drawElements(graphics, map, boundary, true);
         }
     }
 
-    private void drawGrid(GraphicsContext graphics, int cols, int rows, boolean limit) {
+    private void drawGrid(GraphicsContext graphics, int cols, int rows) {
         graphics.setStroke(Color.BLACK);
         graphics.setLineWidth(cellMargin);
 
         for (int x = 0; x <= cols; x++) {
-            if (limit && x > 1) {
-                graphics.strokeLine(
-                        x * cellSize + cellMargin /2,
-                        0,
-                        x * cellSize + cellMargin /2,
-                        cellSize + cellMargin /2
-                );
-            } else {
-                graphics.strokeLine(
-                        x * cellSize + cellMargin /2,
-                        0,
-                        x * cellSize + cellMargin /2,
-                        rows * cellSize + cellMargin /2
-                );
-            }
+            graphics.strokeLine(
+                    x * cellSize + cellMargin /2,
+                    0,
+                    x * cellSize + cellMargin /2,
+                    rows * cellSize + cellMargin /2
+            );
         }
 
         for (int y = 0; y <= rows; y++) {
-            if (limit && y > 1) {
-                graphics.strokeLine(
-                        0,
-                        y * cellSize + cellMargin /2,
-                        cellSize + cellMargin /2,
-                        y * cellSize + cellMargin /2
-                );
-            }else {
-                graphics.strokeLine(
-                        0,
-                        y * cellSize + cellMargin /2,
-                        cols * cellSize + cellMargin /2,
-                        y * cellSize + cellMargin /2
-                );
-            }
+            graphics.strokeLine(
+                    0,
+                    y * cellSize + cellMargin /2,
+                    cols * cellSize + cellMargin /2,
+                    y * cellSize + cellMargin /2
+            );
         }
     }
 
@@ -114,27 +95,37 @@ public class MapRenderer {
         }
     }
 
-    private void drawElements(GraphicsContext graphics, WorldMap map, Boundary boundary) {
+    private void drawElements(GraphicsContext graphics, WorldMap map, Boundary boundary, boolean minimal) {
         configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.GREEN);
+        int offset = minimal ? 0 : 1;
 
         for (Map.Entry<Vector2d, Grass> entity : map.getGrasses().entrySet()) {
             Vector2d position = entity.getKey();
             WorldElement element = entity.getValue();
 
-            double x = (position.getX() - boundary.lowerLeft().getX() +1) * cellSize + cellMargin /2;
-            double y = (boundary.upperRight().getY() - position.getY() +1) * cellSize + cellMargin /2;
+            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
+            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
 
-            graphics.fillText(element.toString(), x + cellSize / 2, y + cellSize / 2);
+            if (minimal) {
+                graphics.fillOval(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
+            } else {
+                graphics.fillText(element.toString(), x + cellSize / 2, y + cellSize / 2);
+            }
         }
 
         configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.RED);
         for (Map.Entry<Vector2d, List<Animal>> entity : map.getAnimals().entrySet()) {
             Vector2d position = entity.getKey();
             for (Animal element: entity.getValue()) {
-                double x = (position.getX() - boundary.lowerLeft().getX() +1) * cellSize + 1;
-                double y = (boundary.upperRight().getY() - position.getY() +1) * cellSize + 1;
 
-                graphics.fillText(element.toString(), x + cellSize / 2, y + cellSize / 2);
+                double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
+                double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
+
+                if (minimal) {
+                    graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
+                } else {
+                    graphics.fillText(element.toString(), x + cellSize / 2, y + cellSize / 2);
+                }
             }
         }
     }
