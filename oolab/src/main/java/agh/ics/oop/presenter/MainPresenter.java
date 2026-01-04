@@ -47,6 +47,7 @@ public class MainPresenter {
         setupIntegerValidation(genomeLengthInput, 1, 100);
         setupIntegerValidation(minMutationInput, 0, 100);
         setupIntegerValidation(maxMutationInput, 0, 100);
+
         //!!!for tests
         onStartClicked();
     }
@@ -91,17 +92,6 @@ public class MainPresenter {
         });
     }
 
-    private void configureAndShowStage(Stage primaryStage, BorderPane viewRoot) {
-        var scene = new Scene(viewRoot, 1280,720);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Simulation");
-
-        primaryStage.show();
-
-        primaryStage.setMinWidth(primaryStage.getWidth());
-        primaryStage.setMinHeight(primaryStage.getHeight());
-    }
-
     @FXML
     public void onStartClicked() {
         try {
@@ -113,12 +103,12 @@ public class MainPresenter {
             BorderPane viewRoot = loader.load();
             SimulationPresenter presenter = loader.getController();
 
-            Stage stage = new Stage();
-            configureAndShowStage(stage, viewRoot);
-
             Simulation sim = new Simulation(makeConfig());
             sim.registerListener(presenter);
             presenter.setupPresenter(sim);
+
+            Stage stage = new Stage();
+            configureStage(stage, viewRoot, presenter);
 
             presenter.startSimulation();
 
@@ -127,7 +117,27 @@ public class MainPresenter {
         }
     }
 
-    public SimulationConfig makeConfig() {
+    private void configureStage(Stage primaryStage, BorderPane viewRoot, SimulationPresenter presenter) {
+        var scene = new Scene(viewRoot);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Simulation");
+
+        primaryStage.show();
+
+        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
+        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+
+        presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+        scene.widthProperty().addListener((obs, oldW, newW) -> {
+            presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+        });
+
+        scene.heightProperty().addListener((obs, oldH, newH) -> {
+            presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+        });
+    }
+
+    private SimulationConfig makeConfig() {
         return new SimulationConfig(
                 Integer.parseInt(widthInput.getText()),
                 Integer.parseInt(heightInput.getText()),

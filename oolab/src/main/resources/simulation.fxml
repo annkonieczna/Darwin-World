@@ -11,7 +11,8 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
-            stylesheets="@simulationStyle.css">
+            stylesheets="@simulationStyle.css"
+            minWidth="800" minHeight="700">
 
     <center>
         <Canvas fx:id="mapCanvas"/>

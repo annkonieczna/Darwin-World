@@ -43,6 +43,9 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private Slider simSpeedScroll;
 
+    private double windowWidth;
+    private double windowHeight;
+
     private Simulation sim;
     private Thread simulationThread;
 
@@ -67,7 +70,7 @@ public class SimulationPresenter implements MapChangeListener {
     public void mapChanged(WorldMap worldMap) {
         Platform.runLater(() -> {
             synchronized (worldMap) {
-                renderer.drawMap(worldMap);
+                renderer.drawMap(worldMap, windowWidth, windowHeight);
             }
         });
     }
@@ -114,6 +117,11 @@ public class SimulationPresenter implements MapChangeListener {
     public void resumeSimulation() {
         playButton.setText("Pause");
         sim.setRunning(true);
+    }
+
+    public void setWindowSize(double width, double height){
+        windowWidth = width;
+        windowHeight = height;
     }
 
 }

@@ -12,18 +12,6 @@ import javafx.scene.Parent;
 
 public class SimulationApp extends Application {
 
-    private void configureAndShowStage(Stage primaryStage, BorderPane viewRoot) {
-        var scene = new Scene(viewRoot, 600,640);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Simulation launcher");
-        //zmieniłem to żeby okienko faktycznie miało takie minimalne rozmiary
-
-//        primaryStage.show();      //!!!turned off for tests
-
-        primaryStage.setMinWidth(primaryStage.getWidth());
-        primaryStage.setMinHeight(primaryStage.getHeight());
-    }
-
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -35,6 +23,17 @@ public class SimulationApp extends Application {
         loader.setLocation(getClass().getClassLoader().getResource("main.fxml"));
 
         BorderPane viewRoot = loader.load();
-        configureAndShowStage(primaryStage, viewRoot);
+        configureStage(primaryStage, viewRoot);
+    }
+
+    private void configureStage(Stage primaryStage, BorderPane viewRoot) {
+        var scene = new Scene(viewRoot);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Simulation launcher");
+
+//        primaryStage.show();      //!!!turned off for tests
+
+        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
+        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
     }
 }
