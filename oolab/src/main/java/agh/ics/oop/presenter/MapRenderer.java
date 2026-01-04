@@ -96,12 +96,16 @@ public class MapRenderer {
     }
 
     private void drawElements(GraphicsContext graphics, WorldMap map, Boundary boundary, boolean minimal) {
-        configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.GREEN);
         int offset = minimal ? 0 : 1;
 
         for (Map.Entry<Vector2d, Grass> entity : map.getGrasses().entrySet()) {
             Vector2d position = entity.getKey();
-            WorldElement element = entity.getValue();
+            Grass grass = entity.getValue();
+            if (grass.isToxic()) {
+                configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.BROWN);
+            } else {
+                configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.GREEN);
+            }
 
             double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
             double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
@@ -109,7 +113,7 @@ public class MapRenderer {
             if (minimal) {
                 graphics.fillOval(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
             } else {
-                graphics.fillText(element.toString(), x + cellSize / 2, y + cellSize / 2);
+                graphics.fillText(grass.toString(), x + cellSize / 2, y + cellSize / 2);
             }
         }
 
