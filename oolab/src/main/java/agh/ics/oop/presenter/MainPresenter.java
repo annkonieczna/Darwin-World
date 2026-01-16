@@ -6,12 +6,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MainPresenter {
+    @FXML
+    private CheckBox isToxicCheckBox;
     @FXML
     private TextField
             widthInput,
@@ -97,6 +100,18 @@ public class MainPresenter {
                 }
             }
         });
+    }
+
+    @FXML
+    public void onToxicCheckBox() {
+        if (isToxicCheckBox.isSelected()) {
+            toxicChanceInput.setDisable(false);
+            energyFromToxicInput.setDisable(false);
+        } else {
+            toxicChanceInput.setText("0");
+            toxicChanceInput.setDisable(true);
+            energyFromToxicInput.setDisable(true);
+        }
     }
 
     @FXML
