@@ -11,20 +11,56 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
-            minWidth="600" minHeight="600">
+            stylesheets="@simulationStyle.css"
+            minWidth="800" minHeight="700">
 
     <center>
         <Canvas fx:id="mapCanvas"/>
     </center>
     <left>
-        <Label fx:id="simStatsLabel" textAlignment="CENTER"/>
+        <VBox alignment="CENTER" minWidth="240" >
+            <VBox alignment="CENTER" spacing="20" styleClass="statsPanel">
+                <VBox alignment="CENTER" spacing="10">
+                    <HBox styleClass="defaultBox">
+                        <Label text="Day: " styleClass="fontMedium"/>
+                        <Label fx:id="dayLabel"/>
+                    </HBox>
+                    <HBox styleClass="defaultBox">
+                        <Label text="Animals: " styleClass="fontMedium"/>
+                        <Label fx:id="animalCountLabel"/>
+                    </HBox>
+                    <HBox styleClass="defaultBox">
+                        <Label text="Grasses: " styleClass="fontMedium"/>
+                        <Label fx:id="grassCountLabel"/>
+                    </HBox>
+                    <HBox styleClass="defaultBox">
+                        <Label text="Free Fields: " styleClass="fontMedium"/>
+                        <Label fx:id="freeFieldsLabel"/>
+                    </HBox>
+                </VBox>
+                <VBox alignment="CENTER" spacing="10">
+                    <HBox styleClass="defaultBox">
+                        <Label text="Avg. Energy: " styleClass="fontMedium"/>
+                        <Label fx:id="avgEnergyLabel"/>
+                    </HBox>
+                    <HBox styleClass="defaultBox">
+                        <Label text="Avg. Life Time: " styleClass="fontMedium"/>
+                        <Label fx:id="avgLifeTimeLabel"/>
+                    </HBox>
+                    <HBox styleClass="defaultBox">
+                        <Label text="Avg. Child Count: " styleClass="fontMedium"/>
+                        <Label fx:id="avgChildAmountLabel"/>
+                    </HBox>
+                </VBox>
+                <VBox alignment="CENTER" styleClass="defaultBox">
+                    <HBox alignment="CENTER">
+                        <Label text="Speed: " styleClass="fontMedium"/>
+                        <Label fx:id="simSpeedLabel" text="500"/>
+                    </HBox>
+                    <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="40" max="990" value="500"/>
+                </VBox>
+                <Button fx:id="playButton" text="Pause" onAction="#onPlayClicked"/>
+            </VBox>
+        </VBox>
     </left>
-    <bottom>
-        <HBox>
-            <Button fx:id="playButton" text="Pause" onAction="#onPlayClicked"/>
-            <Label fx:id="simSpeedLabel" text="Speed: 500"/>
-<!--            tutaj 40 bo to blokuje przesuwanie suwaka co 10-->
-            <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="40" max="990" value="500"/>
-        </HBox>
-    </bottom>
 </BorderPane>

@@ -75,7 +75,7 @@ public class Simulation implements Runnable {
     public void notifyListeners(){
         for(MapChangeListener listener : listeners){
             listener.mapChanged(map);
-            listener.updateStats(new SimulationStats(
+            listener.statsChanged(new SimulationStats(
                     avgChildAmount,
                     avgEnergy,
                     avgLifeTime,
@@ -87,8 +87,6 @@ public class Simulation implements Runnable {
         }
     }
 
-    //tutaj dodałem synchronized żeby nie wywalało błędu przy zapisie i odczycie mapy (problem z wątkami)
-    //całość działa w pętli którą ciągle sobie leci a my przyciskiem zmieniamy tylko running
     @Override
     public void run() {
         notifyListeners();

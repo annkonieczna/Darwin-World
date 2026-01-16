@@ -6,12 +6,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MainPresenter {
+    @FXML
+    private CheckBox isToxicCheckBox;
     @FXML
     private TextField
             widthInput,
@@ -47,9 +50,11 @@ public class MainPresenter {
         setupIntegerValidation(genomeLengthInput, 1, 100);
         setupIntegerValidation(minMutationInput, 0, 100);
         setupIntegerValidation(maxMutationInput, 0, 100);
+
+        //!!!for tests
+//        onStartClicked();
     }
 
-    //tutaj muszę przyznać że cały ten Validator to prawie nie mój ale nie chciało mi się bawić w validację
     private void setupIntegerValidation(TextField textField, int min, int max) {
         textField.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
@@ -66,40 +71,51 @@ public class MainPresenter {
 
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                String text = textField.getText();
-                if (text.isEmpty()) {
+                if (textField.getText().isEmpty()) {
                     textField.setText(String.valueOf(min));
                 }
-                if (Integer.parseInt(text) < min) {
+                int value = Integer.parseInt(textField.getText());
+                if (value < min) {
                     textField.setText(String.valueOf(min));
                 }
-                if (Integer.parseInt(text) > max) {
+                if (value > max) {
                     textField.setText(String.valueOf(max));
                 }
                 if (textField.getId().equals("minMutationInput")) {
-                    if(Integer.parseInt(text) > Integer.parseInt(maxMutationInput.getText())) {
-                        maxMutationInput.setText(text);
+                    if (value > Integer.parseInt(genomeLengthInput.getText())) {
+                        minMutationInput.setText(genomeLengthInput.getText());
+                        value = Integer.parseInt(genomeLengthInput.getText());
+                    }
+                    if(value > Integer.parseInt(maxMutationInput.getText())) {
+                        maxMutationInput.setText(String.valueOf(value));
                     }
                 }
                 if (textField.getId().equals("maxMutationInput")) {
-                    if(Integer.parseInt(text) < Integer.parseInt(minMutationInput.getText())) {
-                        minMutationInput.setText(text);
+                    if (value > Integer.parseInt(genomeLengthInput.getText())) {
+                        maxMutationInput.setText(genomeLengthInput.getText());
+                    }
+                    if(value < Integer.parseInt(minMutationInput.getText())) {
+                        minMutationInput.setText(String.valueOf(value));
                     }
                 }
             }
         });
     }
 
-    private void configureStage(Stage primaryStage, BorderPane viewRoot) {
-        var scene = new Scene(viewRoot);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Simulation");
-        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
-        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+    @FXML
+    public void onToxicCheckBox() {
+        if (isToxicCheckBox.isSelected()) {
+            toxicChanceInput.setDisable(false);
+            energyFromToxicInput.setDisable(false);
+        } else {
+            toxicChanceInput.setText("0");
+            toxicChanceInput.setDisable(true);
+            energyFromToxicInput.setDisable(true);
+        }
     }
 
     @FXML
-    public void onStartClicked(ActionEvent event) {
+    public void onStartClicked() {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(
@@ -109,14 +125,12 @@ public class MainPresenter {
             BorderPane viewRoot = loader.load();
             SimulationPresenter presenter = loader.getController();
 
-            Stage stage = new Stage();
-            configureStage(stage, viewRoot);
-            stage.show();
-
             Simulation sim = new Simulation(makeConfig());
-//            Simulation sim = new Simulation();
             sim.registerListener(presenter);
             presenter.setupPresenter(sim);
+
+            Stage stage = new Stage();
+            configureStage(stage, viewRoot, presenter);
 
             presenter.startSimulation();
 
@@ -125,7 +139,29 @@ public class MainPresenter {
         }
     }
 
-    public SimulationConfig makeConfig() {
+    private void configureStage(Stage primaryStage, BorderPane viewRoot, SimulationPresenter presenter) {
+        var scene = new Scene(viewRoot);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Simulation");
+
+        primaryStage.show();
+
+        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
+        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+
+        presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+        scene.widthProperty().addListener((obs, oldW, newW) -> {
+            presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+        });
+        scene.heightProperty().addListener((obs, oldH, newH) -> {
+            presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+        });
+        primaryStage.setOnCloseRequest(event -> {
+            presenter.terminateSimulation();
+        });
+    }
+
+    private SimulationConfig makeConfig() {
         return new SimulationConfig(
                 Integer.parseInt(widthInput.getText()),
                 Integer.parseInt(heightInput.getText()),
