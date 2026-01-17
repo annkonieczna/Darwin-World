@@ -9,6 +9,7 @@ public class Animal implements WorldElement {
     private MapDirection direction;
     private int energy;
     private final int[] genome;
+    private final int resistanceScore;
     private int activeGeneIndex;
 
     private int plantsEaten = 0;
@@ -18,20 +19,22 @@ public class Animal implements WorldElement {
 
     private static final Random random = new Random();
 
-    public Animal(Vector2d position, int startEnergy, int[] genome) {
+    public Animal(Vector2d position, int startEnergy, int[] genome, int[] pattern) {
         this.position = position;
         this.energy = startEnergy;
         this.genome = genome;
         this.direction = MapDirection.values()[random.nextInt(8)];
         this.activeGeneIndex = random.nextInt(genome.length);
+        this.resistanceScore = Genome.calculateResistanceScore(genome, pattern);
     }
 
-    public Animal(Vector2d position, int startEnergy, int genomeLength) {
+    public Animal(Vector2d position, int startEnergy, int genomeLength, int[] pattern) {
         this.position = position;
         this.energy = startEnergy;
         this.genome = Genome.generate(genomeLength);
         this.direction = MapDirection.values()[random.nextInt(8)];
         this.activeGeneIndex = random.nextInt(genome.length);
+        this.resistanceScore = Genome.calculateResistanceScore(genome, pattern);
     }
 
     @Override
@@ -49,7 +52,9 @@ public class Animal implements WorldElement {
 
     public void eatGrass(int amount, boolean isToxic) {
         if (isToxic) {
-            energy -= amount;
+            int damage = amount * (100 - resistanceScore) / 100;
+            energy -= damage;
+
         } else {
             energy += amount;
         }
@@ -79,7 +84,7 @@ public class Animal implements WorldElement {
 
     }
 
-    public Animal reproduceWith(Animal partner, int min, int max, int energyCost) {
+    public Animal reproduceWith(Animal partner, int min, int max, int energyCost, int[] pattern) {
 
         int[] childGenome = Genome.combine(this.genome, partner.genome, this.energy, partner.energy, min, max);
 
@@ -88,19 +93,38 @@ public class Animal implements WorldElement {
 
         this.childrenCount++;
         partner.childrenCount++;
-        return new Animal(this.position, energyCost * 2, childGenome);
+        return new Animal(this.position, energyCost * 2, childGenome, pattern);
     }
 
     //getters
     @Override
-    public Vector2d getPosition() { return position; }
+    public Vector2d getPosition() {
+        return position;
+    }
 
-    public int getEnergy() { return energy; }
-    public int getAge() { return age; }
-    public int getChildrenCount() { return childrenCount; }
-    public int[] getGenome() { return genome; }
-    public int getActiveGeneIndex() { return activeGeneIndex; }
-    public MapDirection getDirection() { return direction; }
+    public int getEnergy() {
+        return energy;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getChildrenCount() {
+        return childrenCount;
+    }
+
+    public int[] getGenome() {
+        return genome;
+    }
+
+    public int getActiveGeneIndex() {
+        return activeGeneIndex;
+    }
+
+    public MapDirection getDirection() {
+        return direction;
+    }
 
     public Integer getDeathDay() {
         return deathDay;
