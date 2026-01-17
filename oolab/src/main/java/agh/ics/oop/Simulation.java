@@ -27,16 +27,19 @@ public class Simulation implements Runnable {
     private int day = 0;
     private int animalCount;
     private int grassCount;
+    private  final int[] resistancePattern;
 
     public Simulation(SimulationConfig config) {
         this.config = config;
         this.map = new EarthMap(config.width(), config.height());
         this.randomPG = new GrassPositionGenerator(config.width(), config.height());
+        this.resistancePattern = Genome.generate(config.genomeLength());
         for (int i = 0; i < config.startAnimalAmount(); i++) {
             Animal animal = new Animal(
                     map.randomPositionFromMap(),
                     config.startEnergy(),
-                    config.genomeLength()
+                    config.genomeLength(),
+                    resistancePattern
             );
             animals.add(animal);
             map.placeAnimal(animal);
@@ -159,7 +162,8 @@ public class Simulation implements Runnable {
                             toReproduce.get(1),
                             config.minMutation(),
                             config.maxMutation(),
-                            config.reproductionEnergyCost()
+                            config.reproductionEnergyCost(),
+                            resistancePattern
                     );
                     newAnimals.add(child);
                     map.placeAnimal(child);
