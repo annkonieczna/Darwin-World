@@ -76,4 +76,17 @@ public final class Genome {
         }
 
     }
+
+    public static int calculateResistanceScore(int[] genome, int[] pattern) {
+
+        int score = 0;
+
+        for (int i = 0; i < genome.length; i++) {
+
+            if (genome[i] == pattern[i]) {
+                score++;
+            }
+        }
+        return (int) ((score / (double) genome.length) * 100);
+    }
 }
