@@ -30,7 +30,7 @@ public class Simulation implements Runnable {
     private int day = 0;
     private int animalCount;
     private int grassCount;
-    private final int[] resistancePattern;
+    private final List<Integer> resistancePattern;
 
     public Simulation(SimulationConfig config) {
         this.config = config;
@@ -251,12 +251,12 @@ public class Simulation implements Runnable {
     }
 
     private void registerGenome(Animal animal) {
-        List<Integer> key = Arrays.stream(animal.getGenome()).boxed().toList();
+        List<Integer> key = animal.getGenome();
         genomeCount.put(key, genomeCount.getOrDefault(key, 0) + 1);
     }
 
     private void unregisterGenome(Animal animal) {
-        List<Integer> key = Arrays.stream(animal.getGenome()).boxed().toList();
+        List<Integer> key = animal.getGenome();
         int count = genomeCount.getOrDefault(key, 0);
         if (count <= 1) {
             genomeCount.remove(key);
@@ -275,6 +275,7 @@ public class Simulation implements Runnable {
         currDominantGenomes = genomeCount.entrySet().stream()
                 .filter(e -> e.getValue() == maxCount)
                 .map(Map.Entry::getKey)
+                .limit(5)
                 .collect(Collectors.toSet());
 
     }
