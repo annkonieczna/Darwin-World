@@ -6,11 +6,14 @@ import agh.ics.oop.model.util.SimulationConfig;
 import agh.ics.oop.model.util.SimulationStats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Simulation implements Runnable {
     private final List<Animal> animals = new ArrayList<>();
     private final List<Animal> deadAnimals = new ArrayList<>();
     private final List<MapChangeListener> listeners = new ArrayList<>();
+    private final Map<List<Integer>, Integer> genomeCount = new HashMap<>();
+    private Set<List<Integer>> currDominantGenomes = new HashSet<>();
     private final WorldMap map;
     private final GrassPositionGenerator randomPG;
     private final Random random = new Random();
@@ -27,7 +30,7 @@ public class Simulation implements Runnable {
     private int day = 0;
     private int animalCount;
     private int grassCount;
-    private  final int[] resistancePattern;
+    private final int[] resistancePattern;
 
     public Simulation(SimulationConfig config) {
         this.config = config;
@@ -69,14 +72,16 @@ public class Simulation implements Runnable {
         ));
     }
 
-    public void registerListener(MapChangeListener listener){
+    public void registerListener(MapChangeListener listener) {
         listeners.add(listener);
     }
-    public void removeListener(MapChangeListener listener){
+
+    public void removeListener(MapChangeListener listener) {
         listeners.remove(listener);
     }
-    public void notifyListeners(){
-        for(MapChangeListener listener : listeners){
+
+    public void notifyListeners() {
+        for (MapChangeListener listener : listeners) {
             listener.mapChanged(map);
             listener.statsChanged(new SimulationStats(
                     avgChildAmount,
@@ -85,8 +90,8 @@ public class Simulation implements Runnable {
                     freeFields,
                     day,
                     animalCount,
-                    grassCount
-            ));
+                    grassCount,
+                    currDominantGenomes));
         }
     }
 
@@ -116,9 +121,9 @@ public class Simulation implements Runnable {
 
     private void removeDeadAnimals() {
         Iterator<Animal> iter = animals.iterator();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             Animal animal = iter.next();
-            if(animal.isDead()){
+            if (animal.isDead()) {
                 animal.setDeathDay(day);
                 avgLifeTimeCount += animal.getAge();
                 deadAnimals.add(animal);
@@ -181,7 +186,7 @@ public class Simulation implements Runnable {
 
         List<Animal> result = new ArrayList<>(allAnimals);
         Collections.shuffle(result);
-        Collections.sort(result, (a,b) ->{
+        Collections.sort(result, (a, b) -> {
             if (a.getEnergy() > b.getEnergy()) return -1;
             if (a.getEnergy() < b.getEnergy()) return 1;
             if (a.getAge() > b.getAge()) return -1;
@@ -233,8 +238,8 @@ public class Simulation implements Runnable {
     private int countFreeFields() {
         int result = 0;
         Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
-        for(Vector2d position : randomPG.getAllFreePositions()){
-            if(!placedAnimals.containsKey(position)){
+        for (Vector2d position : randomPG.getAllFreePositions()) {
+            if (!placedAnimals.containsKey(position)) {
                 result++;
             }
         }
