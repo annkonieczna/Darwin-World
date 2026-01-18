@@ -2,13 +2,14 @@ package agh.ics.oop.model;
 
 import agh.ics.oop.model.util.Movement;
 
+import java.util.List;
 import java.util.Random;
 
 public class Animal implements WorldElement {
     private Vector2d position;
     private MapDirection direction;
     private int energy;
-    private final int[] genome;
+    private final List<Integer> genome;
     private final int resistanceScore;
     private int activeGeneIndex;
 
@@ -19,21 +20,21 @@ public class Animal implements WorldElement {
 
     private static final Random random = new Random();
 
-    public Animal(Vector2d position, int startEnergy, int[] genome, int[] pattern) {
+    public Animal(Vector2d position, int startEnergy, List<Integer> genome, List<Integer> pattern) {
         this.position = position;
         this.energy = startEnergy;
         this.genome = genome;
         this.direction = MapDirection.values()[random.nextInt(8)];
-        this.activeGeneIndex = random.nextInt(genome.length);
+        this.activeGeneIndex = random.nextInt(genome.size());
         this.resistanceScore = Genome.calculateResistanceScore(genome, pattern);
     }
 
-    public Animal(Vector2d position, int startEnergy, int genomeLength, int[] pattern) {
+    public Animal(Vector2d position, int startEnergy, int genomeLength, List<Integer> pattern) {
         this.position = position;
         this.energy = startEnergy;
         this.genome = Genome.generate(genomeLength);
         this.direction = MapDirection.values()[random.nextInt(8)];
-        this.activeGeneIndex = random.nextInt(genome.length);
+        this.activeGeneIndex = random.nextInt(genome.size());
         this.resistanceScore = Genome.calculateResistanceScore(genome, pattern);
     }
 
@@ -72,21 +73,21 @@ public class Animal implements WorldElement {
     }
 
     public void move(MoveValidator validator) {
-        int activeGene = genome[activeGeneIndex];
+        int activeGene = genome.get(activeGeneIndex);
         direction = direction.rotate(activeGene);
 
         Movement movement = validator.correctPosition(position, direction);
         position = movement.position();
         direction = movement.direction();
 
-        activeGeneIndex = (activeGeneIndex + 1) % genome.length;
+        activeGeneIndex = (activeGeneIndex + 1) % genome.size();
         age++;
 
     }
 
-    public Animal reproduceWith(Animal partner, int min, int max, int energyCost, int[] pattern) {
+    public Animal reproduceWith(Animal partner, int min, int max, int energyCost, List<Integer> pattern) {
 
-        int[] childGenome = Genome.combine(this.genome, partner.genome, this.energy, partner.energy, min, max);
+        List<Integer> childGenome = Genome.combine(this.genome, partner.genome, this.energy, partner.energy, min, max);
 
         this.energy -= energyCost;
         partner.energy -= energyCost;
@@ -114,7 +115,7 @@ public class Animal implements WorldElement {
         return childrenCount;
     }
 
-    public int[] getGenome() {
+    public List<Integer> getGenome() {
         return genome;
     }
 
@@ -128,6 +129,14 @@ public class Animal implements WorldElement {
 
     public Integer getDeathDay() {
         return deathDay;
+    }
+
+    public int getPlantsEaten() {
+        return plantsEaten;
+    }
+
+    public void setPlantsEaten(int plantsEaten) {
+        this.plantsEaten = plantsEaten;
     }
 }
 
