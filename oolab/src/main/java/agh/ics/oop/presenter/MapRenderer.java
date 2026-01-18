@@ -9,13 +9,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MapRenderer {
     private final Canvas mapCanvas;
     private double cellSize = 50;
     private double cellMargin = 1;
+    private Set<List<Integer>> dominantGenotypes = new HashSet<>();
+
 
     public MapRenderer(Canvas canvas) {
         mapCanvas = canvas;
@@ -60,38 +64,38 @@ public class MapRenderer {
 
         for (int x = 0; x <= cols; x++) {
             graphics.strokeLine(
-                    x * cellSize + cellMargin /2,
+                    x * cellSize + cellMargin / 2,
                     0,
-                    x * cellSize + cellMargin /2,
-                    rows * cellSize + cellMargin /2
+                    x * cellSize + cellMargin / 2,
+                    rows * cellSize + cellMargin / 2
             );
         }
 
         for (int y = 0; y <= rows; y++) {
             graphics.strokeLine(
                     0,
-                    y * cellSize + cellMargin /2,
-                    cols * cellSize + cellMargin /2,
-                    y * cellSize + cellMargin /2
+                    y * cellSize + cellMargin / 2,
+                    cols * cellSize + cellMargin / 2,
+                    y * cellSize + cellMargin / 2
             );
         }
     }
 
     private void drawAxes(GraphicsContext graphics, Boundary boundary, int mapCols, int mapRows) {
-        configureFont(graphics, (int) cellSize/2, "Poppins Medium", Color.BLACK);
+        configureFont(graphics, (int) cellSize / 2, "Poppins Medium", Color.BLACK);
 
-        graphics.fillText("y/x", cellSize / 2.0 + cellMargin /2, cellSize / 2.0 + cellMargin /2);
+        graphics.fillText("y/x", cellSize / 2.0 + cellMargin / 2, cellSize / 2.0 + cellMargin / 2);
 
         for (int x = 0; x < mapCols; x++) {
             int value = boundary.lowerLeft().x() + x;
-            double cx = (x + 1) * cellSize + cellSize / 2.0 + cellMargin /2;
-            graphics.fillText(String.valueOf(value), cx, cellSize / 2.0 + cellMargin /2);
+            double cx = (x + 1) * cellSize + cellSize / 2.0 + cellMargin / 2;
+            graphics.fillText(String.valueOf(value), cx, cellSize / 2.0 + cellMargin / 2);
         }
 
         for (int y = 0; y < mapRows; y++) {
             int value = boundary.upperRight().y() - y;
-            double cy = (y + 1) * cellSize + cellSize / 2.0 + cellMargin /2;
-            graphics.fillText(String.valueOf(value), cellSize / 2.0 + cellMargin /2, cy);
+            double cy = (y + 1) * cellSize + cellSize / 2.0 + cellMargin / 2;
+            graphics.fillText(String.valueOf(value), cellSize / 2.0 + cellMargin / 2, cy);
         }
     }
 
@@ -102,13 +106,13 @@ public class MapRenderer {
             Vector2d position = entity.getKey();
             Grass grass = entity.getValue();
             if (grass.isToxic()) {
-                configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.BROWN);
+                configureFont(graphics, (int) cellSize / 2, "Poppins Regular", Color.BROWN);
             } else {
-                configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.GREEN);
+                configureFont(graphics, (int) cellSize / 2, "Poppins Regular", Color.GREEN);
             }
 
-            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
-            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
+            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin / 2;
+            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin / 2;
 
             if (minimal) {
                 graphics.fillOval(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
@@ -117,20 +121,39 @@ public class MapRenderer {
             }
         }
 
-        configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.RED);
+        configureFont(graphics, (int) cellSize / 2, "Poppins Regular", Color.RED);
         for (Map.Entry<Vector2d, List<Animal>> entity : map.getAnimals().entrySet()) {
             Vector2d position = entity.getKey();
-            for (Animal element: entity.getValue()) {
+            for (Animal animal : entity.getValue()) {
 
-                double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
-                double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
-
-                if (minimal) {
-                    graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
-                } else {
-                    graphics.fillText(element.toString(), x + cellSize / 2, y + cellSize / 2);
+                double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin / 2;
+                double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin / 2;
+                boolean isDominant = dominantGenotypes.contains(animal.getGenome());
+                if (isDominant) {
+                    drawDominantHighlight(graphics, x, y);
                 }
+                drawAnimalBody(graphics, animal, x, y, minimal);
             }
+        }
+
+    }
+
+    private void drawDominantHighlight(GraphicsContext graphics, double x, double y) {
+        graphics.setFill(Color.BLUE.deriveColor(0, 1, 1, 0.5));
+        graphics.fillOval(x + cellSize * 0.05, y + cellSize * 0.05, cellSize * 0.9, cellSize * 0.9);
+        graphics.setStroke(Color.BLUE);
+        graphics.setLineWidth(2);
+        graphics.strokeOval(x + cellSize * 0.05, y + cellSize * 0.05, cellSize * 0.9, cellSize * 0.9);
+    }
+
+
+    private void drawAnimalBody(GraphicsContext graphics, Animal animal, double x, double y, boolean minimal) {
+        if (minimal) {
+            graphics.setFill(Color.RED);
+            graphics.fillOval(x + cellSize * 0.2, y + cellSize * 0.2, cellSize * 0.6, cellSize * 0.6);
+        } else {
+            configureFont(graphics, (int) cellSize / 2, "Poppins Regular", Color.RED);
+            graphics.fillText(animal.toString(), x + cellSize / 2, y + cellSize / 2);
         }
     }
 
@@ -144,5 +167,10 @@ public class MapRenderer {
         graphics.setTextBaseline(VPos.CENTER);
         graphics.setFont(new Font(fontWeight, size));
         graphics.setFill(color);
+    }
+
+    public void setDominantGenotypes(Set<List<Integer>> genotypes) {
+        this.dominantGenotypes = genotypes;
+
     }
 }
