@@ -45,7 +45,7 @@ public class MapRenderer {
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
 
-        if (cellSize > 3) {
+        if (cellSize > 18) {
             mapCanvas.setWidth(cols * cellSize + cellMargin);
             mapCanvas.setHeight(rows * cellSize + cellMargin);
 

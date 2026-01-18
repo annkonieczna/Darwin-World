@@ -18,7 +18,7 @@
                 <TextField fx:id="widthInput" text="20" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                 <Label text="Map Height:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <TextField fx:id="heightInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <TextField fx:id="heightInput" text="20" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
                 <Label text="Start Grass Amount:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                 <TextField fx:id="startGrassInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
