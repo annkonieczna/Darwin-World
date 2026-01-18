@@ -45,7 +45,7 @@ public class MapRenderer {
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
 
-        if (cellSize > 15) {
+        if (cellSize > 111) {
             mapCanvas.setWidth(cols * cellSize + cellMargin);
             mapCanvas.setHeight(rows * cellSize + cellMargin);
 
@@ -53,7 +53,7 @@ public class MapRenderer {
             drawBackground(graphics, boundary, Color.web("#85A947"), false);
             drawBackground(graphics, reverseBoundary(map.getJungleBoundary(), false, mapRows), Color.web("#3E7B27"), false);
             //!!! for tests
-//            drawGrid(graphics, cols, rows);
+            drawGrid(graphics, cols, rows);
             drawAxes(graphics, boundary, mapCols, mapRows);
             drawElements(graphics, map, boundary, false);
         } else {
@@ -110,17 +110,18 @@ public class MapRenderer {
     private void drawElements(GraphicsContext graphics, WorldMap map, Boundary boundary, boolean minimal) {
         int offset = minimal ? 0 : 1;
         graphics.setImageSmoothing(false);
+        configureFont(graphics, (int) cellSize/2, "Poppins Medium", Color.WHITE);
 
         for (Map.Entry<Vector2d, Grass> entity : map.getGrasses().entrySet()) {
             Vector2d position = entity.getKey();
             Grass grass = entity.getValue();
 
-            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
-            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
+            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin*offset /2;
+            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin*offset /2;
 
             if (minimal) {
-                if (grass.isToxic()) graphics.setFill(Color.RED);
-                else graphics.setFill(Color.LIGHTGREEN);
+                if (grass.isToxic()) graphics.setFill(Color.web("#FF4646"));
+                else graphics.setFill(Color.web("#A8DF8E"));
                 graphics.fillOval(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
             } else {
                 if (grass.isToxic()) graphics.drawImage(grassToxicImage, x, y, cellSize, cellSize);
@@ -128,34 +129,29 @@ public class MapRenderer {
             }
         }
 
+        graphics.setFill(Color.web("#6E5034"));
         for (Map.Entry<Vector2d, List<Animal>> entity : map.getAnimals().entrySet()) {
             Vector2d position = entity.getKey();
 
-            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
-            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
+            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin*offset /2;
+            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin*offset /2;
 
-            drawAnimals(graphics, entity.getValue(), x, y, minimal);
+            if (minimal) drawMinimalAnimals(graphics, entity.getValue(), x, y);
+            else drawAnimals(graphics, entity.getValue(), x, y);
         }
         graphics.setImageSmoothing(true);
     }
 
-    private void drawAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y, boolean minimal) {
+    private void drawMinimalAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y) {
+        graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
+        if (animals.size() > 1) {
+            graphics.fillText(String.valueOf(animals.size()), x + cellSize / 2, y + cellSize / 2);
+        }
+    }
+
+    private void drawAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y) {
         if (animals.size() == 1) {
-            if (minimal) {
-                graphics.setFill(Color.BROWN);
-                graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
-            } else {
-                graphics.drawImage(animalImage, x, y, cellSize, cellSize);
-            }
         } else {
-            if (minimal) {
-                graphics.setFill(Color.BROWN);
-                for (int i = 0; i < animals.size(); i++) {
-                    graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
-                }
-            } else {
-                graphics.drawImage(animalImage, x, y, cellSize, cellSize);
-            }
         }
     }
 

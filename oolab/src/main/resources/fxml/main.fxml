@@ -24,7 +24,7 @@
                 <TextField fx:id="startGrassInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
                 <Label text="Start Animal Amount:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <TextField fx:id="startAnimalInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <TextField fx:id="startAnimalInput" text="110" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
                 <Label text="Daily Growing Grass:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
                 <TextField fx:id="growingGrassInput" text="5" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
