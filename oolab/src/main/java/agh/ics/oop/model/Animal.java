@@ -8,6 +8,7 @@ public class Animal implements WorldElement {
     private Vector2d position;
     private MapDirection direction;
     private int energy;
+    private int maxEnergy;
     private final int[] genome;
     private int activeGeneIndex;
 
@@ -18,20 +19,22 @@ public class Animal implements WorldElement {
 
     private static final Random random = new Random();
 
-    public Animal(Vector2d position, int startEnergy, int[] genome) {
+    public Animal(Vector2d position, int startEnergy, int[] genome, int maxEnergy) {
         this.position = position;
         this.energy = startEnergy;
         this.genome = genome;
         this.direction = MapDirection.values()[random.nextInt(8)];
         this.activeGeneIndex = random.nextInt(genome.length);
+        this.maxEnergy = maxEnergy;
     }
 
-    public Animal(Vector2d position, int startEnergy, int genomeLength) {
+    public Animal(Vector2d position, int startEnergy, int genomeLength, int maxEnergy) {
         this.position = position;
         this.energy = startEnergy;
         this.genome = Genome.generate(genomeLength);
         this.direction = MapDirection.values()[random.nextInt(8)];
         this.activeGeneIndex = random.nextInt(genome.length);
+        this.maxEnergy = maxEnergy;
     }
 
     @Override
@@ -52,6 +55,7 @@ public class Animal implements WorldElement {
             energy -= amount;
         } else {
             energy += amount;
+            energy = Math.min(energy, maxEnergy);
         }
         plantsEaten += 1;
     }
@@ -88,7 +92,7 @@ public class Animal implements WorldElement {
 
         this.childrenCount++;
         partner.childrenCount++;
-        return new Animal(this.position, energyCost * 2, childGenome);
+        return new Animal(this.position, energyCost * 2, childGenome, this.maxEnergy);
     }
 
     //getters
@@ -105,6 +109,8 @@ public class Animal implements WorldElement {
     public Integer getDeathDay() {
         return deathDay;
     }
+
+    public int getMaxEnergy() { return maxEnergy; }
 }
 
 

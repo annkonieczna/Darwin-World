@@ -22,6 +22,7 @@ public class MapRenderer {
     private final Image grassNormalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/grass_normal.png")));
     private final Image grassToxicImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/grass_toxic.png")));
     private final Image animalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/pepu.png")));
+    private final Image animalsImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/pepus.png")));
 
     public MapRenderer(Canvas canvas) {
         mapCanvas = canvas;
@@ -45,7 +46,7 @@ public class MapRenderer {
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
 
-        if (cellSize > 18) {
+        if (cellSize > 20) {
             mapCanvas.setWidth(cols * cellSize + cellMargin);
             mapCanvas.setHeight(rows * cellSize + cellMargin);
 
@@ -129,6 +130,7 @@ public class MapRenderer {
             }
         }
 
+        graphics.setFill(Color.web("#6E5034"));
         for (Map.Entry<Vector2d, List<Animal>> entity : map.getAnimals().entrySet()) {
             Vector2d position = entity.getKey();
 
@@ -143,17 +145,18 @@ public class MapRenderer {
 
     private void drawMinimalAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y) {
         if (animals.size() == 1) {
-            graphics.setFill(Color.web("#6E5034"));
-            graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
+            graphics.fillOval(x + cellSize * (0.5/3.0), y + cellSize * (0.5/3.0), cellSize / 1.5, cellSize / 1.5);
         } else {
-            graphics.setFill(Color.web("#946131"));
-            graphics.fillRoundRect(
-                    x + cellSize * (0.5/3),
-                    y + cellSize * (0.5/3),
-                    cellSize / 1.5,
-                    cellSize / 1.5,
-                    cellSize/4.0,
-                    cellSize/4.0);
+            double cX = x + cellSize / 2/0;
+            double cY = y + cellSize / 2.0;
+            for (int i = 0; i < 3; i++) {
+                double angle = 2 * Math.PI * i / 3.0 - Math.PI/2.0;
+
+                double pX = cX + cellSize/4.0 * Math.cos(angle);
+                double pY = cY + cellSize/4.0  * Math.sin(angle);
+
+                graphics.fillOval(pX - cellSize/5.0, pY - cellSize/5.0, cellSize/2.5, cellSize/2.5);
+            }
         }
     }
 
@@ -173,8 +176,32 @@ public class MapRenderer {
                     (cellSize-cellMargin)
             );
             graphics.restore();
+            drawHealthBar(graphics, animals.getFirst(),cX,cY);
         } else {
+            graphics.drawImage(
+                    animalsImage,
+                    x,
+                    y,
+                    (cellSize-cellMargin),
+                    (cellSize-cellMargin)
+            );
         }
+    }
+
+    private void drawHealthBar(GraphicsContext graphics, Animal animal, double cX, double cY) {
+        double w = cellSize / 1.5;
+        double h = cellSize / 8.0;
+
+        graphics.setFill(Color.WHITE);
+        graphics.fillRoundRect(cX - w/2, cY-cellSize/2.5, w, h, h, h);
+
+        double w2 = cellSize / 1.6;
+        double h2 = cellSize / 12.0;
+
+        double w3 = w2 * ((double) animal.getEnergy() /animal.getMaxEnergy());
+
+        graphics.setFill(Color.GREEN);
+        graphics.fillRoundRect(cX - w2/2, cY-cellSize/2.5 + (h-h2)/2.0, w3, h2, h2, h2);
     }
 
     private void drawBackground(GraphicsContext graphics, Boundary boundary, Color color, boolean minimal) {

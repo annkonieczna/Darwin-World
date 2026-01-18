@@ -36,7 +36,8 @@ public class Simulation implements Runnable {
             Animal animal = new Animal(
                     map.randomPositionFromMap(),
                     config.startEnergy(),
-                    config.genomeLength()
+                    config.genomeLength(),
+                    config.maxAnimalEnergy()
             );
             animals.add(animal);
             map.placeAnimal(animal);
@@ -62,7 +63,8 @@ public class Simulation implements Runnable {
                 2,
                 1,
                 3,
-                10
+                10,
+                100
         ));
     }
 

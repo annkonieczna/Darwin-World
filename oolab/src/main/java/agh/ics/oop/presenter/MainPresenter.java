@@ -30,7 +30,8 @@ public class MainPresenter {
             minimumEnergyForReproductionInput,
             minMutationInput,
             maxMutationInput,
-            genomeLengthInput;
+            genomeLengthInput,
+            maxAnimalEnergy;
 
     @FXML
     public void initialize() {
@@ -49,6 +50,8 @@ public class MainPresenter {
         setupIntegerValidation(genomeLengthInput, 1, 100);
         setupIntegerValidation(minMutationInput, 0, 100);
         setupIntegerValidation(maxMutationInput, 0, 100);
+        setupIntegerValidation(maxAnimalEnergy, 1, 1000);
+
 
 //        !!!for tests
         onStartClicked();
@@ -176,7 +179,8 @@ public class MainPresenter {
                 Integer.parseInt(minimumEnergyForReproductionInput.getText()),
                 Integer.parseInt(minMutationInput.getText()),
                 Integer.parseInt(maxMutationInput.getText()),
-                Integer.parseInt(genomeLengthInput.getText())
+                Integer.parseInt(genomeLengthInput.getText()),
+                Integer.parseInt(maxAnimalEnergy.getText())
         );
     }
 }
