@@ -45,7 +45,7 @@ public class MapRenderer {
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
 
-        if (cellSize > 111) {
+        if (cellSize > 3) {
             mapCanvas.setWidth(cols * cellSize + cellMargin);
             mapCanvas.setHeight(rows * cellSize + cellMargin);
 
@@ -129,7 +129,6 @@ public class MapRenderer {
             }
         }
 
-        graphics.setFill(Color.web("#6E5034"));
         for (Map.Entry<Vector2d, List<Animal>> entity : map.getAnimals().entrySet()) {
             Vector2d position = entity.getKey();
 
@@ -143,14 +142,37 @@ public class MapRenderer {
     }
 
     private void drawMinimalAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y) {
-        graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
-        if (animals.size() > 1) {
-            graphics.fillText(String.valueOf(animals.size()), x + cellSize / 2, y + cellSize / 2);
+        if (animals.size() == 1) {
+            graphics.setFill(Color.web("#6E5034"));
+            graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
+        } else {
+            graphics.setFill(Color.web("#946131"));
+            graphics.fillRoundRect(
+                    x + cellSize * (0.5/3),
+                    y + cellSize * (0.5/3),
+                    cellSize / 1.5,
+                    cellSize / 1.5,
+                    cellSize/4.0,
+                    cellSize/4.0);
         }
     }
 
     private void drawAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y) {
         if (animals.size() == 1) {
+            graphics.save();
+            double cX = x + (cellSize-cellMargin)/2.0;
+            double cY = y + (cellSize-cellMargin)/2.0;
+            int angle = animals.getFirst().getDirection().toAngle() + 90;
+            graphics.translate(cX, cY);
+            graphics.rotate(angle);
+            graphics.drawImage(
+                    animalImage,
+                    -(cellSize-cellMargin)/2.0,
+                    -(cellSize-cellMargin)/2.0,
+                    (cellSize-cellMargin),
+                    (cellSize-cellMargin)
+            );
+            graphics.restore();
         } else {
         }
     }
