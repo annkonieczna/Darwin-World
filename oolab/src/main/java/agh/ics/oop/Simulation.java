@@ -46,6 +46,7 @@ public class Simulation implements Runnable {
             );
             animals.add(animal);
             map.placeAnimal(animal);
+            registerGenome(animal);
             animalCount++;
         }
         spawnGrasses(config.startGrassAmount());
@@ -128,6 +129,7 @@ public class Simulation implements Runnable {
                 avgLifeTimeCount += animal.getAge();
                 deadAnimals.add(animal);
                 map.removeAnimal(animal);
+                unregisterGenome(animal);
                 animalCount--;
                 iter.remove();
             }
@@ -172,6 +174,7 @@ public class Simulation implements Runnable {
                     );
                     newAnimals.add(child);
                     map.placeAnimal(child);
+                    registerGenome(child);
                     animalCount++;
                 }
             }
@@ -231,6 +234,7 @@ public class Simulation implements Runnable {
         }
 
         freeFields = countFreeFields();
+        updateDominantGenomes();
 
         day++;
     }
@@ -244,6 +248,35 @@ public class Simulation implements Runnable {
             }
         }
         return result;
+    }
+
+    private void registerGenome(Animal animal) {
+        List<Integer> key = Arrays.stream(animal.getGenome()).boxed().toList();
+        genomeCount.put(key, genomeCount.getOrDefault(key, 0) + 1);
+    }
+
+    private void unregisterGenome(Animal animal) {
+        List<Integer> key = Arrays.stream(animal.getGenome()).boxed().toList();
+        int count = genomeCount.getOrDefault(key, 0);
+        if (count <= 1) {
+            genomeCount.remove(key);
+        } else {
+            genomeCount.put(key, count - 1);
+        }
+
+    }
+
+    private void updateDominantGenomes() {
+        if (genomeCount.isEmpty()) {
+            currDominantGenomes = Collections.emptySet();
+            return;
+        }
+        int maxCount = Collections.max(genomeCount.values());
+        currDominantGenomes = genomeCount.entrySet().stream()
+                .filter(e -> e.getValue() == maxCount)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
     }
 
     public WorldMap getWorldMap() {
