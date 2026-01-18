@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.scene.Parent;
 
 
 public class SimulationApp extends Application {
@@ -20,7 +19,7 @@ public class SimulationApp extends Application {
         Font.loadFont(getClass().getResourceAsStream("/fonts/Poppins-Regular.ttf"), 32);
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getClassLoader().getResource("main.fxml"));
+        loader.setLocation(getClass().getClassLoader().getResource("fxml/main.fxml"));
 
         BorderPane viewRoot = loader.load();
         configureStage(primaryStage, viewRoot);
@@ -31,7 +30,8 @@ public class SimulationApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Simulation launcher");
 
-        primaryStage.show();
+//        !!! for tests
+//        primaryStage.show();
 
         primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());

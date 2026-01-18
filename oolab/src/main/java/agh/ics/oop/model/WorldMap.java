@@ -32,5 +32,7 @@ public interface WorldMap extends MoveValidator {
 
     Boundary getBounds();
 
+    Boundary getJungleBoundary();
+
     UUID getId();
 }

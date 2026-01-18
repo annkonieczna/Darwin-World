@@ -1,4 +1,4 @@
-package agh.ics.oop.presenter;
+package agh.ics.oop.renderer;
 
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.util.Boundary;
@@ -28,6 +28,7 @@ public class MapRenderer {
 
         int mapCols = boundary.upperRight().x() - boundary.lowerLeft().x() + 1;
         int mapRows = boundary.upperRight().y() - boundary.lowerLeft().y() + 1;
+        System.out.println("mapRows: " + mapRows);
 
         int cols = mapCols + 1;
         int rows = mapRows + 1;
@@ -39,17 +40,21 @@ public class MapRenderer {
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
 
-        if (cellSize > 18) {
+        if (cellSize > 45) {
             mapCanvas.setWidth(cols * cellSize + cellMargin);
             mapCanvas.setHeight(rows * cellSize + cellMargin);
-            clearCanvas(graphics);
+
+            clearCanvas(graphics, Color.web("#85A947"));
+            drawBackground(graphics, map.getJungleBoundary(), mapRows, Color.WHITE, false);
             drawGrid(graphics, cols, rows);
             drawAxes(graphics, boundary, mapCols, mapRows);
             drawElements(graphics, map, boundary, false);
         } else {
             mapCanvas.setWidth(mapCols * cellSize);
             mapCanvas.setHeight(mapRows * cellSize);
-            clearCanvas(graphics);
+
+            clearCanvas(graphics, Color.web("#85A947"));
+            drawBackground(graphics, map.getJungleBoundary(), mapRows, Color.WHITE, true);
             drawElements(graphics, map, boundary, true);
         }
     }
@@ -134,8 +139,21 @@ public class MapRenderer {
         }
     }
 
-    private void clearCanvas(GraphicsContext graphics) {
-        graphics.setFill(Color.WHITE);
+    private void drawBackground(GraphicsContext graphics, Boundary boundary, int mapRows, Color color, boolean minimal) {
+        int offset = minimal ? 0 : 1;
+
+        double w = (boundary.upperRight().getX() - boundary.lowerLeft().getX()) * cellSize;
+        double h = (boundary.upperRight().getY() - boundary.lowerLeft().getY()) * cellSize;
+
+        double x = (boundary.lowerLeft().getX()+offset) * cellSize;
+        double y = (mapRows - boundary.upperRight().getY() + offset) * cellSize;
+
+        graphics.setFill(color);
+        graphics.fillRect(x, y, w, h);
+    }
+
+    private void clearCanvas(GraphicsContext graphics, Color color) {
+        graphics.setFill(color);
         graphics.fillRect(0, 0, mapCanvas.getWidth(), mapCanvas.getHeight());
     }
 

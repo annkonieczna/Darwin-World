@@ -30,8 +30,8 @@ public class Simulation implements Runnable {
 
     public Simulation(SimulationConfig config) {
         this.config = config;
-        this.map = new EarthMap(config.width(), config.height());
         this.randomPG = new GrassPositionGenerator(config.width(), config.height());
+        this.map = new EarthMap(config.width(), config.height(), this.randomPG.getJungle());
         for (int i = 0; i < config.startAnimalAmount(); i++) {
             Animal animal = new Animal(
                     map.randomPositionFromMap(),
