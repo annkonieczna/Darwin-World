@@ -89,6 +89,6 @@ public class GrassPositionGenerator implements ElementPositionGenerator {
     }
 
     public Boundary getJungle() {
-        return new Boundary(new Vector2d(0, jungleStart), new Vector2d(width, jungleEnd));
+        return new Boundary(new Vector2d(0, jungleStart), new Vector2d(width-1, jungleEnd-1));
     }
 }

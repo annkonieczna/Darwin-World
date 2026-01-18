@@ -8,14 +8,20 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.image.Image;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class MapRenderer {
     private final Canvas mapCanvas;
     private double cellSize = 50;
     private double cellMargin = 1;
+
+    private final Image grassNormalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/grass_normal.png")));
+    private final Image grassToxicImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/grass_toxic.png")));
+    private final Image animalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/pepu.png")));
 
     public MapRenderer(Canvas canvas) {
         mapCanvas = canvas;
@@ -28,7 +34,6 @@ public class MapRenderer {
 
         int mapCols = boundary.upperRight().x() - boundary.lowerLeft().x() + 1;
         int mapRows = boundary.upperRight().y() - boundary.lowerLeft().y() + 1;
-        System.out.println("mapRows: " + mapRows);
 
         int cols = mapCols + 1;
         int rows = mapRows + 1;
@@ -40,21 +45,23 @@ public class MapRenderer {
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
 
-        if (cellSize > 45) {
+        if (cellSize > 15) {
             mapCanvas.setWidth(cols * cellSize + cellMargin);
             mapCanvas.setHeight(rows * cellSize + cellMargin);
 
-            clearCanvas(graphics, Color.web("#85A947"));
-            drawBackground(graphics, map.getJungleBoundary(), mapRows, Color.WHITE, false);
-            drawGrid(graphics, cols, rows);
+            clearCanvas(graphics, Color.WHITE);
+            drawBackground(graphics, boundary, Color.web("#85A947"), false);
+            drawBackground(graphics, reverseBoundary(map.getJungleBoundary(), false, mapRows), Color.web("#3E7B27"), false);
+            //!!! for tests
+//            drawGrid(graphics, cols, rows);
             drawAxes(graphics, boundary, mapCols, mapRows);
             drawElements(graphics, map, boundary, false);
         } else {
             mapCanvas.setWidth(mapCols * cellSize);
             mapCanvas.setHeight(mapRows * cellSize);
 
-            clearCanvas(graphics, Color.web("#85A947"));
-            drawBackground(graphics, map.getJungleBoundary(), mapRows, Color.WHITE, true);
+            drawBackground(graphics, boundary, Color.web("#85A947"), true);
+            drawBackground(graphics, reverseBoundary(map.getJungleBoundary(), false, mapRows), Color.web("#3E7B27"), true);
             drawElements(graphics, map, boundary, true);
         }
     }
@@ -102,51 +109,64 @@ public class MapRenderer {
 
     private void drawElements(GraphicsContext graphics, WorldMap map, Boundary boundary, boolean minimal) {
         int offset = minimal ? 0 : 1;
+        graphics.setImageSmoothing(false);
 
         for (Map.Entry<Vector2d, Grass> entity : map.getGrasses().entrySet()) {
             Vector2d position = entity.getKey();
             Grass grass = entity.getValue();
-            if (grass.isToxic()) {
-                configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.BROWN);
-            } else {
-                configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.GREEN);
-            }
 
             double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
             double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
 
             if (minimal) {
+                if (grass.isToxic()) graphics.setFill(Color.RED);
+                else graphics.setFill(Color.LIGHTGREEN);
                 graphics.fillOval(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
             } else {
-                graphics.fillText(grass.toString(), x + cellSize / 2, y + cellSize / 2);
+                if (grass.isToxic()) graphics.drawImage(grassToxicImage, x, y, cellSize, cellSize);
+                else graphics.drawImage(grassNormalImage, x, y, cellSize, cellSize);
             }
         }
 
-        configureFont(graphics, (int) cellSize/2, "Poppins Regular", Color.RED);
         for (Map.Entry<Vector2d, List<Animal>> entity : map.getAnimals().entrySet()) {
             Vector2d position = entity.getKey();
-            for (Animal element: entity.getValue()) {
 
-                double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
-                double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
+            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin /2;
+            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin /2;
 
-                if (minimal) {
+            drawAnimals(graphics, entity.getValue(), x, y, minimal);
+        }
+        graphics.setImageSmoothing(true);
+    }
+
+    private void drawAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y, boolean minimal) {
+        if (animals.size() == 1) {
+            if (minimal) {
+                graphics.setFill(Color.BROWN);
+                graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
+            } else {
+                graphics.drawImage(animalImage, x, y, cellSize, cellSize);
+            }
+        } else {
+            if (minimal) {
+                graphics.setFill(Color.BROWN);
+                for (int i = 0; i < animals.size(); i++) {
                     graphics.fillOval(x + cellSize * (0.5/3), y + cellSize * (0.5/3), cellSize / 1.5, cellSize / 1.5);
-                } else {
-                    graphics.fillText(element.toString(), x + cellSize / 2, y + cellSize / 2);
                 }
+            } else {
+                graphics.drawImage(animalImage, x, y, cellSize, cellSize);
             }
         }
     }
 
-    private void drawBackground(GraphicsContext graphics, Boundary boundary, int mapRows, Color color, boolean minimal) {
+    private void drawBackground(GraphicsContext graphics, Boundary boundary, Color color, boolean minimal) {
         int offset = minimal ? 0 : 1;
 
-        double w = (boundary.upperRight().getX() - boundary.lowerLeft().getX()) * cellSize;
-        double h = (boundary.upperRight().getY() - boundary.lowerLeft().getY()) * cellSize;
+        double w = (boundary.upperRight().getX() - boundary.lowerLeft().getX()+1) * cellSize;
+        double h = (boundary.upperRight().getY() - boundary.lowerLeft().getY()+1) * cellSize;
 
         double x = (boundary.lowerLeft().getX()+offset) * cellSize;
-        double y = (mapRows - boundary.upperRight().getY() + offset) * cellSize;
+        double y = (boundary.lowerLeft().getY()+offset) * cellSize;
 
         graphics.setFill(color);
         graphics.fillRect(x, y, w, h);
@@ -162,5 +182,28 @@ public class MapRenderer {
         graphics.setTextBaseline(VPos.CENTER);
         graphics.setFont(new Font(fontWeight, size));
         graphics.setFill(color);
+    }
+
+    private Boundary reverseBoundary(Boundary boundary, boolean horizontal, int value) {
+        Vector2d lowerLeft = boundary.lowerLeft();
+        Vector2d upperRight = boundary.upperRight();
+
+        if (horizontal) {
+            int newX1 = (value - 1) - upperRight.getX();
+            int newX2 = (value - 1) - lowerLeft.getX();
+
+            return new Boundary(
+                    new Vector2d(newX1, lowerLeft.getY()),
+                    new Vector2d(newX2, upperRight.getY())
+            );
+        } else {
+            int newY1 = (value - 1) - upperRight.getY();
+            int newY2 = (value - 1) - lowerLeft.getY();
+
+            return new Boundary(
+                    new Vector2d(lowerLeft.getX(), newY1),
+                    new Vector2d(upperRight.getX(), newY2)
+            );
+        }
     }
 }
