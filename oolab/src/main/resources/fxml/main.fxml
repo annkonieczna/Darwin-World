@@ -7,71 +7,88 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.MainPresenter"
-            minWidth="600" minHeight="640">
+            minWidth="700" minHeight="600">
     <center>
-        <VBox spacing="10" alignment="CENTER">
-            <padding>
-                <Insets top="5" right="10" bottom="5" left="10"/>
-            </padding>
-            <GridPane hgap="10" vgap="10" alignment="CENTER">
-                <Label text="Map Width:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <TextField fx:id="widthInput" text="100" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <HBox alignment="CENTER">
+            <VBox spacing="10" alignment="CENTER">
+                <padding>
+                    <Insets top="5" right="10" bottom="5" left="10"/>
+                </padding>
+                <GridPane hgap="10" vgap="10" alignment="CENTER">
+                    <Label text="Map Width:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="widthInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                <Label text="Map Height:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <TextField fx:id="heightInput" text="100" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <Label text="Map Height:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="heightInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                <Label text="Start Grass Amount:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <TextField fx:id="startGrassInput" text="1000" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                    <Label text="Start Grass Amount:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <TextField fx:id="startGrassInput" text="20" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                <Label text="Start Animal Amount:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <TextField fx:id="startAnimalInput" text="2000" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                    <Label text="Start Animal Amount:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <TextField fx:id="startAnimalInput" text="20" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-                <Label text="Daily Growing Grass:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <TextField fx:id="growingGrassInput" text="500" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    <Label text="Daily Growing Grass:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                    <TextField fx:id="growingGrassInput" text="5" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-                <Label text="Energy from Normal Grass:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-                <TextField fx:id="energyFromGrassInput" text="5" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                    <Label text="Energy from Normal Grass:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                    <TextField fx:id="energyFromGrassInput" text="5" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
 
-                <Label text="Max Animal Energy:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-                <TextField fx:id="maxAnimalEnergy" text="50" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                    <Label text="Max Animal Energy:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                    <TextField fx:id="maxAnimalEnergy" text="50" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
 
-                <Label text="Start Energy:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
-                <TextField fx:id="startEnergyInput" text="20" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                    <Label text="Start Energy:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                    <TextField fx:id="startEnergyInput" text="20" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
 
-                <Label text="Move Energy Cost:" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
-                <TextField fx:id="moveEnergyCostInput" text="1" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+                    <Label text="Move Energy Cost:" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+                    <TextField fx:id="moveEnergyCostInput" text="1" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
 
-                <Label text="Reproduction Cost:" GridPane.columnIndex="0" GridPane.rowIndex="9"/>
-                <TextField fx:id="reproductionEnergyCostInput" text="5" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+                    <Label text="Reproduction Cost:" GridPane.columnIndex="0" GridPane.rowIndex="9"/>
+                    <TextField fx:id="reproductionEnergyCostInput" text="5" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
 
-                <Label text="Min Energy to Reproduce:" GridPane.columnIndex="0" GridPane.rowIndex="10"/>
-                <TextField fx:id="minimumEnergyForReproductionInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="10"/>
+                    <Label text="Min Energy to Reproduce:" GridPane.columnIndex="0" GridPane.rowIndex="10"/>
+                    <TextField fx:id="minimumEnergyForReproductionInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="10"/>
 
-                <Label text="Min Mutations:" GridPane.columnIndex="0" GridPane.rowIndex="11"/>
-                <TextField fx:id="minMutationInput" text="0" GridPane.columnIndex="1" GridPane.rowIndex="11"/>
+                    <Label text="Min Mutations:" GridPane.columnIndex="0" GridPane.rowIndex="11"/>
+                    <TextField fx:id="minMutationInput" text="0" GridPane.columnIndex="1" GridPane.rowIndex="11"/>
 
-                <Label text="Max Mutations:" GridPane.columnIndex="0" GridPane.rowIndex="12"/>
-                <TextField fx:id="maxMutationInput" text="3" GridPane.columnIndex="1" GridPane.rowIndex="12"/>
+                    <Label text="Max Mutations:" GridPane.columnIndex="0" GridPane.rowIndex="12"/>
+                    <TextField fx:id="maxMutationInput" text="3" GridPane.columnIndex="1" GridPane.rowIndex="12"/>
 
-                <Label text="Genome Length:" GridPane.columnIndex="0" GridPane.rowIndex="13"/>
-                <TextField fx:id="genomeLengthInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="13"/>
-            </GridPane>
+                    <Label text="Genome Length:" GridPane.columnIndex="0" GridPane.rowIndex="13"/>
+                    <TextField fx:id="genomeLengthInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="13"/>
+                </GridPane>
+                <Button text="Start" onAction="#onStartClicked"/>
+            </VBox>
+            <VBox spacing="10" alignment="CENTER">
+                <padding>
+                    <Insets top="5" right="10" bottom="5" left="10"/>
+                </padding>
 
-            <HBox alignment="CENTER">
-                <Label text="Toxic grass: "/>
-                <CheckBox fx:id="isToxicCheckBox" selected="true" onAction="#onToxicCheckBox"/>
-            </HBox>
+                <HBox alignment="CENTER">
+                    <Label text="Toxic grass: "/>
+                    <CheckBox fx:id="isToxicCheckBox" selected="true" onAction="#onToxicCheckBox"/>
+                </HBox>
 
-            <GridPane hgap="10" vgap="10" alignment="CENTER">
-                <Label text="Toxic Grass Chance (%):" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <TextField fx:id="toxicChanceInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <GridPane hgap="10" vgap="10" alignment="CENTER">
+                    <Label text="Toxic Grass Chance (%):" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="toxicChanceInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                <Label text="Lose energy from Toxic Grass:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <TextField fx:id="energyFromToxicInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-            </GridPane>
+                    <Label text="Lose energy from Toxic Grass:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="energyFromToxicInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                </GridPane>
 
-            <Button text="Start" onAction="#onStartClicked"/>
-        </VBox>
+                <VBox spacing="10" alignment="CENTER">
+                    <padding>
+                        <Insets top="50" right="10" bottom="5" left="10"/>
+                    </padding>
+                    <ComboBox fx:id="presetsComboBox" onAction="#onPresetSelected"/>
+                    <HBox spacing="10" alignment="CENTER">
+                        <Button text="Save" onAction="#onSaveClicked"/>
+                        <Button text="Load" onAction="#onLoadClicked"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </HBox>
     </center>
 
 </BorderPane>

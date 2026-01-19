@@ -24,9 +24,9 @@ public class Simulation implements Runnable {
     private boolean running = true;
     private int runningSpeed = 500;
 
-    private int avgChildAmount;
-    private int avgEnergy;
-    private int avgLifeTime;
+    private float avgChildAmount;
+    private float avgEnergy;
+    private float avgLifeTime;
     private int avgLifeTimeCount;
     private int freeFields;
     private int day = 0;
@@ -51,9 +51,9 @@ public class Simulation implements Runnable {
             animals.add(animal);
             map.placeAnimal(animal);
             registerGenome(animal);
-            updateStats();
             animalCount++;
         }
+        updateStats();
         spawnGrasses(config.startGrassAmount());
     }
 
@@ -75,7 +75,8 @@ public class Simulation implements Runnable {
                 1,
                 3,
                 10,
-                100
+                100,
+                true
         ));
     }
 
@@ -225,7 +226,7 @@ public class Simulation implements Runnable {
             if (position != null) {
                 Grass grass = new Grass(
                         position,
-                        random.nextInt(100) < config.toxicGrassChance()
+                        random.nextInt(100) < config.toxicGrassChance() && config.toxicOn()
                 );
                 map.placeGrass(grass);
                 grassCount++;
@@ -247,7 +248,7 @@ public class Simulation implements Runnable {
 
         avgLifeTime = 0;
         if (!deadAnimals.isEmpty()) {
-            avgLifeTime = avgLifeTimeCount / deadAnimals.size();
+            avgLifeTime = (float) avgLifeTimeCount / deadAnimals.size();
         }
 
         freeFields = countFreeFields();

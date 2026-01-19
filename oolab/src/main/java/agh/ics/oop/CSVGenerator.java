@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
@@ -18,10 +19,10 @@ public class CSVGenerator implements StatsChangeListener {
     public CSVGenerator(String fileName) {
         String directoryName = "csvFiles";
         try {
-            Files.createDirectories(Paths.get(directoryName));
+            Files.createDirectories(Path.of(directoryName));
             this.fileName = String.format("%s/sim_%s.csv", directoryName, fileName);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Could not create folder",e);
         }
         initialize();
     }
@@ -41,7 +42,7 @@ public class CSVGenerator implements StatsChangeListener {
         try (PrintWriter writer = new PrintWriter(fileName)) {
             writer.println(header);
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Could not save head: " + e.getMessage());
         }
     }
 
@@ -54,7 +55,7 @@ public class CSVGenerator implements StatsChangeListener {
                         .collect(Collectors.joining("")))
                 .collect(Collectors.joining(" | "));
 
-        String data = String.format("%d;%d;%d;%d;%d;%d;%d;%d;\"%s\"",
+        String data = String.format("%f;%f;%f;%d;%d;%d;%d;%d;\"%s\"",
                 stats.avgChildAmount(),
                 stats.avgEnergy(),
                 stats.avgLifeTime(),
@@ -69,7 +70,7 @@ public class CSVGenerator implements StatsChangeListener {
         try (PrintWriter writer = new PrintWriter(new FileWriter(fileName, true))) {
             writer.println(data);
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Could not save data: " + e.getMessage());
         }
     }
 
