@@ -18,10 +18,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.geometry.VPos;
+import agh.ics.oop.model.util.TrackedStats;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollPane;
 
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SimulationPresenter implements MapChangeListener {
@@ -45,6 +50,21 @@ public class SimulationPresenter implements MapChangeListener {
     private Slider simSpeedScroll;
     @FXML
     private VBox dominantGenotypesBox;
+    @FXML
+    private VBox statsCheckboxBox;
+    @FXML
+    private VBox chartsBox;
+    @FXML
+    private LineChart<Number, Number> statsChart;
+    @FXML
+    private VBox mapContainer;
+    @FXML
+    private ScrollPane mapScrollPane;
+
+
+
+    private final Map<TrackedStats, XYChart.Series<Number, Number>> chartSeries = new HashMap<>();
+    private final Map<TrackedStats, List<XYChart.Data<Number, Number>>> history = new EnumMap<>(TrackedStats.class);
 
     private double windowWidth;
     private double windowHeight;
@@ -59,7 +79,13 @@ public class SimulationPresenter implements MapChangeListener {
         this.renderer = new MapRenderer(mapCanvas);
 
         setListeners();
+        setupStatCheckboxes();
+        for (TrackedStats stat : TrackedStats.values()) {
+            history.put(stat, new ArrayList<>());
+        }
+
     }
+
 
     private void setListeners() {
         simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -70,24 +96,24 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     public void setWindowSize(double width, double height) {
-        windowWidth = width;
-        windowHeight = height;
-
-        if (sim != null) {
+        refreshMap();
+    }
+    private void refreshMap() {
+        if (sim != null && mapCanvas != null) {
             WorldMap map = sim.getWorldMap();
-            synchronized (map) {
-                renderer.drawMap(map, windowWidth, windowHeight);
-            }
+            double areaWidth = mapContainer.getWidth();
+            double areaHeight = mapContainer.getHeight();
+
+            if (areaWidth <= 0) areaWidth = 600;
+            if (areaHeight <= 0) areaHeight = 600;
+
+            renderer.drawMap(map, areaWidth, areaHeight);
         }
     }
 
     @Override
     public void mapChanged(WorldMap worldMap) {
-        Platform.runLater(() -> {
-            synchronized (worldMap) {
-                renderer.drawMap(worldMap, windowWidth, windowHeight);
-            }
-        });
+        Platform.runLater(this::refreshMap);
     }
 
     //stats
@@ -114,6 +140,26 @@ public class SimulationPresenter implements MapChangeListener {
                 label.getStyleClass().add("fontSmall");
                 dominantGenotypesBox.getChildren().add(label);
             }
+            for (TrackedStats stat : TrackedStats.values()) {
+                XYChart.Data<Number, Number> newData = new XYChart.Data<>(stats.day(), stats.getStatValue(stat));
+
+                history.get(stat).add(newData);
+                if (history.get(stat).size() > 300) {
+                    history.get(stat).remove(0);
+                }
+
+                XYChart.Series<Number, Number> series = chartSeries.get(stat);
+                if (series != null) {
+
+                    series.getData().add(newData);
+
+
+                    if (series.getData().size() > 300) {
+                        series.getData().remove(0);
+                    }
+                }
+            }
+
         });
     }
 
@@ -149,6 +195,44 @@ public class SimulationPresenter implements MapChangeListener {
     public void terminateSimulation() {
         if (simulationThread != null) {
             simulationThread.interrupt();
+        }
+    }
+    private void setupStatCheckboxes() {
+        for (TrackedStats stat : TrackedStats.values()) {
+            CheckBox cb = new CheckBox(stat.getLabel());
+
+            cb.setOnAction(e -> {
+                if (cb.isSelected()) {
+                    addSeries(stat);
+                } else {
+                    removeSeries(stat);
+                }
+            });
+
+            statsCheckboxBox.getChildren().add(cb);
+        }
+    }
+
+    private void addSeries(TrackedStats stat) {
+        if (!chartSeries.containsKey(stat)) {
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+            series.setName(stat.getLabel());
+
+            List<XYChart.Data<Number, Number>> currentHistory = history.get(stat);
+            for(XYChart.Data<Number, Number> data : currentHistory) {
+                series.getData().add(new XYChart.Data<>(data.getXValue(), data.getYValue()));
+            }
+
+            chartSeries.put(stat, series);
+            statsChart.getData().add(series);
+        }
+    }
+
+
+    private void removeSeries(TrackedStats stat) {
+        XYChart.Series<Number, Number> series = chartSeries.remove(stat);
+        if (series != null) {
+            statsChart.getData().remove(series);
         }
     }
 
