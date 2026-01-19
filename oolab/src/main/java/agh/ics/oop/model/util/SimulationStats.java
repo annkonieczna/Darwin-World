@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 public record SimulationStats(
-        int avgChildAmount,
-        int avgEnergy,
-        int avgLifeTime,
+        float avgChildAmount,
+        float avgEnergy,
+        float avgLifeTime,
         int freeFields,
         int day,
         int animalCount,

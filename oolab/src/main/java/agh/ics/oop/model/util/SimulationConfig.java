@@ -16,6 +16,7 @@ public record SimulationConfig(
         int minMutation,    //<=maxMutation
         int maxMutation,    //<=genomeLength
         int genomeLength,
-        int maxAnimalEnergy
+        int maxAnimalEnergy,
+        boolean toxicOn
 ) {
 }

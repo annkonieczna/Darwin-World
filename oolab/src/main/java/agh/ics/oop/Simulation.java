@@ -11,20 +11,22 @@ import java.util.stream.Collectors;
 public class Simulation implements Runnable {
     private final List<Animal> animals = new ArrayList<>();
     private final List<Animal> deadAnimals = new ArrayList<>();
-    private final List<MapChangeListener> listeners = new ArrayList<>();
+    private final List<MapChangeListener> mapListeners = new ArrayList<>();
+    private final List<StatsChangeListener> statsListeners = new ArrayList<>();
     private final Map<List<Integer>, Integer> genomeCount = new HashMap<>();
     private Set<List<Integer>> currDominantGenomes = new HashSet<>();
     private final WorldMap map;
     private final GrassPositionGenerator randomPG;
     private final Random random = new Random();
+    private final UUID simID = UUID.randomUUID();
 
     private final SimulationConfig config;
     private boolean running = true;
     private int runningSpeed = 500;
 
-    private int avgChildAmount;
-    private int avgEnergy;
-    private int avgLifeTime;
+    private float avgChildAmount;
+    private float avgEnergy;
+    private float avgLifeTime;
     private int avgLifeTimeCount;
     private int freeFields;
     private int day = 0;
@@ -49,9 +51,9 @@ public class Simulation implements Runnable {
             animals.add(animal);
             map.placeAnimal(animal);
             registerGenome(animal);
-            updateDominantGenomes();
             animalCount++;
         }
+        updateStats();
         spawnGrasses(config.startGrassAmount());
     }
 
@@ -73,34 +75,43 @@ public class Simulation implements Runnable {
                 1,
                 3,
                 10,
-                100
+                100,
+                true
         ));
     }
 
-    public void registerListener(MapChangeListener listener) {
-        listeners.add(listener);
+    public void registerMapListener(MapChangeListener mapListener) {mapListeners.add(mapListener);}
+    public void removeMapListener(MapChangeListener mapListener) {
+        mapListeners.remove(mapListener);
     }
 
-    public void removeListener(MapChangeListener listener) {
-        listeners.remove(listener);
+    public void registerStatsListener(StatsChangeListener statsListener) {
+        statsListeners.add(statsListener);
+    }
+    public void removeStatsListener(StatsChangeListener statsListener) {
+        statsListeners.remove(statsListener);
     }
 
-    public void notifyListeners() {
-        for (MapChangeListener listener : listeners) {
-            Set<List<Integer>> dominantCopy = new HashSet<>(currDominantGenomes);
-            listener.statsChanged(new SimulationStats(
-                    avgChildAmount,
-                    avgEnergy,
-                    avgLifeTime,
-                    freeFields,
-                    day,
-                    animalCount,
-                    grassCount,
-                    dominantAmount,
-                    dominantCopy
-                    ));
+    public synchronized void notifyListeners() {
+        SimulationStats stats = new SimulationStats(
+                avgChildAmount,
+                avgEnergy,
+                avgLifeTime,
+                freeFields,
+                day,
+                animalCount,
+                grassCount,
+                dominantAmount,
+                new HashSet<>(currDominantGenomes));
+
+        for (StatsChangeListener listener : statsListeners) {
+            listener.statsChanged(stats);
+        }
+
+        for (MapChangeListener listener : mapListeners) {
             listener.mapChanged(map);
         }
+
     }
 
     @Override
@@ -216,7 +227,7 @@ public class Simulation implements Runnable {
             if (position != null) {
                 Grass grass = new Grass(
                         position,
-                        random.nextInt(100) < config.toxicGrassChance()
+                        random.nextInt(100) < config.toxicGrassChance() && config.toxicOn()
                 );
                 map.placeGrass(grass);
                 grassCount++;
@@ -238,7 +249,7 @@ public class Simulation implements Runnable {
 
         avgLifeTime = 0;
         if (!deadAnimals.isEmpty()) {
-            avgLifeTime = avgLifeTimeCount / deadAnimals.size();
+            avgLifeTime = (float) avgLifeTimeCount / deadAnimals.size();
         }
 
         freeFields = countFreeFields();
@@ -303,5 +314,9 @@ public class Simulation implements Runnable {
 
     public void setRunningSpeed(int speed) {
         runningSpeed = speed;
+    }
+
+    public UUID getSimID() {
+        return simID;
     }
 }
