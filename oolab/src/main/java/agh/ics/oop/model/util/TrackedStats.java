@@ -1,19 +1,29 @@
 package agh.ics.oop.model.util;
 
+import javafx.scene.paint.Color;
+import java.util.function.ToIntFunction;
+
 public enum TrackedStats {
-    AVG_ENERGY("Avg Energy"),
-    AVG_LIFETIME("Avg Life Time"),
-    ANIMAL_COUNT("Animal Count"),
-    GRASS_COUNT("Grass Count");
+
+    ANIMALS("Animals", Color.RED, SimulationStats::animalCount),
+    GRASS("Grass", Color.GREEN, SimulationStats::grassCount),
+    AVG_LIFETIME("Avg lifetime", Color.PURPLE, SimulationStats::avgLifeTime),
+    AVG_ENERGY("Avg energy", Color.ORANGE, SimulationStats::avgEnergy);
 
     private final String label;
+    private final Color color;
+    private final ToIntFunction<SimulationStats> extractor;
 
-    TrackedStats(String label) {
+    TrackedStats(String label, Color color, ToIntFunction<SimulationStats> extractor) {
         this.label = label;
+        this.color = color;
+        this.extractor = extractor;
     }
 
-    public String getLabel() {
-        return label;
+    public String getLabel() { return label; }
+    public Color getColor() { return color; }
+
+    public int extract(SimulationStats stats) {
+        return extractor.applyAsInt(stats);
     }
 }
-
