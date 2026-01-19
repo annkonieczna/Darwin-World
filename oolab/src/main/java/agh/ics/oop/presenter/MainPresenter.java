@@ -1,5 +1,6 @@
 package agh.ics.oop.presenter;
 
+import agh.ics.oop.CSVGenerator;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.util.SimulationConfig;
 import javafx.fxml.FXML;
@@ -128,8 +129,12 @@ public class MainPresenter {
             SimulationPresenter presenter = loader.getController();
 
             Simulation sim = new Simulation(makeConfig());
-            sim.registerListener(presenter);
+            sim.registerMapListener(presenter);
+            sim.registerStatsListener(presenter);
             presenter.setupPresenter(sim);
+
+            CSVGenerator csvGenerator = new CSVGenerator(String.valueOf(sim.getSimID()));
+            sim.registerStatsListener(csvGenerator);
 
             Stage stage = new Stage();
             configureStage(stage, viewRoot, presenter);
