@@ -14,12 +14,4 @@ public record SimulationStats(
         int dominantAmount,
         Set<List<Integer>> dominantGenotypes
 ) {
-    public int getStatValue(TrackedStats stat) {
-        return switch (stat) {
-            case AVG_ENERGY -> avgEnergy();
-            case AVG_LIFETIME -> avgLifeTime();
-            case ANIMAL_COUNT -> animalCount();
-            case GRASS_COUNT -> grassCount();
-        };
-    }
 }
