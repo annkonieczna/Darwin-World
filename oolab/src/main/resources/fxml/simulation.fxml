@@ -90,33 +90,71 @@
     </left>
     <bottom>
         <VBox fx:id="chartPanel"
-              spacing="8"
-              alignment="CENTER"
-              styleClass="defaultBox"
-              prefHeight="260"
-              maxHeight="260"
-              minHeight="260">
+              spacing="10"
+              styleClass="defaultBox">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
 
             <Label text="Tracked statistics" styleClass="fontMedium"/>
 
-            <VBox fx:id="statsCheckboxBox" spacing="6"/>
+            <HBox spacing="16" VBox.vgrow="ALWAYS">
 
-            <LineChart fx:id="statsChart"
-                       animated="false"
-                       legendVisible="true"
-                       createSymbols="false"
-                       prefHeight="180"
-                       maxHeight="180">
-                <xAxis>
-                    <NumberAxis label="Day"/>
-                </xAxis>
-                <yAxis>
-                    <NumberAxis label="Value"/>
-                </yAxis>
-            </LineChart>
+                <!-- LEFT PANEL: CHECKBOXES + LEGEND -->
+                <VBox spacing="12"
+                      minWidth="220"
+                      maxWidth="220">
 
+                    <!-- CHECKBOXES -->
+                    <VBox>
+                        <Label text="Select stats:" styleClass="fontSmall"/>
+                        <VBox fx:id="statsCheckboxBox"
+                              spacing="6">
+                            <padding>
+                                <Insets top="6" right="6" bottom="6" left="6"/>
+                            </padding>
+                        </VBox>
+
+                    </VBox>
+
+                    <!-- LEGEND -->
+                    <VBox spacing="6">
+                        <Label text="Legend:" styleClass="fontSmall"/>
+
+                        <!-- Example legend row -->
+                        <!-- Reszta generowana dynamicznie -->
+                        <VBox fx:id="statsLegendBox"
+                              spacing="6">
+                            <padding>
+                                <Insets top="6" right="6" bottom="6" left="6"/>
+                            </padding>
+                        </VBox>
+                    </VBox>
+
+                </VBox>
+
+                <!-- RIGHT PANEL: CHART -->
+                <LineChart fx:id="statsChart"
+                           animated="false"
+                           legendVisible="false"
+                           createSymbols="false"
+                           VBox.vgrow="ALWAYS"
+                           HBox.hgrow="ALWAYS">
+
+                    <xAxis>
+                        <NumberAxis label="Day"/>
+                    </xAxis>
+
+                    <yAxis>
+                        <NumberAxis label="Value"/>
+                    </yAxis>
+
+                </LineChart>
+
+            </HBox>
         </VBox>
     </bottom>
+
 
 
 </BorderPane>
