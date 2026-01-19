@@ -20,9 +20,7 @@ public class GrassPositionGenerator implements ElementPositionGenerator {
         this.width = width;
         this.height = height;
         this.jungleStart = (int) (height * 0.4);
-        System.out.println("jungleStart: " + jungleStart);
         this.jungleEnd = (int) (height * 0.6);
-        System.out.println("jungleEnd: " + jungleEnd);
         for(int x = 0; x < width; x++){
             for(int y = 0; y < height; y++){
                 Vector2d position = new Vector2d(x, y);

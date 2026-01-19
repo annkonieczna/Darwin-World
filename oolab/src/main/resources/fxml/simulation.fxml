@@ -52,15 +52,17 @@
                         <Label text="Avg. Child Count: " styleClass="fontMedium"/>
                         <Label fx:id="avgChildAmountLabel"/>
                     </HBox>
-                    <VBox styleClass="defaultBox" spacing="6" alignment="CENTER">
+                    <VBox styleClass="defaultBox" spacing="6" alignment="TOP_CENTER" minHeight="180">
 
-                        <Label text="Dominant Genotypes"
+                        <Label text="Dominant Genotypes (max:5)"
                                styleClass="fontMedium"/>
-                        <Rectangle fx:id="dominantColorBox"
-                                   width="12" height="12"
-                                   arcWidth="2" arcHeight="2" fill="BLUE"/>
+                        <Rectangle
+                                   width="60" height="12"
+                                   arcWidth="10" arcHeight="10" fill="#6bc1f2"/>
 
-                        <VBox fx:id="dominantGenotypesBox" alignment="CENTER"
+                        <VBox fx:id="dominantGenotypesBox"
+                              VBox.vgrow="ALWAYS"
+                              alignment="CENTER"
                               spacing="4"/>
 
                     </VBox>

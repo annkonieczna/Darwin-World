@@ -5,19 +5,20 @@ import agh.ics.oop.model.util.Boundary;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.image.Image;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class MapRenderer {
     private final Canvas mapCanvas;
     private double cellSize = 50;
     private double cellMargin = 1;
+    private Set<List<Integer>> dominantGenotypes = new HashSet<>();
 
     private final Image grassNormalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/grass_normal.png")));
     private final Image grassToxicImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/grass_toxic.png")));
@@ -130,12 +131,11 @@ public class MapRenderer {
             }
         }
 
-        graphics.setFill(Color.web("#6E5034"));
         for (Map.Entry<Vector2d, List<Animal>> entity : map.getAnimals().entrySet()) {
             Vector2d position = entity.getKey();
 
-            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin*offset /2;
-            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin*offset /2;
+            double x = (position.getX() - boundary.lowerLeft().getX() + offset) * cellSize + cellMargin*offset / 2.0;
+            double y = (boundary.upperRight().getY() - position.getY() + offset) * cellSize + cellMargin*offset / 2.0;
 
             if (minimal) drawMinimalAnimals(graphics, entity.getValue(), x, y);
             else drawAnimals(graphics, entity.getValue(), x, y);
@@ -144,12 +144,29 @@ public class MapRenderer {
     }
 
     private void drawMinimalAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y) {
+        graphics.setFill(Color.web("#6E5034"));
         if (animals.size() == 1) {
+            if (dominantGenotypes.contains(animals.getFirst().getGenome())) {
+                graphics.setFill(Color.web("#6bc1f2"));
+            }
             graphics.fillOval(x + cellSize * (0.5/3.0), y + cellSize * (0.5/3.0), cellSize / 1.5, cellSize / 1.5);
         } else {
-            double cX = x + cellSize / 2/0;
+            double cX = x + cellSize / 2.0;
             double cY = y + cellSize / 2.0;
+            int dominantCount = 0;
+            for (Animal animal : animals) {
+                if (dominantGenotypes.contains(animal.getGenome())){
+                    dominantCount++;
+                }
+            }
             for (int i = 0; i < 3; i++) {
+                if (dominantCount > 0) {
+                    graphics.setFill(Color.web("#6bc1f2"));
+                    dominantCount --;
+                } else {
+                    graphics.setFill(Color.web("#6E5034"));
+                }
+
                 double angle = 2 * Math.PI * i / 3.0 - Math.PI/2.0;
 
                 double pX = cX + cellSize/4.0 * Math.cos(angle);
@@ -161,30 +178,61 @@ public class MapRenderer {
     }
 
     private void drawAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y) {
+
+        DropShadow highlight = new DropShadow();
+        highlight.setColor(Color.web("#6bc1f2"));
+        highlight.setRadius(cellSize/4.0);
+        highlight.setSpread(0.5);
+
         if (animals.size() == 1) {
             graphics.save();
-            double cX = x + (cellSize-cellMargin)/2.0;
-            double cY = y + (cellSize-cellMargin)/2.0;
+
+            double cX = x + (cellSize - cellMargin) / 2.0;
+            double cY = y + (cellSize - cellMargin) / 2.0;
             int angle = animals.getFirst().getDirection().toAngle() + 90;
             graphics.translate(cX, cY);
             graphics.rotate(angle);
+
+            if (dominantGenotypes.contains(animals.getFirst().getGenome())) {
+                graphics.setEffect(highlight);
+            }
+
             graphics.drawImage(
                     animalImage,
-                    -(cellSize-cellMargin)/2.0,
-                    -(cellSize-cellMargin)/2.0,
-                    (cellSize-cellMargin),
-                    (cellSize-cellMargin)
+                    -(cellSize - cellMargin) / 2.0,
+                    -(cellSize - cellMargin) / 2.0,
+                    (cellSize - cellMargin),
+                    (cellSize - cellMargin)
             );
+
+            graphics.setEffect(null);
             graphics.restore();
-            drawHealthBar(graphics, animals.getFirst(),cX,cY);
+            drawHealthBar(graphics, animals.getFirst(), cX, cY);
         } else {
+            boolean dominant = false;
+            for (Animal animal : animals) {
+                if (dominantGenotypes.contains(animal.getGenome())) {
+                    dominant = true;
+                    break;
+                }
+            }
+
+            graphics.save();
+
+            if (dominant) {
+                graphics.setEffect(highlight);
+            }
+
             graphics.drawImage(
                     animalsImage,
                     x,
                     y,
-                    (cellSize-cellMargin),
-                    (cellSize-cellMargin)
+                    (cellSize - cellMargin),
+                    (cellSize - cellMargin)
             );
+
+            graphics.setEffect(null);
+            graphics.restore();
         }
     }
 
@@ -250,5 +298,10 @@ public class MapRenderer {
                     new Vector2d(upperRight.getX(), newY2)
             );
         }
+    }
+
+    public void setDominantGenotypes(Set<List<Integer>> genotypes) {
+        this.dominantGenotypes = genotypes;
+
     }
 }

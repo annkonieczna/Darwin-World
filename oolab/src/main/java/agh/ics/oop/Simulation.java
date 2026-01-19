@@ -48,6 +48,7 @@ public class Simulation implements Runnable {
             animals.add(animal);
             map.placeAnimal(animal);
             registerGenome(animal);
+            updateDominantGenomes();
             animalCount++;
         }
         spawnGrasses(config.startGrassAmount());
@@ -85,7 +86,6 @@ public class Simulation implements Runnable {
 
     public void notifyListeners() {
         for (MapChangeListener listener : listeners) {
-            listener.mapChanged(map);
             listener.statsChanged(new SimulationStats(
                     avgChildAmount,
                     avgEnergy,
@@ -95,6 +95,7 @@ public class Simulation implements Runnable {
                     animalCount,
                     grassCount,
                     currDominantGenomes));
+            listener.mapChanged(map);
         }
     }
 
@@ -152,7 +153,8 @@ public class Simulation implements Runnable {
         for (Map.Entry<Vector2d, List<Animal>> field : placedAnimals.entrySet()) {
             Grass grass = placedGrasses.get(field.getKey());
             if (grass != null) {
-                chooseBestAnimals(field.getValue(), 1).get(0).eatGrass(config.energyFromGrass(), grass.isToxic());
+                int amount = grass.isToxic() ? config.energyFromToxicGrass() : config.energyFromGrass();
+                chooseBestAnimals(field.getValue(), 1).get(0).eatGrass(amount, grass.isToxic());
                 map.removeGrass(grass);
                 randomPG.makePositionFree(grass);
                 grassCount--;
