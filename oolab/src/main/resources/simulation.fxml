@@ -8,6 +8,7 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.shape.Rectangle?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
@@ -18,7 +19,7 @@
         <Canvas fx:id="mapCanvas"/>
     </center>
     <left>
-        <VBox alignment="CENTER" minWidth="240" >
+        <VBox alignment="CENTER" minWidth="240">
             <VBox alignment="CENTER" spacing="20" styleClass="statsPanel">
                 <VBox alignment="CENTER" spacing="10">
                     <HBox styleClass="defaultBox">
@@ -51,6 +52,19 @@
                         <Label text="Avg. Child Count: " styleClass="fontMedium"/>
                         <Label fx:id="avgChildAmountLabel"/>
                     </HBox>
+                    <VBox styleClass="defaultBox" spacing="6" alignment="CENTER">
+
+                        <Label text="Dominant Genotypes"
+                               styleClass="fontMedium"/>
+                        <Rectangle fx:id="dominantColorBox"
+                                   width="12" height="12"
+                                   arcWidth="2" arcHeight="2" fill="BLUE"/>
+
+                        <VBox fx:id="dominantGenotypesBox" alignment="CENTER"
+                              spacing="4"/>
+
+                    </VBox>
+
                 </VBox>
                 <VBox alignment="CENTER" styleClass="defaultBox">
                     <HBox alignment="CENTER">

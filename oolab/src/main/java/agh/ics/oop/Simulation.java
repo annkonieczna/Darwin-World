@@ -6,11 +6,14 @@ import agh.ics.oop.model.util.SimulationConfig;
 import agh.ics.oop.model.util.SimulationStats;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Simulation implements Runnable {
     private final List<Animal> animals = new ArrayList<>();
     private final List<Animal> deadAnimals = new ArrayList<>();
     private final List<MapChangeListener> listeners = new ArrayList<>();
+    private final Map<List<Integer>, Integer> genomeCount = new HashMap<>();
+    private Set<List<Integer>> currDominantGenomes = new HashSet<>();
     private final WorldMap map;
     private final GrassPositionGenerator randomPG;
     private final Random random = new Random();
@@ -27,19 +30,23 @@ public class Simulation implements Runnable {
     private int day = 0;
     private int animalCount;
     private int grassCount;
+    private final List<Integer> resistancePattern;
 
     public Simulation(SimulationConfig config) {
         this.config = config;
         this.map = new EarthMap(config.width(), config.height());
         this.randomPG = new GrassPositionGenerator(config.width(), config.height());
+        this.resistancePattern = Genome.generate(config.genomeLength());
         for (int i = 0; i < config.startAnimalAmount(); i++) {
             Animal animal = new Animal(
                     map.randomPositionFromMap(),
                     config.startEnergy(),
-                    config.genomeLength()
+                    config.genomeLength(),
+                    resistancePattern
             );
             animals.add(animal);
             map.placeAnimal(animal);
+            registerGenome(animal);
             animalCount++;
         }
         spawnGrasses(config.startGrassAmount());
@@ -66,14 +73,16 @@ public class Simulation implements Runnable {
         ));
     }
 
-    public void registerListener(MapChangeListener listener){
+    public void registerListener(MapChangeListener listener) {
         listeners.add(listener);
     }
-    public void removeListener(MapChangeListener listener){
+
+    public void removeListener(MapChangeListener listener) {
         listeners.remove(listener);
     }
-    public void notifyListeners(){
-        for(MapChangeListener listener : listeners){
+
+    public void notifyListeners() {
+        for (MapChangeListener listener : listeners) {
             listener.mapChanged(map);
             listener.statsChanged(new SimulationStats(
                     avgChildAmount,
@@ -82,8 +91,8 @@ public class Simulation implements Runnable {
                     freeFields,
                     day,
                     animalCount,
-                    grassCount
-            ));
+                    grassCount,
+                    currDominantGenomes));
         }
     }
 
@@ -113,13 +122,14 @@ public class Simulation implements Runnable {
 
     private void removeDeadAnimals() {
         Iterator<Animal> iter = animals.iterator();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             Animal animal = iter.next();
-            if(animal.isDead()){
+            if (animal.isDead()) {
                 animal.setDeathDay(day);
                 avgLifeTimeCount += animal.getAge();
                 deadAnimals.add(animal);
                 map.removeAnimal(animal);
+                unregisterGenome(animal);
                 animalCount--;
                 iter.remove();
             }
@@ -159,10 +169,12 @@ public class Simulation implements Runnable {
                             toReproduce.get(1),
                             config.minMutation(),
                             config.maxMutation(),
-                            config.reproductionEnergyCost()
+                            config.reproductionEnergyCost(),
+                            resistancePattern
                     );
                     newAnimals.add(child);
                     map.placeAnimal(child);
+                    registerGenome(child);
                     animalCount++;
                 }
             }
@@ -177,7 +189,7 @@ public class Simulation implements Runnable {
 
         List<Animal> result = new ArrayList<>(allAnimals);
         Collections.shuffle(result);
-        Collections.sort(result, (a,b) ->{
+        Collections.sort(result, (a, b) -> {
             if (a.getEnergy() > b.getEnergy()) return -1;
             if (a.getEnergy() < b.getEnergy()) return 1;
             if (a.getAge() > b.getAge()) return -1;
@@ -222,6 +234,7 @@ public class Simulation implements Runnable {
         }
 
         freeFields = countFreeFields();
+        updateDominantGenomes();
 
         day++;
     }
@@ -229,12 +242,42 @@ public class Simulation implements Runnable {
     private int countFreeFields() {
         int result = 0;
         Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
-        for(Vector2d position : randomPG.getAllFreePositions()){
-            if(!placedAnimals.containsKey(position)){
+        for (Vector2d position : randomPG.getAllFreePositions()) {
+            if (!placedAnimals.containsKey(position)) {
                 result++;
             }
         }
         return result;
+    }
+
+    private void registerGenome(Animal animal) {
+        List<Integer> key = animal.getGenome();
+        genomeCount.put(key, genomeCount.getOrDefault(key, 0) + 1);
+    }
+
+    private void unregisterGenome(Animal animal) {
+        List<Integer> key = animal.getGenome();
+        int count = genomeCount.getOrDefault(key, 0);
+        if (count <= 1) {
+            genomeCount.remove(key);
+        } else {
+            genomeCount.put(key, count - 1);
+        }
+
+    }
+
+    private void updateDominantGenomes() {
+        if (genomeCount.isEmpty()) {
+            currDominantGenomes = Collections.emptySet();
+            return;
+        }
+        int maxCount = Collections.max(genomeCount.values());
+        currDominantGenomes = genomeCount.entrySet().stream()
+                .filter(e -> e.getValue() == maxCount)
+                .map(Map.Entry::getKey)
+                .limit(5)
+                .collect(Collectors.toSet());
+
     }
 
     public WorldMap getWorldMap() {
