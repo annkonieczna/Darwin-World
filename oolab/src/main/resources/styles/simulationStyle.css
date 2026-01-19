@@ -16,7 +16,7 @@
 
     -fx-max-width: infinity;
     -fx-alignment: center;
-    -fx-padding: 10;
+    -fx-padding: 5;
 
     -fx-effect:
             dropshadow(
@@ -27,7 +27,7 @@
 
 .label {
     -fx-font-family: "Poppins Regular";
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-text-fill: white;
 }
 
@@ -37,7 +37,7 @@
 
 #playButton {
     -fx-font-family: "Poppins Medium";
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-text-fill: white;
 
     -fx-background-color: #3E7B27;

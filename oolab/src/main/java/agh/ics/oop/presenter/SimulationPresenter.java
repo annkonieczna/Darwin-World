@@ -2,13 +2,11 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
-import agh.ics.oop.model.util.Boundary;
 import agh.ics.oop.model.util.SimulationStats;
+import agh.ics.oop.renderer.MapRenderer;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -129,6 +127,9 @@ public class SimulationPresenter implements MapChangeListener {
             avgLifeTimeLabel.setText(String.valueOf(stats.avgLifeTime()));
             avgChildAmountLabel.setText(String.valueOf(stats.avgChildAmount()));
             renderer.setDominantGenotypes(stats.dominantGenotypes());
+            dominantGenotypesLabel.setText(
+                    String.format("Dominant Genotypes with this many animals each: %d",
+                    stats.dominantAmount()));
 
             dominantGenotypesBox.getChildren().clear();
             for (List<Integer> genotype : stats.dominantGenotypes()) {

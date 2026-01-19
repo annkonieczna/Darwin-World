@@ -16,7 +16,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
-            stylesheets="@simulationStyle.css"
+            stylesheets="@../styles/simulationStyle.css"
             minWidth="800" minHeight="700">
 
     <center>
@@ -58,15 +58,20 @@
                         <Label text="Avg. Child Count: " styleClass="fontMedium"/>
                         <Label fx:id="avgChildAmountLabel"/>
                     </HBox>
-                    <VBox styleClass="defaultBox" spacing="6" alignment="CENTER">
+                    <VBox styleClass="defaultBox" spacing="6" alignment="TOP_CENTER" minHeight="180">
 
-                        <Label text="Dominant Genotypes"
-                               styleClass="fontMedium"/>
-                        <Rectangle fx:id="dominantColorBox"
-                                   width="12" height="12"
-                                   arcWidth="2" arcHeight="2" fill="BLUE"/>
+                        <Label fx:id="dominantGenotypesLabel" text="Dominant Genotypes with this many animals each: 0"
+                               styleClass="fontMedium"
+                               wrapText="true"
+                               textAlignment="CENTER"
+                               maxWidth="240"/>
+                        <Rectangle
+                                   width="60" height="12"
+                                   arcWidth="10" arcHeight="10" fill="#6bc1f2"/>
 
-                        <VBox fx:id="dominantGenotypesBox" alignment="CENTER"
+                        <VBox fx:id="dominantGenotypesBox"
+                              VBox.vgrow="ALWAYS"
+                              alignment="TOP_CENTER"
                               spacing="4"/>
 
                     </VBox>

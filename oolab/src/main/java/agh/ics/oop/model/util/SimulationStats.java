@@ -11,6 +11,7 @@ public record SimulationStats(
         int day,
         int animalCount,
         int grassCount,
+        int dominantAmount,
         Set<List<Integer>> dominantGenotypes
 ) {
     public int getStatValue(TrackedStats stat) {

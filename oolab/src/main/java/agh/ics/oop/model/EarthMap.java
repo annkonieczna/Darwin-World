@@ -9,9 +9,11 @@ import java.util.UUID;
 public class EarthMap extends AbstractWorldMap{
     private final Boundary bounds;
     private final Random random = new Random();
+    private final Boundary jungleBoundary;
 
-    public EarthMap(int width, int height) {
+    public EarthMap(int width, int height, Boundary jungleBoundary) {
         this.bounds = new Boundary(new Vector2d(0,0), new Vector2d(width-1,height-1));
+        this.jungleBoundary = jungleBoundary;
     }
 
     @Override
@@ -53,5 +55,9 @@ public class EarthMap extends AbstractWorldMap{
     @Override
     public Boundary getBounds() {
         return bounds;
+    }
+
+    public Boundary getJungleBoundary() {
+        return jungleBoundary;
     }
 }

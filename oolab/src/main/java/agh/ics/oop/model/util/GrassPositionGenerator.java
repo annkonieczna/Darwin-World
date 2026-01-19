@@ -13,8 +13,12 @@ public class GrassPositionGenerator implements ElementPositionGenerator {
     private final List<Vector2d> freeJunglePositions = new ArrayList<>();
     private final int jungleStart;
     private final int jungleEnd;
+    private final int width;
+    private final int height;
 
     public GrassPositionGenerator(int width, int height) {
+        this.width = width;
+        this.height = height;
         this.jungleStart = (int) (height * 0.4);
         this.jungleEnd = (int) (height * 0.6);
         for(int x = 0; x < width; x++){
@@ -82,11 +86,7 @@ public class GrassPositionGenerator implements ElementPositionGenerator {
         return freePositions;
     }
 
-    public int getJungleStart() {
-        return jungleStart;
-    }
-
-    public int getJungleEnd() {
-        return jungleEnd;
+    public Boundary getJungle() {
+        return new Boundary(new Vector2d(0, jungleStart), new Vector2d(width-1, jungleEnd-1));
     }
 }

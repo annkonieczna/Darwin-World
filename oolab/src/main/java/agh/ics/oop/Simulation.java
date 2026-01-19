@@ -30,23 +30,26 @@ public class Simulation implements Runnable {
     private int day = 0;
     private int animalCount;
     private int grassCount;
+    private int dominantAmount;
     private final List<Integer> resistancePattern;
 
     public Simulation(SimulationConfig config) {
         this.config = config;
-        this.map = new EarthMap(config.width(), config.height());
         this.randomPG = new GrassPositionGenerator(config.width(), config.height());
         this.resistancePattern = Genome.generate(config.genomeLength());
+        this.map = new EarthMap(config.width(), config.height(), this.randomPG.getJungle());
         for (int i = 0; i < config.startAnimalAmount(); i++) {
             Animal animal = new Animal(
                     map.randomPositionFromMap(),
                     config.startEnergy(),
                     config.genomeLength(),
-                    resistancePattern
+                    resistancePattern,
+                    config.maxAnimalEnergy()
             );
             animals.add(animal);
             map.placeAnimal(animal);
             registerGenome(animal);
+            updateDominantGenomes();
             animalCount++;
         }
         spawnGrasses(config.startGrassAmount());
@@ -69,7 +72,8 @@ public class Simulation implements Runnable {
                 2,
                 1,
                 3,
-                10
+                10,
+                100
         ));
     }
 
@@ -83,7 +87,7 @@ public class Simulation implements Runnable {
 
     public void notifyListeners() {
         for (MapChangeListener listener : listeners) {
-            listener.mapChanged(map);
+            Set<List<Integer>> dominantCopy = new HashSet<>(currDominantGenomes);
             listener.statsChanged(new SimulationStats(
                     avgChildAmount,
                     avgEnergy,
@@ -92,7 +96,10 @@ public class Simulation implements Runnable {
                     day,
                     animalCount,
                     grassCount,
-                    currDominantGenomes));
+                    dominantAmount,
+                    dominantCopy
+                    ));
+            listener.mapChanged(map);
         }
     }
 
@@ -114,8 +121,8 @@ public class Simulation implements Runnable {
                     reproduceAnimals();
                     spawnGrasses(config.growingGrassAmount());
                     updateStats();
+                    notifyListeners();
                 }
-                notifyListeners();
             }
         }
     }
@@ -150,7 +157,8 @@ public class Simulation implements Runnable {
         for (Map.Entry<Vector2d, List<Animal>> field : placedAnimals.entrySet()) {
             Grass grass = placedGrasses.get(field.getKey());
             if (grass != null) {
-                chooseBestAnimals(field.getValue(), 1).get(0).eatGrass(config.energyFromGrass(), grass.isToxic());
+                int amount = grass.isToxic() ? config.energyFromToxicGrass() : config.energyFromGrass();
+                chooseBestAnimals(field.getValue(), 1).get(0).eatGrass(amount, grass.isToxic());
                 map.removeGrass(grass);
                 randomPG.makePositionFree(grass);
                 grassCount--;
@@ -269,11 +277,12 @@ public class Simulation implements Runnable {
     private void updateDominantGenomes() {
         if (genomeCount.isEmpty()) {
             currDominantGenomes = Collections.emptySet();
+            dominantAmount = 0;
             return;
         }
-        int maxCount = Collections.max(genomeCount.values());
+        dominantAmount = Collections.max(genomeCount.values());
         currDominantGenomes = genomeCount.entrySet().stream()
-                .filter(e -> e.getValue() == maxCount)
+                .filter(e -> e.getValue() == dominantAmount)
                 .map(Map.Entry::getKey)
                 .limit(5)
                 .collect(Collectors.toSet());
