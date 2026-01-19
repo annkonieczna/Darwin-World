@@ -92,7 +92,7 @@ public class Simulation implements Runnable {
         statsListeners.remove(statsListener);
     }
 
-    public void notifyListeners() {
+    public synchronized void notifyListeners() {
         SimulationStats stats = new SimulationStats(
                 avgChildAmount,
                 avgEnergy,
@@ -104,13 +104,14 @@ public class Simulation implements Runnable {
                 dominantAmount,
                 new HashSet<>(currDominantGenomes));
 
+        for (StatsChangeListener listener : statsListeners) {
+            listener.statsChanged(stats);
+        }
+
         for (MapChangeListener listener : mapListeners) {
             listener.mapChanged(map);
         }
 
-        for (StatsChangeListener listener : statsListeners) {
-            listener.statsChanged(stats);
-        }
     }
 
     @Override
