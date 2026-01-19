@@ -15,7 +15,7 @@
             </padding>
             <GridPane hgap="10" vgap="10" alignment="CENTER">
                 <Label text="Map Width:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <TextField fx:id="widthInput" text="30" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <TextField fx:id="widthInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                 <Label text="Map Height:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                 <TextField fx:id="heightInput" text="10" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
@@ -33,7 +33,7 @@
                 <TextField fx:id="energyFromGrassInput" text="5" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
 
                 <Label text="Max Animal Energy:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-                <TextField fx:id="maxAnimalEnergy" text="20" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                <TextField fx:id="maxAnimalEnergy" text="50" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
 
                 <Label text="Start Energy:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
                 <TextField fx:id="startEnergyInput" text="20" GridPane.columnIndex="1" GridPane.rowIndex="7"/>

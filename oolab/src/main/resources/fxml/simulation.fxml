@@ -54,15 +54,18 @@
                     </HBox>
                     <VBox styleClass="defaultBox" spacing="6" alignment="TOP_CENTER" minHeight="180">
 
-                        <Label text="Dominant Genotypes (max:5)"
-                               styleClass="fontMedium"/>
+                        <Label fx:id="dominantGenotypesLabel" text="Dominant Genotypes with this many animals each: 0"
+                               styleClass="fontMedium"
+                               wrapText="true"
+                               textAlignment="CENTER"
+                               maxWidth="240"/>
                         <Rectangle
                                    width="60" height="12"
                                    arcWidth="10" arcHeight="10" fill="#6bc1f2"/>
 
                         <VBox fx:id="dominantGenotypesBox"
                               VBox.vgrow="ALWAYS"
-                              alignment="CENTER"
+                              alignment="TOP_CENTER"
                               spacing="4"/>
 
                     </VBox>

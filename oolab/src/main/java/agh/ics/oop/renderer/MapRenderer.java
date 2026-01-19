@@ -5,6 +5,7 @@ import agh.ics.oop.model.util.Boundary;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlurType;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -24,6 +25,8 @@ public class MapRenderer {
     private final Image grassToxicImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/grass_toxic.png")));
     private final Image animalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/pepu.png")));
     private final Image animalsImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/pepus.png")));
+
+    private final DropShadow highlight = new DropShadow(BlurType.THREE_PASS_BOX, Color.web("#6bc1f2"), 10, 0.5,0,0);
 
     public MapRenderer(Canvas canvas) {
         mapCanvas = canvas;
@@ -179,10 +182,7 @@ public class MapRenderer {
 
     private void drawAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y) {
 
-        DropShadow highlight = new DropShadow();
-        highlight.setColor(Color.web("#6bc1f2"));
         highlight.setRadius(cellSize/4.0);
-        highlight.setSpread(0.5);
 
         if (animals.size() == 1) {
             graphics.save();

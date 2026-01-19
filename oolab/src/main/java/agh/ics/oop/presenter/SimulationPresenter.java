@@ -101,6 +101,9 @@ public class SimulationPresenter implements MapChangeListener {
             avgLifeTimeLabel.setText(String.valueOf(stats.avgLifeTime()));
             avgChildAmountLabel.setText(String.valueOf(stats.avgChildAmount()));
             renderer.setDominantGenotypes(stats.dominantGenotypes());
+            dominantGenotypesLabel.setText(
+                    String.format("Dominant Genotypes with this many animals each: %d",
+                    stats.dominantAmount()));
 
             dominantGenotypesBox.getChildren().clear();
             for (List<Integer> genotype : stats.dominantGenotypes()) {
