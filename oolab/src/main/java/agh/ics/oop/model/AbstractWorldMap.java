@@ -52,12 +52,13 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public Map<Vector2d, List<Animal>> getAnimals() {
-        return Map.copyOf(animals);
+        // !!! zmianiłem z Map.copyof (zwiększa zdecydowanie wydajność, może zmniejsza bezpieczeństko idk, idc XD, nie no, do obgadania)
+        return this.animals;
     }
 
     @Override
     public Map<Vector2d, Grass> getGrasses() {
-        return Map.copyOf(grasses);
+        return this.grasses;
     }
 
     @Override

@@ -2,7 +2,6 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.util.SimulationConfig;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -31,7 +30,8 @@ public class MainPresenter {
             minimumEnergyForReproductionInput,
             minMutationInput,
             maxMutationInput,
-            genomeLengthInput;
+            genomeLengthInput,
+            maxAnimalEnergy;
 
     @FXML
     public void initialize() {
@@ -50,9 +50,11 @@ public class MainPresenter {
         setupIntegerValidation(genomeLengthInput, 1, 100);
         setupIntegerValidation(minMutationInput, 0, 100);
         setupIntegerValidation(maxMutationInput, 0, 100);
+        setupIntegerValidation(maxAnimalEnergy, 1, 1000);
 
-        //!!!for tests
-//        onStartClicked();
+
+//        !!!for tests
+        onStartClicked();
     }
 
     private void setupIntegerValidation(TextField textField, int min, int max) {
@@ -119,7 +121,7 @@ public class MainPresenter {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(
-                    getClass().getClassLoader().getResource("simulation.fxml")
+                    getClass().getClassLoader().getResource("fxml/simulation.fxml")
             );
 
             BorderPane viewRoot = loader.load();
@@ -177,7 +179,8 @@ public class MainPresenter {
                 Integer.parseInt(minimumEnergyForReproductionInput.getText()),
                 Integer.parseInt(minMutationInput.getText()),
                 Integer.parseInt(maxMutationInput.getText()),
-                Integer.parseInt(genomeLengthInput.getText())
+                Integer.parseInt(genomeLengthInput.getText()),
+                Integer.parseInt(maxAnimalEnergy.getText())
         );
     }
 }
