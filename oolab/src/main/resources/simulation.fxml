@@ -9,6 +9,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.CheckBox?>
+
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
@@ -16,7 +20,9 @@
             minWidth="800" minHeight="700">
 
     <center>
+        <VBox fx:id="mapContainer" alignment="CENTER">
         <Canvas fx:id="mapCanvas"/>
+        </VBox>
     </center>
     <left>
         <VBox alignment="CENTER" minWidth="240">
@@ -77,4 +83,35 @@
             </VBox>
         </VBox>
     </left>
+    <bottom>
+        <VBox fx:id="chartPanel"
+              spacing="8"
+              alignment="CENTER"
+              styleClass="defaultBox"
+              prefHeight="260"
+              maxHeight="260"
+              minHeight="260">
+
+            <Label text="Tracked statistics" styleClass="fontMedium"/>
+
+            <VBox fx:id="statsCheckboxBox" spacing="6"/>
+
+            <LineChart fx:id="statsChart"
+                       animated="false"
+                       legendVisible="true"
+                       createSymbols="false"
+                       prefHeight="180"
+                       maxHeight="180">
+                <xAxis>
+                    <NumberAxis label="Day"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis label="Value"/>
+                </yAxis>
+            </LineChart>
+
+        </VBox>
+    </bottom>
+
+
 </BorderPane>
