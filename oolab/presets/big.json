@@ -1,0 +1,1 @@
+{"width":100,"height":100,"startGrassAmount":500,"startAnimalAmount":1000,"growingGrassAmount":500,"toxicGrassChance":10,"energyFromGrass":5,"energyFromToxicGrass":10,"startEnergy":20,"moveEnergyCost":1,"reproductionEnergyCost":5,"minimumEnergyForReproduction":10,"minMutation":0,"maxMutation":3,"genomeLength":10,"maxAnimalEnergy":50,"toxicOn":true}

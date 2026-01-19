@@ -5,7 +5,6 @@ import java.util.*;
 public abstract class AbstractWorldMap implements WorldMap {
     protected Map<Vector2d, List<Animal>> animals = new HashMap<>();
     protected Map<Vector2d, Grass> grasses = new HashMap<>();
-    protected final UUID mapID = UUID.randomUUID();
 
     @Override
     public void placeAnimal(Animal animal) {
@@ -52,17 +51,11 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public Map<Vector2d, List<Animal>> getAnimals() {
-        // !!! zmianiłem z Map.copyof (zwiększa zdecydowanie wydajność, może zmniejsza bezpieczeństko idk, idc XD, nie no, do obgadania)
         return this.animals;
     }
 
     @Override
     public Map<Vector2d, Grass> getGrasses() {
         return this.grasses;
-    }
-
-    @Override
-    public UUID getId() {
-        return mapID;
     }
 }

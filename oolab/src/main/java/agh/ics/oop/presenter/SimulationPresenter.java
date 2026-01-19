@@ -20,7 +20,7 @@ import javafx.scene.control.ScrollPane;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SimulationPresenter implements MapChangeListener {
+public class SimulationPresenter implements MapChangeListener, StatsChangeListener {
 
     @FXML
     private Canvas mapCanvas;

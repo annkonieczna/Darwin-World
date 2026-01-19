@@ -57,7 +57,6 @@ public class MapRenderer {
             clearCanvas(graphics, Color.WHITE);
             drawBackground(graphics, boundary, Color.web("#85A947"), false);
             drawBackground(graphics, reverseBoundary(map.getJungleBoundary(), false, mapRows), Color.web("#3E7B27"), false);
-            //!!! for tests
             drawGrid(graphics, cols, rows);
             drawAxes(graphics, boundary, mapCols, mapRows);
             drawElements(graphics, map, boundary, false);
@@ -65,7 +64,7 @@ public class MapRenderer {
             mapCanvas.setWidth(mapCols * cellSize);
             mapCanvas.setHeight(mapRows * cellSize);
 
-            drawBackground(graphics, boundary, Color.web("#85A947"), true);
+            clearCanvas(graphics, Color.web("#85A947"));
             drawBackground(graphics, reverseBoundary(map.getJungleBoundary(), false, mapRows), Color.web("#3E7B27"), true);
             drawElements(graphics, map, boundary, true);
         }

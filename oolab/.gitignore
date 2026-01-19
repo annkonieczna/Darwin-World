@@ -47,3 +47,7 @@ bin/
 
 # OS
 Thumbs.db
+
+# Custom
+
+/csvFiles/

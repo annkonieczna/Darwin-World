@@ -30,8 +30,7 @@ public class SimulationApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Simulation launcher");
 
-//        !!! for tests
-//        primaryStage.show();
+        primaryStage.show();
 
         primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
