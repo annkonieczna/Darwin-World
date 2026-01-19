@@ -243,15 +243,12 @@ public class Simulation implements Runnable {
                 avgEnergy += animal.getEnergy();
             }
             avgChildAmount = avgChildAmount / animals.size();
-            avgChildAmount = (float) (Math.round(avgChildAmount * 100.0) / 100.0);
             avgEnergy = avgEnergy / animals.size();
-            avgEnergy = (float) (Math.round(avgEnergy * 100.0) / 100.0);
         }
 
         avgLifeTime = 0;
         if (!deadAnimals.isEmpty()) {
             avgLifeTime = (float) avgLifeTimeCount / deadAnimals.size();
-            avgLifeTime = (float) (Math.round(avgLifeTime * 100.0) / 100.0);
         }
 
         freeFields = countFreeFields();
