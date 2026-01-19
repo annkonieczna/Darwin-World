@@ -1,6 +1,8 @@
 package agh.ics.oop.model;
 
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public final class Genome {
 
@@ -10,70 +12,69 @@ public final class Genome {
 
     }
 
-    public static int[] generate(int length) {
-        int[] result = new int[length];
-        for (int i = 0; i < length; i++) {
-            result[i] = random.nextInt(8);
-        }
-        return result;
+    public static List<Integer> generate(int length) {
+        return IntStream.range(0,length)
+                .map(i -> random.nextInt(8))
+                .boxed()
+                .toList();
     }
 
-    public static int[] combine(int[] genomeA, int[] genomeB, int energyA, int energyB, int minMutations, int maxMutations) {
+    public static List<Integer> combine(List<Integer> genomeA, List<Integer> genomeB, int energyA, int energyB, int minMutations, int maxMutations) {
 
-        int length = genomeA.length;
+        int length = genomeA.size();
 
-        int[] stronger;
-        int[] weaker;
-        int moreEnergy;
-        int lessEnergy;
-        if (energyA >= energyB) {
-            moreEnergy = energyA;
-            lessEnergy = energyB;
-            stronger = genomeA;
-            weaker = genomeB;
+        List<Integer> stronger = energyA >= energyB ? genomeA : genomeB;
+        List<Integer> weaker = energyA >= energyB ? genomeB : genomeA;
 
-        } else {
-            stronger = genomeB;
-            weaker = genomeA;
-            moreEnergy = energyB;
-            lessEnergy = energyA;
-        }
-
-        double ratio = (double) moreEnergy / (moreEnergy + lessEnergy);
+        double ratio = (double) Math.max(energyA,energyB) / (energyA+energyB);
         int strongerGeneCount = (int) Math.round(ratio * length);
         boolean isLeft = random.nextBoolean();
-        int[] child = new int[length];
+        List<Integer> child = new ArrayList<>();
         if (isLeft) {
-            System.arraycopy(stronger, 0, child, 0, strongerGeneCount);
-            System.arraycopy(weaker, strongerGeneCount, child, strongerGeneCount, length - strongerGeneCount);
+            child.addAll(stronger.subList(0,strongerGeneCount));
+            child.addAll(weaker.subList(strongerGeneCount, length));
 
         } else {
             int weakerGeneCount = length - strongerGeneCount;
-            System.arraycopy(weaker, 0, child, 0, weakerGeneCount);
-            System.arraycopy(stronger, weakerGeneCount, child, weakerGeneCount, strongerGeneCount);
+            child.addAll(weaker.subList(0, weakerGeneCount));
+            child.addAll(stronger.subList(weakerGeneCount, length));
         }
         mutate(child, minMutations, maxMutations);
-        return child;
+        return List.copyOf(child);
 
 
     }
 
-    public static void mutate(int[] child, int min, int max) {
-        if (max == 0) return;
-        if (min > max) return;
+    public static void mutate(List<Integer> child, int min, int max) {
+        if (max == 0 || min > max) return;
 
         int mutations = random.nextInt((max - min + 1)) + min;
+        List<Integer> indices = new ArrayList<>(IntStream.range(0,child.size()).boxed().toList());
+        Collections.shuffle(indices);
         for (int i = 0; i < mutations; i++) {
-            int index = random.nextInt(child.length);
+            int index = indices.get(i);
+            int oldGene = child.get(i);
             int newGene;
             do {
                 newGene = random.nextInt(8);
-            } while (newGene == child[index]);
+            } while (newGene == oldGene);
 
-            child[index] = newGene;
+            child.set(index,newGene);
 
 
         }
 
+    }
+
+    public static int calculateResistanceScore(List<Integer> genome, List<Integer> pattern) {
+
+        int score = 0;
+
+        for (int i = 0; i < genome.size(); i++) {
+            if(Objects.equals(genome.get(i), pattern.get(i))) {
+                score++;
+            }
+        }
+        return (int) ((score / (double) genome.size() * 100));
     }
 }

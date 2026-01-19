@@ -10,6 +10,17 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
+import javafx.geometry.VPos;
+
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SimulationPresenter implements MapChangeListener {
 
@@ -26,9 +37,12 @@ public class SimulationPresenter implements MapChangeListener {
             freeFieldsLabel,
             avgEnergyLabel,
             avgLifeTimeLabel,
-            avgChildAmountLabel;
+            avgChildAmountLabel,
+            dominantGenotypesLabel;
     @FXML
     private Slider simSpeedScroll;
+    @FXML
+    private VBox dominantGenotypesBox;
 
     private double windowWidth;
     private double windowHeight;
@@ -45,15 +59,15 @@ public class SimulationPresenter implements MapChangeListener {
         setListeners();
     }
 
-    private void setListeners(){
+    private void setListeners() {
         simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
-            int speed = ((int) (1000 - newValue.intValue())/10) * 10;
+            int speed = ((int) (1000 - newValue.intValue()) / 10) * 10;
             simSpeedLabel.setText(String.valueOf(speed));
             this.sim.setRunningSpeed(speed);
         });
     }
 
-    public void setWindowSize(double width, double height){
+    public void setWindowSize(double width, double height) {
         windowWidth = width;
         windowHeight = height;
 
@@ -79,13 +93,25 @@ public class SimulationPresenter implements MapChangeListener {
     @Override
     public void statsChanged(SimulationStats stats) {
         Platform.runLater(() -> {
-            dayLabel.setText( String.valueOf(stats.day()));
+            dayLabel.setText(String.valueOf(stats.day()));
             animalCountLabel.setText(String.valueOf(stats.animalCount()));
             grassCountLabel.setText(String.valueOf(stats.grassCount()));
             freeFieldsLabel.setText(String.valueOf(stats.freeFields()));
             avgEnergyLabel.setText(String.valueOf(stats.avgEnergy()));
             avgLifeTimeLabel.setText(String.valueOf(stats.avgLifeTime()));
             avgChildAmountLabel.setText(String.valueOf(stats.avgChildAmount()));
+            renderer.setDominantGenotypes(stats.dominantGenotypes());
+
+            dominantGenotypesBox.getChildren().clear();
+            for (List<Integer> genotype : stats.dominantGenotypes()) {
+                Label label = new Label(
+                        genotype.stream()
+                                .map(String::valueOf)
+                                .collect(Collectors.joining(""))
+                );
+                label.getStyleClass().add("fontSmall");
+                dominantGenotypesBox.getChildren().add(label);
+            }
         });
     }
 
@@ -100,7 +126,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     @FXML
-    public void onPlayClicked(){
+    public void onPlayClicked() {
         if (sim.getRunning()) {
             pauseSimulation();
         } else {
