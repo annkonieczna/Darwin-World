@@ -21,7 +21,7 @@
 
     <center>
         <VBox fx:id="mapContainer" alignment="CENTER">
-        <Canvas fx:id="mapCanvas"/>
+            <Canvas fx:id="mapCanvas"/>
         </VBox>
     </center>
     <left>
@@ -66,8 +66,8 @@
                                textAlignment="CENTER"
                                maxWidth="240"/>
                         <Rectangle
-                                   width="60" height="12"
-                                   arcWidth="10" arcHeight="10" fill="#6bc1f2"/>
+                                width="60" height="12"
+                                arcWidth="10" arcHeight="10" fill="#6bc1f2"/>
 
                         <VBox fx:id="dominantGenotypesBox"
                               VBox.vgrow="ALWAYS"
@@ -100,12 +100,12 @@
 
             <HBox spacing="16" VBox.vgrow="ALWAYS">
 
-                <!-- LEFT PANEL: CHECKBOXES + LEGEND -->
+
                 <VBox spacing="12"
                       minWidth="220"
                       maxWidth="220">
 
-                    <!-- CHECKBOXES -->
+
                     <VBox>
                         <Label text="Select stats:" styleClass="fontSmall"/>
                         <VBox fx:id="statsCheckboxBox"
@@ -117,12 +117,11 @@
 
                     </VBox>
 
-                    <!-- LEGEND -->
+                    <!-- Legend -->
                     <VBox spacing="6">
                         <Label text="Legend:" styleClass="fontSmall"/>
 
-                        <!-- Example legend row -->
-                        <!-- Reszta generowana dynamicznie -->
+
                         <VBox fx:id="statsLegendBox"
                               spacing="6">
                             <padding>
@@ -133,7 +132,7 @@
 
                 </VBox>
 
-                <!-- RIGHT PANEL: CHART -->
+                <!--                Chart-->
                 <LineChart fx:id="statsChart"
                            animated="false"
                            legendVisible="false"
@@ -142,7 +141,7 @@
                            HBox.hgrow="ALWAYS">
 
                     <xAxis>
-                        <NumberAxis label="Day"/>
+                        <NumberAxis fx:id="dayAxis" label="Day"/>
                     </xAxis>
 
                     <yAxis>
@@ -154,7 +153,6 @@
             </HBox>
         </VBox>
     </bottom>
-
 
 
 </BorderPane>
