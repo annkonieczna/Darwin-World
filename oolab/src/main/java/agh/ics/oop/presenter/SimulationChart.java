@@ -17,22 +17,22 @@ import java.util.*;
 
 public class SimulationChart {
 
-    private static final int MAX_POINTS = 300;
-
     private final LineChart<Number, Number> chart;
     private final VBox checkboxBox;
     private final VBox legendBox;
 
     private final Map<TrackedStats, XYChart.Series<Number, Number>> activeSeries = new EnumMap<>(TrackedStats.class);
     private final Map<TrackedStats, Deque<XYChart.Data<Number, Number>>> history = new EnumMap<>(TrackedStats.class);
+    private final int windowSize;
 
     public SimulationChart(LineChart<Number, Number> chart,
                            VBox checkboxBox,
-                           VBox legendBox) {
+                           VBox legendBox, int windowSize) {
 
         this.chart = chart;
         this.checkboxBox = checkboxBox;
         this.legendBox = legendBox;
+        this.windowSize = windowSize;
 
         for (TrackedStats stat : TrackedStats.values()) {
             history.put(stat, new ArrayDeque<>());
@@ -48,16 +48,12 @@ public class SimulationChart {
 
             Deque<XYChart.Data<Number, Number>> h = history.get(stat);
             h.addLast(data);
-            if (h.size() > MAX_POINTS) {
-                h.removeFirst();
-            }
+            while (h.size() > windowSize) h.removeFirst();
 
             XYChart.Series<Number, Number> series = activeSeries.get(stat);
             if (series != null) {
                 series.getData().add(data);
-                if (series.getData().size() > MAX_POINTS) {
-                    series.getData().remove(0);
-                }
+                while (series.getData().size() > windowSize) series.getData().remove(0);
             }
         }
     }
@@ -76,7 +72,6 @@ public class SimulationChart {
 
         checkboxBox.getChildren().add(cb);
     }
-
 
 
     private void showSeries(TrackedStats stat) {
@@ -108,9 +103,10 @@ public class SimulationChart {
     private void applyColor(XYChart.Series<Number, Number> series, Color color) {
         Platform.runLater(() -> {
             Node node = series.getNode();
-            if (node != null) {
-                node.lookup(".chart-series-line")
-                        .setStyle("-fx-stroke: " + toRgb(color) + ";");
+            if (node == null) return;
+            Node line = node.lookup(".chart-series-line");
+            if (line != null) {
+                line.setStyle("-fx-stroke: " + toRgb(color) + ";");
             }
         });
     }
@@ -118,9 +114,9 @@ public class SimulationChart {
     private String toRgb(Color c) {
         return String.format(
                 "rgb(%d,%d,%d)",
-                (int)(c.getRed()*255),
-                (int)(c.getGreen()*255),
-                (int)(c.getBlue()*255)
+                (int) (c.getRed() * 255),
+                (int) (c.getGreen() * 255),
+                (int) (c.getBlue() * 255)
         );
     }
 
