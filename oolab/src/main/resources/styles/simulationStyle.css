@@ -71,3 +71,10 @@
                     #123524cc,
                     0, 3, 0, 4);
 }
+.chart-series-line {
+    -fx-stroke-width: 2.5px;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 4px;
+}

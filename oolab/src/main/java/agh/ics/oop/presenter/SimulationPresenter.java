@@ -7,19 +7,15 @@ import agh.ics.oop.renderer.MapRenderer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
-import javafx.geometry.VPos;
+import javafx.scene.chart.LineChart;
 
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SimulationPresenter implements MapChangeListener, StatsChangeListener {
@@ -43,21 +39,44 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
     private Slider simSpeedScroll;
     @FXML
     private VBox dominantGenotypesBox;
+    @FXML
+    private VBox statsCheckboxBox;
+    @FXML
+    private LineChart<Number, Number> statsChart;
+    @FXML
+    private VBox mapContainer;
+    @FXML
+    private VBox statsLegendBox;
+    @FXML
+    private NumberAxis dayAxis;
 
-    private double windowWidth;
-    private double windowHeight;
 
+    private static final int WINDOW = 500;
     private Simulation sim;
     private Thread simulationThread;
 
     private MapRenderer renderer;
+    private SimulationChart statsChartController;
 
     public void setupPresenter(Simulation sim) {
         this.sim = sim;
         this.renderer = new MapRenderer(mapCanvas);
 
         setListeners();
+        dayAxis.setAutoRanging(false);
+        dayAxis.setLowerBound(1);
+        dayAxis.setUpperBound(50); //random higher number for it to work
+        dayAxis.setForceZeroInRange(false);
+        statsChartController = new SimulationChart(
+                statsChart,
+                statsCheckboxBox,
+                statsLegendBox,
+                WINDOW
+        );
+
+
     }
+
 
     private void setListeners() {
         simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -68,24 +87,27 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
     }
 
     public void setWindowSize(double width, double height) {
-        windowWidth = width;
-        windowHeight = height;
+        refreshMap();
+    }
 
-        if (sim != null) {
+    private void refreshMap() {
+        if (sim != null && mapCanvas != null) {
             WorldMap map = sim.getWorldMap();
-            synchronized (map) {
-                renderer.drawMap(map, windowWidth, windowHeight);
+            double areaWidth = mapContainer.getWidth();
+            double areaHeight = mapContainer.getHeight();
+
+            if (areaWidth <= 0) areaWidth = 600;
+            if (areaHeight <= 0) areaHeight = 600;
+
+            synchronized (map){
+                renderer.drawMap(map, areaWidth, areaHeight);
             }
         }
     }
 
     @Override
     public void mapChanged(WorldMap worldMap) {
-        Platform.runLater(() -> {
-            synchronized (worldMap) {
-                renderer.drawMap(worldMap, windowWidth, windowHeight);
-            }
-        });
+        Platform.runLater(this::refreshMap);
     }
 
     //stats
@@ -103,7 +125,7 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
             renderer.setDominantGenotypes(stats.dominantGenotypes());
             dominantGenotypesLabel.setText(
                     String.format("Dominant Genotypes with this many animals each: %d",
-                    stats.dominantAmount()));
+                            stats.dominantAmount()));
 
             dominantGenotypesBox.getChildren().clear();
             for (List<Integer> genotype : stats.dominantGenotypes()) {
@@ -115,6 +137,28 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
                 label.getStyleClass().add("fontSmall");
                 dominantGenotypesBox.getChildren().add(label);
             }
+            int d = stats.day();
+            int lower = Math.max(1, d - WINDOW + 1);
+
+            dayAxis.setLowerBound(lower);
+            dayAxis.setUpperBound(d);
+            dayAxis.setForceZeroInRange(false);
+            int range = d - lower + 1;
+
+            double tick;
+            if (range <= 50) {
+                tick = 1;
+            } else if (range <= 200) {
+                tick = 5;
+            } else if (range <= 600) {
+                tick = 10;
+            } else {
+                tick = 100;
+            }
+
+
+            dayAxis.setTickUnit(tick);
+            statsChartController.updateStats(stats.day(), stats);
         });
     }
 
@@ -152,5 +196,6 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
             simulationThread.interrupt();
         }
     }
+
 
 }

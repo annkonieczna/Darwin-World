@@ -9,6 +9,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.CheckBox?>
+
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
@@ -16,7 +20,9 @@
             minWidth="800" minHeight="700">
 
     <center>
-        <Canvas fx:id="mapCanvas"/>
+        <VBox fx:id="mapContainer" alignment="CENTER">
+            <Canvas fx:id="mapCanvas"/>
+        </VBox>
     </center>
     <left>
         <VBox alignment="CENTER" minWidth="240">
@@ -60,8 +66,8 @@
                                textAlignment="CENTER"
                                maxWidth="240"/>
                         <Rectangle
-                                   width="60" height="12"
-                                   arcWidth="10" arcHeight="10" fill="#6bc1f2"/>
+                                width="60" height="12"
+                                arcWidth="10" arcHeight="10" fill="#6bc1f2"/>
 
                         <VBox fx:id="dominantGenotypesBox"
                               VBox.vgrow="ALWAYS"
@@ -82,4 +88,71 @@
             </VBox>
         </VBox>
     </left>
+    <bottom>
+        <VBox fx:id="chartPanel"
+              spacing="10"
+              styleClass="defaultBox">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <Label text="Tracked statistics" styleClass="fontMedium"/>
+
+            <HBox spacing="16" VBox.vgrow="ALWAYS">
+
+
+                <VBox spacing="12"
+                      minWidth="220"
+                      maxWidth="220">
+
+
+                    <VBox>
+                        <Label text="Select stats:" styleClass="fontSmall"/>
+                        <VBox fx:id="statsCheckboxBox"
+                              spacing="6">
+                            <padding>
+                                <Insets top="6" right="6" bottom="6" left="6"/>
+                            </padding>
+                        </VBox>
+
+                    </VBox>
+
+                    <!-- Legend -->
+                    <VBox spacing="6">
+                        <Label text="Legend:" styleClass="fontSmall"/>
+
+
+                        <VBox fx:id="statsLegendBox"
+                              spacing="6">
+                            <padding>
+                                <Insets top="6" right="6" bottom="6" left="6"/>
+                            </padding>
+                        </VBox>
+                    </VBox>
+
+                </VBox>
+
+                <!--                Chart-->
+                <LineChart fx:id="statsChart"
+                           animated="false"
+                           legendVisible="false"
+                           createSymbols="false"
+                           VBox.vgrow="ALWAYS"
+                           HBox.hgrow="ALWAYS">
+
+                    <xAxis>
+                        <NumberAxis fx:id="dayAxis" label="Day"/>
+                    </xAxis>
+
+                    <yAxis>
+                        <NumberAxis label="Value"/>
+                    </yAxis>
+
+                </LineChart>
+
+            </HBox>
+        </VBox>
+    </bottom>
+
+
 </BorderPane>
