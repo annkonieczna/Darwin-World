@@ -99,7 +99,9 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
             if (areaWidth <= 0) areaWidth = 600;
             if (areaHeight <= 0) areaHeight = 600;
 
-            renderer.drawMap(map, areaWidth, areaHeight);
+            synchronized (map){
+                renderer.drawMap(map, areaWidth, areaHeight);
+            }
         }
     }
 
