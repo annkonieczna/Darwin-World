@@ -7,14 +7,12 @@ import agh.ics.oop.renderer.MapRenderer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
-import agh.ics.oop.model.util.TrackedStats;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.ScrollPane;
 
 
 import java.util.*;
@@ -49,9 +47,11 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
     private VBox mapContainer;
     @FXML
     private VBox statsLegendBox;
+    @FXML
+    private NumberAxis dayAxis;
 
 
-
+    private static final int WINDOW = 500;
     private Simulation sim;
     private Thread simulationThread;
 
@@ -63,10 +63,15 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
         this.renderer = new MapRenderer(mapCanvas);
 
         setListeners();
+        dayAxis.setAutoRanging(false);
+        dayAxis.setLowerBound(1);
+        dayAxis.setUpperBound(50); //random higher number for it to work
+        dayAxis.setForceZeroInRange(false);
         statsChartController = new SimulationChart(
                 statsChart,
                 statsCheckboxBox,
-                statsLegendBox
+                statsLegendBox,
+                WINDOW
         );
 
 
@@ -84,6 +89,7 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
     public void setWindowSize(double width, double height) {
         refreshMap();
     }
+
     private void refreshMap() {
         if (sim != null && mapCanvas != null) {
             WorldMap map = sim.getWorldMap();
@@ -117,7 +123,7 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
             renderer.setDominantGenotypes(stats.dominantGenotypes());
             dominantGenotypesLabel.setText(
                     String.format("Dominant Genotypes with this many animals each: %d",
-                    stats.dominantAmount()));
+                            stats.dominantAmount()));
 
             dominantGenotypesBox.getChildren().clear();
             for (List<Integer> genotype : stats.dominantGenotypes()) {
@@ -129,8 +135,28 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
                 label.getStyleClass().add("fontSmall");
                 dominantGenotypesBox.getChildren().add(label);
             }
-            statsChartController.updateStats(stats.day(), stats);
+            int d = stats.day();
+            int lower = Math.max(1, d - WINDOW + 1);
 
+            dayAxis.setLowerBound(lower);
+            dayAxis.setUpperBound(d);
+            dayAxis.setForceZeroInRange(false);
+            int range = d - lower + 1;
+
+            double tick;
+            if (range <= 50) {
+                tick = 1;
+            } else if (range <= 200) {
+                tick = 5;
+            } else if (range <= 600) {
+                tick = 10;
+            } else {
+                tick = 100;
+            }
+
+
+            dayAxis.setTickUnit(tick);
+            statsChartController.updateStats(stats.day(), stats);
         });
     }
 
@@ -168,7 +194,6 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
             simulationThread.interrupt();
         }
     }
-
 
 
 }
