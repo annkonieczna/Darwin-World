@@ -114,6 +114,16 @@ public class MainPresenter {
                         minMutationInput.setText(String.valueOf(value));
                     }
                 }
+                if (textField.getId().equals("startEnergyInput")) {
+                    if(value > Integer.parseInt(maxAnimalEnergy.getText())) {
+                        maxAnimalEnergy.setText(String.valueOf(Math.min(value, max)));
+                    }
+                }
+                if (textField.getId().equals("maxAnimalEnergy")) {
+                    if(value < Integer.parseInt(startEnergyInput.getText())) {
+                        startEnergyInput.setText(String.valueOf(Math.max(value, min)));
+                    }
+                }
             }
         });
     }
