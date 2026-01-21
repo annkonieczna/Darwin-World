@@ -24,9 +24,9 @@ public class MapRenderer {
     private final Image grassNormalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/grass_normal.png")));
     private final Image grassToxicImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/grass_toxic.png")));
     private final Image animalImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/pepu.png")));
+    private final Image animalSpecialImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/pepu_special.png")));
     private final Image animalsImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/pepus.png")));
-
-    private final DropShadow highlight = new DropShadow(BlurType.THREE_PASS_BOX, Color.web("#6bc1f2"), 10, 0.5,0,0);
+    private final Image animalsSpecialImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/pepus_special.png")));
 
     public MapRenderer(Canvas canvas) {
         mapCanvas = canvas;
@@ -44,8 +44,8 @@ public class MapRenderer {
         int rows = mapRows + 1;
 
         cellSize = Math.min(
-                (windowWidth - 300) / cols,
-                (windowHeight - 100) / rows
+                (windowWidth - 50) / cols,
+                (windowHeight - 50) / rows
         );
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
@@ -181,7 +181,6 @@ public class MapRenderer {
 
     private void drawAnimals(GraphicsContext graphics, List<Animal> animals, double x, double y) {
 
-        highlight.setRadius(cellSize/4.0);
 
         if (animals.size() == 1) {
             graphics.save();
@@ -193,18 +192,23 @@ public class MapRenderer {
             graphics.rotate(angle);
 
             if (dominantGenotypes.contains(animals.getFirst().getGenome())) {
-                graphics.setEffect(highlight);
+                graphics.drawImage(
+                        animalSpecialImage,
+                        -(cellSize - cellMargin) / 2.0,
+                        -(cellSize - cellMargin) / 2.0,
+                        (cellSize - cellMargin),
+                        (cellSize - cellMargin)
+                );
+            } else {
+                graphics.drawImage(
+                        animalImage,
+                        -(cellSize - cellMargin) / 2.0,
+                        -(cellSize - cellMargin) / 2.0,
+                        (cellSize - cellMargin),
+                        (cellSize - cellMargin)
+                );
             }
 
-            graphics.drawImage(
-                    animalImage,
-                    -(cellSize - cellMargin) / 2.0,
-                    -(cellSize - cellMargin) / 2.0,
-                    (cellSize - cellMargin),
-                    (cellSize - cellMargin)
-            );
-
-            graphics.setEffect(null);
             graphics.restore();
             drawHealthBar(graphics, animals.getFirst(), cX, cY);
         } else {
@@ -216,22 +220,23 @@ public class MapRenderer {
                 }
             }
 
-            graphics.save();
-
             if (dominant) {
-                graphics.setEffect(highlight);
+                graphics.drawImage(
+                        animalsSpecialImage,
+                        x,
+                        y,
+                        (cellSize - cellMargin),
+                        (cellSize - cellMargin)
+                );
+            } else {
+                graphics.drawImage(
+                        animalsImage,
+                        x,
+                        y,
+                        (cellSize - cellMargin),
+                        (cellSize - cellMargin)
+                );
             }
-
-            graphics.drawImage(
-                    animalsImage,
-                    x,
-                    y,
-                    (cellSize - cellMargin),
-                    (cellSize - cellMargin)
-            );
-
-            graphics.setEffect(null);
-            graphics.restore();
         }
     }
 

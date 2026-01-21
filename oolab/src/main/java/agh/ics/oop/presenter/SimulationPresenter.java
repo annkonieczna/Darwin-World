@@ -11,6 +11,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.chart.LineChart;
 
@@ -46,7 +47,7 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
     @FXML
     private VBox mapContainer;
     @FXML
-    private VBox statsLegendBox;
+    private HBox statsLegendBox;
     @FXML
     private NumberAxis dayAxis;
 
@@ -77,7 +78,6 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
 
     }
 
-
     private void setListeners() {
         simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
             int speed = ((int) (1000 - newValue.intValue()) / 10) * 10;
@@ -86,7 +86,7 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
         });
     }
 
-    public void setWindowSize(double width, double height) {
+    public void setWindowSize() {
         refreshMap();
     }
 
@@ -96,8 +96,8 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
             double areaWidth = mapContainer.getWidth();
             double areaHeight = mapContainer.getHeight();
 
-            if (areaWidth <= 0) areaWidth = 600;
-            if (areaHeight <= 0) areaHeight = 600;
+            if (areaWidth <= 0) areaWidth = 100;
+            if (areaHeight <= 0) areaHeight = 100;
 
             synchronized (map){
                 renderer.drawMap(map, areaWidth, areaHeight);

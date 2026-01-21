@@ -19,7 +19,7 @@ public class SimulationChart {
 
     private final LineChart<Number, Number> chart;
     private final VBox checkboxBox;
-    private final VBox legendBox;
+    private final HBox legendBox;
 
     private final Map<TrackedStats, XYChart.Series<Number, Number>> activeSeries = new EnumMap<>(TrackedStats.class);
     private final Map<TrackedStats, Deque<XYChart.Data<Number, Number>>> history = new EnumMap<>(TrackedStats.class);
@@ -27,7 +27,7 @@ public class SimulationChart {
 
     public SimulationChart(LineChart<Number, Number> chart,
                            VBox checkboxBox,
-                           VBox legendBox, int windowSize) {
+                           HBox legendBox, int windowSize) {
 
         this.chart = chart;
         this.checkboxBox = checkboxBox;
