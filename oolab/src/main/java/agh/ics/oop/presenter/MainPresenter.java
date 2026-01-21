@@ -67,6 +67,8 @@ public class MainPresenter {
         setupIntegerValidation(maxAnimalEnergy, 1, 1000);
 
         refreshPresets();
+//        //!!! tests
+//        onStartClicked();
     }
 
     private void setupIntegerValidation(TextField textField, int min, int max) {
@@ -110,6 +112,16 @@ public class MainPresenter {
                     }
                     if(value < Integer.parseInt(minMutationInput.getText())) {
                         minMutationInput.setText(String.valueOf(value));
+                    }
+                }
+                if (textField.getId().equals("startEnergyInput")) {
+                    if(value > Integer.parseInt(maxAnimalEnergy.getText())) {
+                        maxAnimalEnergy.setText(String.valueOf(Math.min(value, max)));
+                    }
+                }
+                if (textField.getId().equals("maxAnimalEnergy")) {
+                    if(value < Integer.parseInt(startEnergyInput.getText())) {
+                        startEnergyInput.setText(String.valueOf(Math.max(value, min)));
                     }
                 }
             }
@@ -230,12 +242,12 @@ public class MainPresenter {
         primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
         primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
 
-        presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+        presenter.setWindowSize();
         scene.widthProperty().addListener((obs, oldW, newW) -> {
-            presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+            presenter.setWindowSize();
         });
         scene.heightProperty().addListener((obs, oldH, newH) -> {
-            presenter.setWindowSize(scene.getWidth(), scene.getHeight());
+            presenter.setWindowSize();
         });
         primaryStage.setOnCloseRequest(event -> {
             presenter.terminateSimulation();

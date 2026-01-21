@@ -13,6 +13,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.CheckBox?>
 
+<?import javafx.scene.control.ScrollPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
@@ -26,8 +27,8 @@
     </center>
     <left>
         <VBox alignment="CENTER" minWidth="240">
-            <VBox alignment="CENTER" spacing="20" styleClass="statsPanel">
-                <VBox alignment="CENTER" spacing="10">
+            <VBox alignment="CENTER" spacing="10" styleClass="statsPanel">
+                <VBox alignment="CENTER" spacing="5">
                     <HBox styleClass="defaultBox">
                         <Label text="Day: " styleClass="fontMedium"/>
                         <Label fx:id="dayLabel"/>
@@ -45,7 +46,7 @@
                         <Label fx:id="freeFieldsLabel"/>
                     </HBox>
                 </VBox>
-                <VBox alignment="CENTER" spacing="10">
+                <VBox alignment="CENTER" spacing="5">
                     <HBox styleClass="defaultBox">
                         <Label text="Avg. Energy: " styleClass="fontMedium"/>
                         <Label fx:id="avgEnergyLabel"/>
@@ -58,7 +59,7 @@
                         <Label text="Avg. Child Count: " styleClass="fontMedium"/>
                         <Label fx:id="avgChildAmountLabel"/>
                     </HBox>
-                    <VBox styleClass="defaultBox" spacing="6" alignment="TOP_CENTER" minHeight="180">
+                    <VBox styleClass="defaultBox" spacing="5" alignment="TOP_CENTER" minHeight="100">
 
                         <Label fx:id="dominantGenotypesLabel" text="Dominant Genotypes with this many animals each: 0"
                                styleClass="fontMedium"
@@ -69,70 +70,63 @@
                                 width="60" height="12"
                                 arcWidth="10" arcHeight="10" fill="#6bc1f2"/>
 
-                        <VBox fx:id="dominantGenotypesBox"
-                              VBox.vgrow="ALWAYS"
-                              alignment="TOP_CENTER"
-                              spacing="4"/>
+                        <ScrollPane
+                                    prefHeight="50"
+                                    maxHeight="50"
+                                    fitToWidth="true"
+                                    style="-fx-background: transparent; -fx-background-color: #85A947; -fx-background-radius: 10;">
+                            <content>
+                                <VBox fx:id="dominantGenotypesBox"
+                                      alignment="TOP_CENTER"
+                                      spacing="4">
+                                </VBox>
+                            </content>
+                        </ScrollPane>
 
                     </VBox>
-
                 </VBox>
                 <VBox alignment="CENTER" styleClass="defaultBox">
                     <HBox alignment="CENTER">
                         <Label text="Speed: " styleClass="fontMedium"/>
                         <Label fx:id="simSpeedLabel" text="500"/>
                     </HBox>
-                    <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="40" max="990" value="500"/>
+                    <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="5" max="995" value="500"/>
                 </VBox>
                 <Button fx:id="playButton" text="Pause" onAction="#onPlayClicked"/>
             </VBox>
         </VBox>
     </left>
     <bottom>
-        <VBox fx:id="chartPanel"
-              spacing="10"
+        <VBox spacing="10"
               styleClass="defaultBox">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
 
             <Label text="Tracked statistics" styleClass="fontMedium"/>
+            <!-- Legend -->
+            <HBox spacing="6" alignment="CENTER">
+                <Label text="Legend:" styleClass="fontMedium"/>
 
-            <HBox spacing="16" VBox.vgrow="ALWAYS">
 
+                <HBox fx:id="statsLegendBox"
+                      spacing="6"
+                      alignment="CENTER">
+                </HBox>
+            </HBox>
+            <HBox spacing="16" VBox.vgrow="ALWAYS" prefHeight="150">
 
                 <VBox spacing="12"
-                      minWidth="220"
-                      maxWidth="220">
-
+                      minWidth="220">
 
                     <VBox>
-                        <Label text="Select stats:" styleClass="fontSmall"/>
+                        <Label text="Select stats:" styleClass="fontMedium"/>
                         <VBox fx:id="statsCheckboxBox"
                               spacing="6">
-                            <padding>
-                                <Insets top="6" right="6" bottom="6" left="6"/>
-                            </padding>
                         </VBox>
 
-                    </VBox>
-
-                    <!-- Legend -->
-                    <VBox spacing="6">
-                        <Label text="Legend:" styleClass="fontSmall"/>
-
-
-                        <VBox fx:id="statsLegendBox"
-                              spacing="6">
-                            <padding>
-                                <Insets top="6" right="6" bottom="6" left="6"/>
-                            </padding>
-                        </VBox>
                     </VBox>
 
                 </VBox>
 
-                <!--                Chart-->
+                <!-- Chart -->
                 <LineChart fx:id="statsChart"
                            animated="false"
                            legendVisible="false"
