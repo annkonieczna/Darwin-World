@@ -53,7 +53,7 @@ public final class Genome {
         Collections.shuffle(indices);
         for (int i = 0; i < mutations; i++) {
             int index = indices.get(i);
-            int oldGene = child.get(i);
+            int oldGene = child.get(index);
             int newGene;
             do {
                 newGene = random.nextInt(8);
