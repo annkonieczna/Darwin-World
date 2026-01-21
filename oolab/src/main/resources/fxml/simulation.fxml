@@ -13,6 +13,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.CheckBox?>
 
+<?import javafx.scene.control.ScrollPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
@@ -58,7 +59,7 @@
                         <Label text="Avg. Child Count: " styleClass="fontMedium"/>
                         <Label fx:id="avgChildAmountLabel"/>
                     </HBox>
-                    <VBox styleClass="defaultBox" spacing="5" alignment="TOP_CENTER" minHeight="180">
+                    <VBox styleClass="defaultBox" spacing="5" alignment="TOP_CENTER" minHeight="100">
 
                         <Label fx:id="dominantGenotypesLabel" text="Dominant Genotypes with this many animals each: 0"
                                styleClass="fontMedium"
@@ -69,10 +70,19 @@
                                 width="60" height="12"
                                 arcWidth="10" arcHeight="10" fill="#6bc1f2"/>
 
-                        <VBox fx:id="dominantGenotypesBox"
-                              VBox.vgrow="ALWAYS"
-                              alignment="TOP_CENTER"
-                              spacing="4"/>
+                        <ScrollPane
+                                    prefHeight="50"
+                                    maxHeight="50"
+                                    fitToWidth="true"
+                                    style="-fx-background: transparent; -fx-background-color: #85A947; -fx-background-radius: 10;">
+                            <content>
+                                <VBox fx:id="dominantGenotypesBox"
+                                      alignment="TOP_CENTER"
+                                      spacing="4">
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+
                     </VBox>
                 </VBox>
                 <VBox alignment="CENTER" styleClass="defaultBox">

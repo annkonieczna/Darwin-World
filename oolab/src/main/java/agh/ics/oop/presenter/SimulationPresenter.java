@@ -119,9 +119,9 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
             animalCountLabel.setText(String.valueOf(stats.animalCount()));
             grassCountLabel.setText(String.valueOf(stats.grassCount()));
             freeFieldsLabel.setText(String.valueOf(stats.freeFields()));
-            avgEnergyLabel.setText(String.valueOf(stats.avgEnergy()));
-            avgLifeTimeLabel.setText(String.valueOf(stats.avgLifeTime()));
-            avgChildAmountLabel.setText(String.valueOf(stats.avgChildAmount()));
+            avgEnergyLabel.setText(String.format("%.2f",stats.avgEnergy()));
+            avgLifeTimeLabel.setText(String.format("%.2f",stats.avgLifeTime()));
+            avgChildAmountLabel.setText(String.format("%.2f",stats.avgChildAmount()));
             renderer.setDominantGenotypes(stats.dominantGenotypes());
             dominantGenotypesLabel.setText(
                     String.format("Dominant Genotypes with this many animals each: %d",

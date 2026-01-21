@@ -286,7 +286,7 @@ public class Simulation implements Runnable {
     }
 
     private void updateDominantGenomes() {
-        if (genomeCount.isEmpty()) {
+        if (genomeCount.isEmpty() || Collections.max(genomeCount.values()) < 2) {
             currDominantGenomes = Collections.emptySet();
             dominantAmount = 0;
             return;
@@ -295,7 +295,6 @@ public class Simulation implements Runnable {
         currDominantGenomes = genomeCount.entrySet().stream()
                 .filter(e -> e.getValue() == dominantAmount)
                 .map(Map.Entry::getKey)
-                .limit(5)
                 .collect(Collectors.toSet());
 
     }

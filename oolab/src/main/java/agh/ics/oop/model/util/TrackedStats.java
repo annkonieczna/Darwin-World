@@ -25,7 +25,7 @@ public enum TrackedStats {
     public String getLabel() { return label; }
     public Color getColor() { return color; }
 
-    public int extract(SimulationStats stats) {
-        return (int)extractor.applyAsDouble(stats);
+    public double extract(SimulationStats stats) {
+        return extractor.applyAsDouble(stats);
     }
 }
