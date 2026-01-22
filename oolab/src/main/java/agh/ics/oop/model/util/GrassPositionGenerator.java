@@ -1,7 +1,8 @@
 package agh.ics.oop.model.util;
 
-import agh.ics.oop.model.Grass;
-import agh.ics.oop.model.Vector2d;
+import agh.ics.oop.model.elements.Grass;
+import agh.ics.oop.model.movement.Vector2d;
+import agh.ics.oop.model.map.Boundary;
 
 import java.util.ArrayList;
 import java.util.List;

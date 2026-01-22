@@ -1,12 +1,12 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.map;
 
-import agh.ics.oop.model.util.Boundary;
-import agh.ics.oop.model.util.Movement;
+import agh.ics.oop.model.movement.MapDirection;
+import agh.ics.oop.model.movement.Movement;
+import agh.ics.oop.model.movement.Vector2d;
 
 import java.util.Random;
-import java.util.UUID;
 
-public class EarthMap extends AbstractWorldMap{
+public class EarthMap extends AbstractWorldMap {
     private final Boundary bounds;
     private final Random random = new Random();
     private final Boundary jungleBoundary;

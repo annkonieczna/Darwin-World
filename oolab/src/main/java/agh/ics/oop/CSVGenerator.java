@@ -1,17 +1,13 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.StatsChangeListener;
-import agh.ics.oop.model.util.SimulationStats;
+import agh.ics.oop.model.listeners.StatsChangeListener;
+import agh.ics.oop.model.stats.SimulationStats;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CSVGenerator implements StatsChangeListener {
     private String fileName;

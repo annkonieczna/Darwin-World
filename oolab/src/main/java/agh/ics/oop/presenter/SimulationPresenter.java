@@ -1,8 +1,10 @@
 package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
-import agh.ics.oop.model.*;
-import agh.ics.oop.model.util.SimulationStats;
+import agh.ics.oop.model.map.WorldMap;
+import agh.ics.oop.model.listeners.MapChangeListener;
+import agh.ics.oop.model.listeners.StatsChangeListener;
+import agh.ics.oop.model.stats.SimulationStats;
 import agh.ics.oop.renderer.MapRenderer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;

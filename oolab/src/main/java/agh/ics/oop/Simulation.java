@@ -1,9 +1,16 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.*;
+import agh.ics.oop.model.elements.Animal;
+import agh.ics.oop.model.elements.Genome;
+import agh.ics.oop.model.elements.Grass;
+import agh.ics.oop.model.map.EarthMap;
+import agh.ics.oop.model.movement.Vector2d;
+import agh.ics.oop.model.map.WorldMap;
+import agh.ics.oop.model.listeners.MapChangeListener;
+import agh.ics.oop.model.listeners.StatsChangeListener;
 import agh.ics.oop.model.util.GrassPositionGenerator;
-import agh.ics.oop.model.util.SimulationConfig;
-import agh.ics.oop.model.util.SimulationStats;
+import agh.ics.oop.model.stats.SimulationConfig;
+import agh.ics.oop.model.stats.SimulationStats;
 
 import java.util.*;
 import java.util.stream.Collectors;

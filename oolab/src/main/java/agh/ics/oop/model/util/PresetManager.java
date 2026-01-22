@@ -1,5 +1,6 @@
 package agh.ics.oop.model.util;
 
+import agh.ics.oop.model.stats.SimulationConfig;
 import com.google.gson.Gson;
 
 import java.io.*;
