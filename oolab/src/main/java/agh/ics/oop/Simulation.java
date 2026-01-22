@@ -118,7 +118,6 @@ public class Simulation implements Runnable {
         for (MapChangeListener listener : mapListeners) {
             listener.mapChanged();
         }
-
     }
 
     @Override
@@ -176,7 +175,7 @@ public class Simulation implements Runnable {
             Grass grass = placedGrasses.get(field.getKey());
             if (grass != null) {
                 int amount = grass.isToxic() ? config.energyFromToxicGrass() : config.energyFromGrass();
-                chooseBestAnimals(field.getValue(), 1).get(0).eatGrass(amount, grass.isToxic());
+                chooseBestAnimals(field.getValue(), 1).getFirst().eatGrass(amount, grass.isToxic());
                 map.removeGrass(grass);
                 randomPG.makePositionFree(grass);
                 grassCount--;
