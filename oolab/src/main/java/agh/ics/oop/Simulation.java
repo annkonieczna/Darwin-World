@@ -131,16 +131,20 @@ public class Simulation implements Runnable {
                 break;
             }
             if (running) {
-                synchronized (map) {
-                    removeDeadAnimals();
-                    moveAnimals();
-                    dinnerAnimals();
-                    reproduceAnimals();
-                    spawnGrasses(config.growingGrassAmount());
-                    updateStats();
-                    notifyListeners();
-                }
+                doDay();
             }
+        }
+    }
+
+    void doDay() {
+        synchronized (map) {
+            removeDeadAnimals();
+            moveAnimals();
+            dinnerAnimals();
+            reproduceAnimals();
+            spawnGrasses(config.growingGrassAmount());
+            updateStats();
+            notifyListeners();
         }
     }
 
