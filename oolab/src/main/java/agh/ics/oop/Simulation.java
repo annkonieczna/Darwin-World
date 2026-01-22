@@ -116,7 +116,7 @@ public class Simulation implements Runnable {
         }
 
         for (MapChangeListener listener : mapListeners) {
-            listener.mapChanged(map);
+            listener.mapChanged();
         }
 
     }
