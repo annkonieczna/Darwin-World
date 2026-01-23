@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class CSVGenerator implements StatsChangeListener {
-    private String fileName;
+    private final String fileName;
 
     public CSVGenerator(String fileName) {
         String directoryName = "csvFiles";

@@ -55,7 +55,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public Map<Vector2d, List<Animal>> getAnimals() {
-        return this.animals;
+        return Collections.unmodifiableMap(animals);
     }
 
     @Override

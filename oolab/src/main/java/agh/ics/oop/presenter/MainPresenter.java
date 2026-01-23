@@ -44,7 +44,7 @@ public class MainPresenter {
     @FXML
     ComboBox<String> presetsComboBox;
 
-    PresetManager presetManager = new PresetManager();;
+    PresetManager presetManager = new PresetManager();
 
     @FXML
     public void initialize() {

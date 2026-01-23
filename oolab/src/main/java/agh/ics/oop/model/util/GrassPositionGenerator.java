@@ -58,10 +58,8 @@ public class GrassPositionGenerator implements ElementPositionGenerator {
 
     //Returns random position from list of Vector2d-s
     public Vector2d randomPositionFromList(List<Vector2d> list) {
-        Vector2d position = list.get(random.nextInt(list.size()));
-        list.remove(position);
-
-        return position;
+        int idx = random.nextInt(list.size());
+        return list.remove(idx);
     }
 
     //Adds position back to free positions

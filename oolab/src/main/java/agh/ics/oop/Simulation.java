@@ -191,9 +191,7 @@ public class Simulation implements Runnable {
             if (a.getEnergy() < b.getEnergy()) return 1;
             if (a.getAge() > b.getAge()) return -1;
             if (a.getAge() < b.getAge()) return 1;
-            if (a.getChildrenCount() > b.getChildrenCount()) return -1;
-            if (a.getChildrenCount() < b.getChildrenCount()) return 1;
-            return 0;
+            return Integer.compare(b.getChildrenCount(), a.getChildrenCount());
         });
         return result.subList(0, Math.min(count, result.size()));
     }
