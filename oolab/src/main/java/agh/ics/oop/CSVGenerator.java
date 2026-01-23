@@ -45,12 +45,6 @@ public class CSVGenerator implements StatsChangeListener {
     @Override
     public void statsChanged(SimulationStats stats) {
 
-//        String formattedGenotypes = stats.dominantGenotypes().stream()
-//                .map(genotype -> genotype.stream()
-//                        .map(String::valueOf)
-//                        .collect(Collectors.joining("")))
-//                .collect(Collectors.joining(" | "));
-
         String data = String.format("%f;%f;%f;%d;%d;%d;%d;%d",
                 stats.avgChildAmount(),
                 stats.avgEnergy(),
