@@ -60,6 +60,6 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public Map<Vector2d, Grass> getGrasses() {
-        return this.grasses;
+        return Collections.unmodifiableMap(grasses);
     }
 }

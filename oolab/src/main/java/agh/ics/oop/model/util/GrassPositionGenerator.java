@@ -15,11 +15,9 @@ public class GrassPositionGenerator implements ElementPositionGenerator {
     private final int jungleStart;
     private final int jungleEnd;
     private final int width;
-    private final int height;
 
     public GrassPositionGenerator(int width, int height) {
         this.width = width;
-        this.height = height;
         this.jungleStart = (int) (height * 0.4);
         this.jungleEnd = (int) (height * 0.6);
         for(int x = 0; x < width; x++){

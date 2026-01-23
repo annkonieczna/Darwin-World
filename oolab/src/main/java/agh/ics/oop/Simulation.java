@@ -60,9 +60,11 @@ public class Simulation implements Runnable {
         spawnGrasses(config.startGrassAmount());
     }
 
+
     public void registerMapListener(MapChangeListener mapListener) {
         mapListeners.add(mapListener);
     }
+
     public void registerStatsListener(StatsChangeListener statsListener) {
         statsListeners.add(statsListener);
     }
@@ -100,6 +102,7 @@ public class Simulation implements Runnable {
             moveAnimals();
             dinnerAnimals();
             reproduceAnimals();
+            loseEnergy();
             spawnGrasses(config.growingGrassAmount());
             statsManager.updateStats(animals, map, randomPG);
             day++;
@@ -124,11 +127,15 @@ public class Simulation implements Runnable {
             }
         }
     }
+    private void loseEnergy() {
+        for(Animal animal: animals) {
+            animal.loseEnergy(config.moveEnergyCost());
+        }
+    }
 
     private void moveAnimals() {
         for (Animal animal : animals) {
             map.move(animal);
-            animal.loseEnergy(config.moveEnergyCost());
         }
     }
 
