@@ -12,7 +12,7 @@ public class Animal implements WorldElement {
     private Vector2d position;
     private MapDirection direction;
     private int energy;
-    private int maxEnergy;
+    private final int maxEnergy;
     private final List<Integer> genome;
     private final int resistanceScore;
     private int activeGeneIndex;

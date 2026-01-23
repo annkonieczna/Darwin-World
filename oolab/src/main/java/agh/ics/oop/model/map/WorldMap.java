@@ -26,6 +26,8 @@ public interface WorldMap extends MoveValidator {
 
     boolean inBounds(Vector2d position);
 
+    void registerGrowth(Vector2d position, boolean toxic);
+
     Map<Vector2d, List<Animal>> getAnimals();
 
     Map<Vector2d, Grass> getGrasses();
@@ -35,4 +37,9 @@ public interface WorldMap extends MoveValidator {
     Boundary getBounds();
 
     Boundary getJungleBoundary();
+
+    Map<Vector2d,Integer> getGoodGrassSpawnMap();
+
+    Map<Vector2d,Integer> getToxicGrassSpawnMap();
+
 }
