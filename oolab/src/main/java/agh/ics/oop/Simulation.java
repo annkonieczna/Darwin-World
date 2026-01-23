@@ -64,39 +64,11 @@ public class Simulation implements Runnable {
         spawnGrasses(config.startGrassAmount());
     }
 
-    //for tests
-    public Simulation() {
-        this(new SimulationConfig(
-                10,
-                10,
-                0,
-                4,
-                5,
-                10,
-                3,
-                100,
-                10,
-                1,
-                2,
-                2,
-                1,
-                3,
-                10,
-                100,
-                true
-        ));
-    }
 
     public void registerMapListener(MapChangeListener mapListener) {mapListeners.add(mapListener);}
-    public void removeMapListener(MapChangeListener mapListener) {
-        mapListeners.remove(mapListener);
-    }
 
     public void registerStatsListener(StatsChangeListener statsListener) {
         statsListeners.add(statsListener);
-    }
-    public void removeStatsListener(StatsChangeListener statsListener) {
-        statsListeners.remove(statsListener);
     }
 
     public synchronized void notifyListeners() {
@@ -142,6 +114,7 @@ public class Simulation implements Runnable {
             moveAnimals();
             dinnerAnimals();
             reproduceAnimals();
+            loseEnergy();
             spawnGrasses(config.growingGrassAmount());
             updateStats();
             notifyListeners();
@@ -164,11 +137,15 @@ public class Simulation implements Runnable {
         }
 
     }
+    private void loseEnergy() {
+        for(Animal animal: animals) {
+            animal.loseEnergy(config.moveEnergyCost());
+        }
+    }
 
     private void moveAnimals() {
         for (Animal animal : animals) {
             map.move(animal);
-            animal.loseEnergy(config.moveEnergyCost());
         }
     }
 
