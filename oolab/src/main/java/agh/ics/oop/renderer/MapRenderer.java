@@ -1,13 +1,13 @@
 package agh.ics.oop.renderer;
 
-import agh.ics.oop.model.*;
-import agh.ics.oop.model.util.Boundary;
+import agh.ics.oop.model.elements.Animal;
+import agh.ics.oop.model.elements.Grass;
+import agh.ics.oop.model.map.Boundary;
+import agh.ics.oop.model.movement.Vector2d;
+import agh.ics.oop.model.map.WorldMap;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;

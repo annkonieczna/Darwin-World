@@ -1,4 +1,4 @@
-package agh.ics.oop.model.util;
+package agh.ics.oop.model.stats;
 
 import java.util.List;
 import java.util.Set;

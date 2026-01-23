@@ -1,7 +1,7 @@
 package agh.ics.oop.presenter;
 
-import agh.ics.oop.model.util.SimulationStats;
-import agh.ics.oop.model.util.TrackedStats;
+import agh.ics.oop.model.stats.SimulationStats;
+import agh.ics.oop.model.stats.TrackedStats;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -92,6 +92,7 @@ public class SimulationChart {
         applyColor(series, stat.getColor());
     }
 
+
     private void hideSeries(TrackedStats stat) {
         XYChart.Series<Number, Number> series = activeSeries.remove(stat);
         if (series != null) {
@@ -111,6 +112,7 @@ public class SimulationChart {
         });
     }
 
+
     private String toRgb(Color c) {
         return String.format(
                 "rgb(%d,%d,%d)",
@@ -119,6 +121,7 @@ public class SimulationChart {
                 (int) (c.getBlue() * 255)
         );
     }
+
 
     private void createLegendEntry(TrackedStats stat) {
         Rectangle rect = new Rectangle(12, 12, stat.getColor());

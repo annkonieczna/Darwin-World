@@ -1,4 +1,8 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.map;
+
+import agh.ics.oop.model.elements.Animal;
+import agh.ics.oop.model.elements.Grass;
+import agh.ics.oop.model.movement.Vector2d;
 
 import java.util.*;
 

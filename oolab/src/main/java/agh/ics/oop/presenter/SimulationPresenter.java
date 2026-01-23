@@ -1,9 +1,12 @@
 package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
-import agh.ics.oop.model.*;
-import agh.ics.oop.model.util.SimulationStats;
+import agh.ics.oop.model.map.WorldMap;
+import agh.ics.oop.model.listeners.MapChangeListener;
+import agh.ics.oop.model.listeners.StatsChangeListener;
+import agh.ics.oop.model.stats.SimulationStats;
 import agh.ics.oop.renderer.MapRenderer;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -14,6 +17,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.chart.LineChart;
+import javafx.util.Duration;
 
 
 import java.util.*;
@@ -55,6 +59,7 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
     private static final int WINDOW = 500;
     private Simulation sim;
     private Thread simulationThread;
+    private final PauseTransition resizeThrottle = new PauseTransition(Duration.millis(50));
 
     private MapRenderer renderer;
     private SimulationChart statsChartController;
@@ -66,7 +71,7 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
         setListeners();
         dayAxis.setAutoRanging(false);
         dayAxis.setLowerBound(1);
-        dayAxis.setUpperBound(50); //random higher number for it to work
+        dayAxis.setUpperBound(50);
         dayAxis.setForceZeroInRange(false);
         statsChartController = new SimulationChart(
                 statsChart,
@@ -74,8 +79,6 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
                 statsLegendBox,
                 WINDOW
         );
-
-
     }
 
     private void setListeners() {
@@ -87,7 +90,8 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
     }
 
     public void setWindowSize() {
-        refreshMap();
+        resizeThrottle.setOnFinished(event -> refreshMap());
+        resizeThrottle.playFromStart();
     }
 
     private void refreshMap() {
@@ -106,11 +110,9 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
     }
 
     @Override
-    public void mapChanged(WorldMap worldMap) {
+    public void mapChanged() {
         Platform.runLater(this::refreshMap);
     }
-
-    //stats
 
     @Override
     public void statsChanged(SimulationStats stats) {
@@ -145,24 +147,15 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
             dayAxis.setForceZeroInRange(false);
             int range = d - lower + 1;
 
-            double tick;
-            if (range <= 50) {
-                tick = 1;
-            } else if (range <= 200) {
-                tick = 5;
-            } else if (range <= 600) {
-                tick = 10;
-            } else {
-                tick = 100;
-            }
+            double tick = Math.max(1, Math.pow(10, Math.floor(Math.log10(range / 10.0))));
 
+            if (range / tick > 20) tick *= 5;
+            else if (range / tick > 15) tick *= 2;
 
             dayAxis.setTickUnit(tick);
             statsChartController.updateStats(stats.day(), stats);
         });
     }
-
-    //Starting/Pausing/Resuming a simulation
 
     public void startSimulation() {
         simulationThread = new Thread(this.sim);

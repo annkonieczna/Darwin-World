@@ -3,8 +3,7 @@ package agh.ics.oop.presenter;
 import agh.ics.oop.CSVGenerator;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.util.PresetManager;
-import agh.ics.oop.model.util.SimulationConfig;
-import javafx.event.ActionEvent;
+import agh.ics.oop.model.stats.SimulationConfig;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -57,28 +56,45 @@ public class MainPresenter {
         setupIntegerValidation(toxicChanceInput, 0, 100);
         setupIntegerValidation(energyFromGrassInput, 0, 1000);
         setupIntegerValidation(energyFromToxicInput, 0, 1000);
-        setupIntegerValidation(startEnergyInput, 1, 1000);
         setupIntegerValidation(moveEnergyCostInput, 0, 1000);
         setupIntegerValidation(reproductionEnergyCostInput, 1, 1000);
         setupIntegerValidation(minimumEnergyForReproductionInput, 1, 1000);
         setupIntegerValidation(genomeLengthInput, 1, 100);
         setupIntegerValidation(minMutationInput, 0, 100);
         setupIntegerValidation(maxMutationInput, 0, 100);
+        setupDependentIntegerValidation(minMutationInput,maxMutationInput);
+        setupDependentIntegerValidation(minMutationInput,genomeLengthInput);
+        setupDependentIntegerValidation(maxMutationInput,genomeLengthInput);
+        setupIntegerValidation(startEnergyInput, 1, 1000);
         setupIntegerValidation(maxAnimalEnergy, 1, 1000);
+        setupDependentIntegerValidation(startEnergyInput,maxAnimalEnergy);
 
         refreshPresets();
-//        //!!! tests
-//        onStartClicked();
+    }
+
+    private void setupDependentIntegerValidation(TextField lower, TextField upper) {
+        lower.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                int low = Integer.parseInt(lower.getText());
+                int high = Integer.parseInt(upper.getText());
+                if (high < low) {upper.setText(Integer.toString(low));}
+            }
+        });
+        upper.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                int low = Integer.parseInt(lower.getText());
+                int high = Integer.parseInt(upper.getText());
+                if (high < low) {lower.setText(Integer.toString(high));}
+            }
+        });
     }
 
     private void setupIntegerValidation(TextField textField, int min, int max) {
         textField.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
-
             if (newText.isEmpty()) {
                 return change;
             }
-
             if (newText.matches("\\d*") && newText.length() < 10) {
                 return change;
             }
@@ -93,36 +109,8 @@ public class MainPresenter {
                 int value = Integer.parseInt(textField.getText());
                 if (value < min) {
                     textField.setText(String.valueOf(min));
-                }
-                if (value > max) {
+                } else if (value > max) {
                     textField.setText(String.valueOf(max));
-                }
-                if (textField.getId().equals("minMutationInput")) {
-                    if (value > Integer.parseInt(genomeLengthInput.getText())) {
-                        minMutationInput.setText(genomeLengthInput.getText());
-                        value = Integer.parseInt(genomeLengthInput.getText());
-                    }
-                    if(value > Integer.parseInt(maxMutationInput.getText())) {
-                        maxMutationInput.setText(String.valueOf(value));
-                    }
-                }
-                if (textField.getId().equals("maxMutationInput")) {
-                    if (value > Integer.parseInt(genomeLengthInput.getText())) {
-                        maxMutationInput.setText(genomeLengthInput.getText());
-                    }
-                    if(value < Integer.parseInt(minMutationInput.getText())) {
-                        minMutationInput.setText(String.valueOf(value));
-                    }
-                }
-                if (textField.getId().equals("startEnergyInput")) {
-                    if(value > Integer.parseInt(maxAnimalEnergy.getText())) {
-                        maxAnimalEnergy.setText(String.valueOf(Math.min(value, max)));
-                    }
-                }
-                if (textField.getId().equals("maxAnimalEnergy")) {
-                    if(value < Integer.parseInt(startEnergyInput.getText())) {
-                        startEnergyInput.setText(String.valueOf(Math.max(value, min)));
-                    }
                 }
             }
         });

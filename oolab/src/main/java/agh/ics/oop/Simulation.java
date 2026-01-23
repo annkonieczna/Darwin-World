@@ -1,9 +1,16 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.*;
+import agh.ics.oop.model.elements.Animal;
+import agh.ics.oop.model.elements.Genome;
+import agh.ics.oop.model.elements.Grass;
+import agh.ics.oop.model.map.EarthMap;
+import agh.ics.oop.model.movement.Vector2d;
+import agh.ics.oop.model.map.WorldMap;
+import agh.ics.oop.model.listeners.MapChangeListener;
+import agh.ics.oop.model.listeners.StatsChangeListener;
 import agh.ics.oop.model.util.GrassPositionGenerator;
-import agh.ics.oop.model.util.SimulationConfig;
-import agh.ics.oop.model.util.SimulationStats;
+import agh.ics.oop.model.stats.SimulationConfig;
+import agh.ics.oop.model.stats.SimulationStats;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -109,9 +116,8 @@ public class Simulation implements Runnable {
         }
 
         for (MapChangeListener listener : mapListeners) {
-            listener.mapChanged(map);
+            listener.mapChanged();
         }
-
     }
 
     @Override
@@ -125,16 +131,20 @@ public class Simulation implements Runnable {
                 break;
             }
             if (running) {
-                synchronized (map) {
-                    removeDeadAnimals();
-                    moveAnimals();
-                    dinnerAnimals();
-                    reproduceAnimals();
-                    spawnGrasses(config.growingGrassAmount());
-                    updateStats();
-                    notifyListeners();
-                }
+                doDay();
             }
+        }
+    }
+
+    void doDay() {
+        synchronized (map) {
+            removeDeadAnimals();
+            moveAnimals();
+            dinnerAnimals();
+            reproduceAnimals();
+            spawnGrasses(config.growingGrassAmount());
+            updateStats();
+            notifyListeners();
         }
     }
 
@@ -169,7 +179,7 @@ public class Simulation implements Runnable {
             Grass grass = placedGrasses.get(field.getKey());
             if (grass != null) {
                 int amount = grass.isToxic() ? config.energyFromToxicGrass() : config.energyFromGrass();
-                chooseBestAnimals(field.getValue(), 1).get(0).eatGrass(amount, grass.isToxic());
+                chooseBestAnimals(field.getValue(), 1).getFirst().eatGrass(amount, grass.isToxic());
                 map.removeGrass(grass);
                 randomPG.makePositionFree(grass);
                 grassCount--;

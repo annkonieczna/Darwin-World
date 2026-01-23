@@ -1,6 +1,6 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.listeners;
 
-import agh.ics.oop.model.util.SimulationStats;
+import agh.ics.oop.model.stats.SimulationStats;
 
 public interface StatsChangeListener {
     void statsChanged(SimulationStats stats);
