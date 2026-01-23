@@ -87,10 +87,10 @@
                 </VBox>
                 <VBox alignment="CENTER" styleClass="defaultBox">
                     <HBox alignment="CENTER">
-                        <Label text="Speed: " styleClass="fontMedium"/>
+                        <Label text="Time between steps (ms): " styleClass="fontMedium"/>
                         <Label fx:id="simSpeedLabel" text="500"/>
                     </HBox>
-                    <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="5" max="995" value="500"/>
+                    <Slider fx:id="simSpeedScroll" snapToTicks="true" majorTickUnit="40" max="990" value="500"/>
                 </VBox>
                 <Button fx:id="playButton" text="Pause" onAction="#onPlayClicked"/>
             </VBox>

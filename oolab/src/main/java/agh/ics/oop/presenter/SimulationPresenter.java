@@ -83,7 +83,8 @@ public class SimulationPresenter implements MapChangeListener, StatsChangeListen
 
     private void setListeners() {
         simSpeedScroll.valueProperty().addListener((observable, oldValue, newValue) -> {
-            int speed = ((int) (1000 - newValue.intValue()) / 5) * 5;
+            int speed = ((int) (1000 - newValue.intValue()) / 10) * 10;
+            if (speed == 0) speed = 10;
             simSpeedLabel.setText(String.valueOf(speed));
             this.sim.setRunningSpeed(speed);
         });
