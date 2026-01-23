@@ -131,7 +131,7 @@ public class MapRenderer {
                 );
 
                 // opacity based on intensity
-                double alpha = baseAlpha + extraAlpha * t;
+                double alpha = Math.max(0.0, Math.min(1.0, baseAlpha + extraAlpha * t));
 
                 g.setFill(new Color(
                         base.getRed(),
