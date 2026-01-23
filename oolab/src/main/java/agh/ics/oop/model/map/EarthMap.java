@@ -48,7 +48,7 @@ public class EarthMap extends AbstractWorldMap {
     @Override
     public Vector2d randomPositionFromMap() {
         return new Vector2d(random.nextInt(bounds.lowerLeft().getX(), bounds.upperRight().getX() + 1),
-                random.nextInt(bounds.lowerLeft().getY(), bounds.upperRight().getY()) + 1);
+                random.nextInt(bounds.lowerLeft().getY(), bounds.upperRight().getY()+ 1) );
     }
 
     @Override
