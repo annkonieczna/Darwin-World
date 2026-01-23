@@ -20,12 +20,12 @@ public class StatsManager {
     private int deadAnimalsCount;
     private int freeFields;
 
-    public void registerGenotype(Animal animal) {
+    public void registerGenome(Animal animal) {
         List<Integer> key = animal.getGenome();
         genomeCount.put(key, genomeCount.getOrDefault(key, 0) + 1);
     }
 
-    public void unregisterGenotype(Animal animal) {
+    public void unregisterGenome(Animal animal) {
         List<Integer> key = animal.getGenome();
         int count = genomeCount.getOrDefault(key, 0);
         if (count <= 1) {

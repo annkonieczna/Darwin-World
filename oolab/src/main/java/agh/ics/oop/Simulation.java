@@ -53,7 +53,7 @@ public class Simulation implements Runnable {
             animals.add(animal);
             map.placeAnimal(animal);
 
-            statsManager.registerGenotype(animal);
+            statsManager.registerGenome(animal);
             animalCount++;
         }
         statsManager.updateStats(animals, map, randomPG);
@@ -116,7 +116,7 @@ public class Simulation implements Runnable {
                 animal.setDeathDay(day);
 
                 statsManager.registerDeath(animal);
-                statsManager.unregisterGenotype(animal);
+                statsManager.unregisterGenome(animal);
 
                 map.removeAnimal(animal);
                 animalCount--;
@@ -164,7 +164,7 @@ public class Simulation implements Runnable {
                     newAnimals.add(child);
                     map.placeAnimal(child);
 
-                    statsManager.registerGenotype(child);
+                    statsManager.registerGenome(child);
 
                     animalCount++;
                 }
