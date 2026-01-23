@@ -235,12 +235,11 @@ public class Simulation implements Runnable {
         for (int i = 0; i < amount; i++) {
             Vector2d position = randomPG.generateRandomPosition();
             if (position != null) {
-                Grass grass = new Grass(
-                        position,
-                        random.nextInt(100) < config.toxicGrassChance() && config.toxicOn()
-                );
+                boolean toxic =random.nextInt(100) < config.toxicGrassChance() && config.toxicOn();
+                Grass grass = new Grass(position, toxic);
                 map.placeGrass(grass);
                 grassCount++;
+                map.registerGrowth(position,toxic);
             }
         }
     }
