@@ -8,20 +8,20 @@ import agh.ics.oop.model.movement.Vector2d;
 import agh.ics.oop.model.map.WorldMap;
 import agh.ics.oop.model.listeners.MapChangeListener;
 import agh.ics.oop.model.listeners.StatsChangeListener;
+import agh.ics.oop.model.stats.StatsManager;
 import agh.ics.oop.model.util.GrassPositionGenerator;
 import agh.ics.oop.model.stats.SimulationConfig;
 import agh.ics.oop.model.stats.SimulationStats;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Simulation implements Runnable {
     private final List<Animal> animals = new ArrayList<>();
-    private final List<Animal> deadAnimals = new ArrayList<>();
     private final List<MapChangeListener> mapListeners = new ArrayList<>();
     private final List<StatsChangeListener> statsListeners = new ArrayList<>();
-    private final Map<List<Integer>, Integer> genomeCount = new HashMap<>();
-    private Set<List<Integer>> currDominantGenomes = new HashSet<>();
+
+    private final StatsManager statsManager = new StatsManager();
+
     private final WorldMap map;
     private final GrassPositionGenerator randomPG;
     private final Random random = new Random();
@@ -31,15 +31,9 @@ public class Simulation implements Runnable {
     private boolean running = true;
     private int runningSpeed = 500;
 
-    private float avgChildAmount;
-    private float avgEnergy;
-    private float avgLifeTime;
-    private int avgLifeTimeCount;
-    private int freeFields;
     private int day = 0;
     private int animalCount;
     private int grassCount;
-    private int dominantAmount;
     private final List<Integer> resistancePattern;
 
     public Simulation(SimulationConfig config) {
@@ -47,6 +41,7 @@ public class Simulation implements Runnable {
         this.randomPG = new GrassPositionGenerator(config.width(), config.height());
         this.resistancePattern = Genome.generate(config.genomeLength());
         this.map = new EarthMap(config.width(), config.height(), this.randomPG.getJungle());
+
         for (int i = 0; i < config.startAnimalAmount(); i++) {
             Animal animal = new Animal(
                     map.randomPositionFromMap(),
@@ -57,64 +52,27 @@ public class Simulation implements Runnable {
             );
             animals.add(animal);
             map.placeAnimal(animal);
-            registerGenome(animal);
+
+            statsManager.registerGenotype(animal);
             animalCount++;
         }
-        updateStats();
+        statsManager.updateStats(animals, map, randomPG);
         spawnGrasses(config.startGrassAmount());
     }
 
-    //for tests
-    public Simulation() {
-        this(new SimulationConfig(
-                10,
-                10,
-                0,
-                4,
-                5,
-                10,
-                3,
-                100,
-                10,
-                1,
-                2,
-                2,
-                1,
-                3,
-                10,
-                100,
-                true
-        ));
+    public void registerMapListener(MapChangeListener mapListener) {
+        mapListeners.add(mapListener);
     }
-
-    public void registerMapListener(MapChangeListener mapListener) {mapListeners.add(mapListener);}
-    public void removeMapListener(MapChangeListener mapListener) {
-        mapListeners.remove(mapListener);
-    }
-
     public void registerStatsListener(StatsChangeListener statsListener) {
         statsListeners.add(statsListener);
     }
-    public void removeStatsListener(StatsChangeListener statsListener) {
-        statsListeners.remove(statsListener);
-    }
 
     public synchronized void notifyListeners() {
-        SimulationStats stats = new SimulationStats(
-                avgChildAmount,
-                avgEnergy,
-                avgLifeTime,
-                freeFields,
-                day,
-                animalCount,
-                grassCount,
-                dominantAmount,
-                new HashSet<>(currDominantGenomes));
+        SimulationStats stats = statsManager.makeStats(day, animalCount, grassCount);
 
         for (StatsChangeListener listener : statsListeners) {
             listener.statsChanged(stats);
         }
-
         for (MapChangeListener listener : mapListeners) {
             listener.mapChanged();
         }
@@ -143,7 +101,9 @@ public class Simulation implements Runnable {
             dinnerAnimals();
             reproduceAnimals();
             spawnGrasses(config.growingGrassAmount());
-            updateStats();
+            statsManager.updateStats(animals, map, randomPG);
+            day++;
+
             notifyListeners();
         }
     }
@@ -154,15 +114,15 @@ public class Simulation implements Runnable {
             Animal animal = iter.next();
             if (animal.isDead()) {
                 animal.setDeathDay(day);
-                avgLifeTimeCount += animal.getAge();
-                deadAnimals.add(animal);
+
+                statsManager.registerDeath(animal);
+                statsManager.unregisterGenotype(animal);
+
                 map.removeAnimal(animal);
-                unregisterGenome(animal);
                 animalCount--;
                 iter.remove();
             }
         }
-
     }
 
     private void moveAnimals() {
@@ -203,7 +163,9 @@ public class Simulation implements Runnable {
                     );
                     newAnimals.add(child);
                     map.placeAnimal(child);
-                    registerGenome(child);
+
+                    statsManager.registerGenotype(child);
+
                     animalCount++;
                 }
             }
@@ -215,7 +177,6 @@ public class Simulation implements Runnable {
         if (allAnimals.isEmpty()) {
             return Collections.emptyList();
         }
-
         List<Animal> result = new ArrayList<>(allAnimals);
         Collections.shuffle(result);
         Collections.sort(result, (a, b) -> {
@@ -227,7 +188,6 @@ public class Simulation implements Runnable {
             if (a.getChildrenCount() < b.getChildrenCount()) return 1;
             return 0;
         });
-
         return result.subList(0, Math.min(count, result.size()));
     }
 
@@ -235,96 +195,18 @@ public class Simulation implements Runnable {
         for (int i = 0; i < amount; i++) {
             Vector2d position = randomPG.generateRandomPosition();
             if (position != null) {
-                boolean toxic =random.nextInt(100) < config.toxicGrassChance() && config.toxicOn();
+                boolean toxic = random.nextInt(100) < config.toxicGrassChance() && config.toxicOn();
                 Grass grass = new Grass(position, toxic);
                 map.placeGrass(grass);
                 grassCount++;
-                map.registerGrowth(position,toxic);
+                map.registerGrowth(position, toxic);
             }
         }
     }
 
-    private void updateStats() {
-        avgEnergy = 0;
-        avgChildAmount = 0;
-        if (!animals.isEmpty()) {
-            for (Animal animal : animals) {
-                avgChildAmount += animal.getChildrenCount();
-                avgEnergy += animal.getEnergy();
-            }
-            avgChildAmount = avgChildAmount / animals.size();
-            avgEnergy = avgEnergy / animals.size();
-        }
-
-        avgLifeTime = 0;
-        if (!deadAnimals.isEmpty()) {
-            avgLifeTime = (float) avgLifeTimeCount / deadAnimals.size();
-        }
-
-        freeFields = countFreeFields();
-        updateDominantGenomes();
-
-        day++;
-    }
-
-    private int countFreeFields() {
-        int result = 0;
-        Map<Vector2d, List<Animal>> placedAnimals = map.getAnimals();
-        for (Vector2d position : randomPG.getAllFreePositions()) {
-            if (!placedAnimals.containsKey(position)) {
-                result++;
-            }
-        }
-        return result;
-    }
-
-    private void registerGenome(Animal animal) {
-        List<Integer> key = animal.getGenome();
-        genomeCount.put(key, genomeCount.getOrDefault(key, 0) + 1);
-    }
-
-    private void unregisterGenome(Animal animal) {
-        List<Integer> key = animal.getGenome();
-        int count = genomeCount.getOrDefault(key, 0);
-        if (count <= 1) {
-            genomeCount.remove(key);
-        } else {
-            genomeCount.put(key, count - 1);
-        }
-
-    }
-
-    private void updateDominantGenomes() {
-        if (genomeCount.isEmpty() || Collections.max(genomeCount.values()) < 2) {
-            currDominantGenomes = Collections.emptySet();
-            dominantAmount = 0;
-            return;
-        }
-        dominantAmount = Collections.max(genomeCount.values());
-        currDominantGenomes = genomeCount.entrySet().stream()
-                .filter(e -> e.getValue() == dominantAmount)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
-
-    }
-
-    public WorldMap getWorldMap() {
-        return map;
-    }
-
-    public boolean getRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
-    public void setRunningSpeed(int speed) {
-        runningSpeed = speed;
-    }
-
-    public UUID getSimID() {
-        return simID;
-    }
+    public WorldMap getWorldMap() { return map; }
+    public boolean getRunning() { return running; }
+    public void setRunning(boolean running) { this.running = running; }
+    public void setRunningSpeed(int speed) { runningSpeed = speed; }
+    public UUID getSimID() { return simID; }
 }
