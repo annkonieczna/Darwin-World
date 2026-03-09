@@ -10,6 +10,12 @@ Over many iterations, the simulation makes it possible to observe changes in the
 
 The program was implemented in **Java** using **JavaFX** for visualization.
 
+## Preview
+
+<p align="center">
+  <img src="Simulation.gif" width="400">
+</p>
+
 
 ## Project Variant
 
