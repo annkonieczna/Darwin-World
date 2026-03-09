@@ -13,7 +13,7 @@ The program was implemented in **Java** using **JavaFX** for visualization.
 ## Preview
 
 <p align="center">
-  <img src="Simulation.gif" width="400">
+  <img src="Simulation.gif" width="700">
 </p>
 
 
